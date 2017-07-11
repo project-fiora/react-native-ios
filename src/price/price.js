@@ -3,14 +3,14 @@
  */
 import React, {Component} from 'react';
 import {
-    ListView, RefreshControl,
+    RefreshControl,
     ScrollView,
     StyleSheet,
-    Text, TouchableHighlight,
+    Text,
     View, AsyncStorage
 } from 'react-native';
 
-import PrivateAddr from '../common/private/private';
+import PrivateAddr from '../common/private/address';
 
 export default class Price extends Component {
     constructor(props) {
@@ -55,7 +55,7 @@ export default class Price extends Component {
     }
 
     getPriceInfo() {
-        fetch(PrivateAddr.getLocalAddr() + "price/info")
+        fetch(PrivateAddr.getAddr() + "price/info")
             .then((response) => response.json())
             .then((responseJson) => {
                 this.setState({infoList: responseJson, refreshing:false});

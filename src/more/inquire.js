@@ -2,15 +2,16 @@
  * Created by kusob on 2017. 6. 28..
  */
 
+
 import React, {Component} from 'react';
 import {
     StyleSheet,
-    Text, TextInput, TouchableHighlight, TouchableOpacity,
+    Text, TextInput, TouchableHighlight,
     View
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 
-import PrivateAddr from '../common/private/private';
+import PrivateAddr from '../common/private/address';
 
 export default class Inquire extends Component {
     constructor(props) {
@@ -32,7 +33,7 @@ export default class Inquire extends Component {
             return false;
         }
         alert('전송이 완료 될때까지\n잠시만 기다려주세요');
-        fetch(PrivateAddr.getLocalAddr()+'inquire', {
+        fetch(PrivateAddr.getAddr()+'inquire', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',

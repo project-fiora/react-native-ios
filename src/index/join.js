@@ -9,7 +9,7 @@ import {
     View
 } from 'react-native';
 import styles from './index_style';
-import PrivateAddr from '../common/private/private';
+import PrivateAddr from '../common/private/address';
 
 export default class Join extends Component {
     constructor(props) {
@@ -62,7 +62,7 @@ export default class Join extends Component {
             if(this.state.passwd!=""&&this.state.passwd2!=""){
                 if(this.state.passwd==this.state.passwd2){
                     if(this.state.nickname!=""){
-                        fetch(PrivateAddr.getLocalAddr()+'member/join', {
+                        fetch(PrivateAddr.getAddr()+'member/join', {
                             method: 'POST',
                             headers: {
                                 'Accept': 'application/json',
@@ -107,7 +107,7 @@ export default class Join extends Component {
     confirmEmail(email){
         //api call
         this.setState({disableConfirmEmail:true});
-        fetch(PrivateAddr.getLocalAddr()+"member?email="+email)
+        fetch(PrivateAddr.getAddr()+"member?email="+email)
             .then((response) => {return response.json()})
             .then((responseJson) => {
                 var re = /^[a-z][a-zA-Z0-9_.]*(\.[a-zA-Z][a-zA-Z0-9_.]*)?@[a-z][a-zA-Z-0-9]*\.[a-z]+(\.[a-z]+)?$/;
@@ -167,7 +167,7 @@ export default class Join extends Component {
     getAuthCode(email){ //인증번호 발송, 인증번호 서버에서 받아서 state에 저장
         alert('이메일로 인증코드를 발송했습니다.');
         this.setState({ toggleAuth:true });
-        fetch(PrivateAddr.getLocalAddr()+"member/auth?email="+email)
+        fetch(PrivateAddr.getAddr()+"member/auth?email="+email)
             .then((response) => {return response.json()})
             .then((responseJson) => {
                 this.setState({ serverAuthCode: responseJson.code });

@@ -12,7 +12,7 @@ import {
 import {Select, Option} from 'react-native-select-list';
 import {Actions} from 'react-native-router-flux';
 
-import PrivateAddr from '../common/private/private';
+import PrivateAddr from '../common/private/address';
 
 export default class MyWalletAdd extends Component {
     constructor(props) {
@@ -29,7 +29,7 @@ export default class MyWalletAdd extends Component {
     }
 
     addWallet() {
-        fetch(PrivateAddr.getLocalAddr() + 'wallet/add', {
+        fetch(PrivateAddr.getAddr() + 'wallet/add', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',

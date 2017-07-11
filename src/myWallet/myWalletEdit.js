@@ -4,14 +4,14 @@
 
 import React, {Component} from 'react';
 import {
-    Image, ScrollView,
+    ScrollView,
     StyleSheet,
-    Text, TextInput, TouchableHighlight, TouchableOpacity,
-    View, AsyncStorage
+    Text, TouchableHighlight,
+    View,
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 
-import PrivateAddr from '../common/private/private';
+import PrivateAddr from '../common/private/address';
 
 export default class MyWalletEdit extends Component {
     constructor(props) {
@@ -29,7 +29,7 @@ export default class MyWalletEdit extends Component {
     }
 
     getWalletList() {
-        fetch(PrivateAddr.getLocalAddr() + "wallet/list?email=" + this.state.email)
+        fetch(PrivateAddr.getAddr() + "wallet/list?email=" + this.state.email)
             .then((response) => response.json())
             .then((responseJson) => {
                 this.setState({walletList: responseJson, load: true});

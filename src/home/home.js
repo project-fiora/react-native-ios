@@ -8,7 +8,7 @@ import {
     View, AsyncStorage
 } from 'react-native';
 
-import PrivateAddr from '../common/private/private';
+import PrivateAddr from '../common/private/address';
 
 
 export default class Home extends Component {
@@ -52,7 +52,7 @@ export default class Home extends Component {
     // }
 
     getPriceInfo() { //시세정보를 미리 가져와서 AsyncStorage에 저장
-        fetch(PrivateAddr.getLocalAddr() + "price/info")
+        fetch(PrivateAddr.getAddr() + "price/info")
             .then((response) => response.json())
             .then((responseJson) => {
                 this.setStorage('priceInfo',JSON.stringify({responseJson}));
@@ -63,7 +63,7 @@ export default class Home extends Component {
     }
 
     getWalletList() { //내지갑정보를 미리 가져와서 AsyncStorage에 저장
-        fetch(PrivateAddr.getLocalAddr() + "wallet/list?email=" + this.state.email)
+        fetch(PrivateAddr.getAddr() + "wallet/list?email=" + this.state.email)
             .then((response) => response.json())
             .then((responseJson) => {
                 this.setStorage('walletList',JSON.stringify({responseJson}));

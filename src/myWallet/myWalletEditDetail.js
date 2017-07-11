@@ -10,7 +10,7 @@ import {
 import {Select, Option} from 'react-native-select-list';
 import {Actions} from 'react-native-router-flux';
 
-import PrivateAddr from '../common/private/private';
+import PrivateAddr from '../common/private/address';
 
 export default class MyWalletEditDetail extends Component {
     constructor(props) {
@@ -33,7 +33,7 @@ export default class MyWalletEditDetail extends Component {
 
     getWallet(){
         //this.props.id에 해당하는 지갑을 꺼내는 api call (수정 후 저장은 main에 goTo 함수에서)
-        fetch(PrivateAddr.getLocalAddr()+"wallet/info?walletId="+this.props.id)
+        fetch(PrivateAddr.getAddr()+"wallet/info?walletId="+this.props.id)
             .then((response) => response.json())
             .then((responseJson) => {
                 this.setState({
@@ -49,7 +49,7 @@ export default class MyWalletEditDetail extends Component {
     }
 
     editWallet() {
-        fetch(PrivateAddr.getLocalAddr() + 'wallet/edit', {
+        fetch(PrivateAddr.getAddr() + 'wallet/edit', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',

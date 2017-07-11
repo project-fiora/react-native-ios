@@ -2,7 +2,7 @@
  * Created by kusob on 2017. 6. 26..
  */
 import React, {Component} from 'react';
-import {Image, ImageBackground} from 'react-native';
+import {ImageBackground} from 'react-native';
 import styles from './index_style';
 
 import Join from './join';

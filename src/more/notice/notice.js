@@ -9,7 +9,7 @@ import {
     View
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
-import PrivateAddr from '../../common/private/private';
+import PrivateAddr from '../../common/private/address';
 
 export default class Notice extends Component {
     constructor(props) {
@@ -25,7 +25,7 @@ export default class Notice extends Component {
     }
 
     getList() {
-        fetch(PrivateAddr.getLocalAddr()+"notice")
+        fetch(PrivateAddr.getAddr()+"notice")
             .then((response) => response.json())
             .then((responseJson) => {
                 this.setState({ noticeList: responseJson });

@@ -5,13 +5,12 @@ import React, {Component} from 'react';
 import {
     ScrollView,
     StyleSheet,
-    Text, TextInput, TouchableHighlight, TouchableOpacity,
+    Text, TouchableOpacity,
     View, AsyncStorage
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
-import {Select, Option} from 'react-native-select-list';
 
-import PrivateAddr from '../common/private/private';
+import PrivateAddr from '../common/private/address';
 
 export default class MyWallet extends Component {
     constructor(props) {
@@ -54,7 +53,7 @@ export default class MyWallet extends Component {
 
     getWalletList() {
         //this.props.id에 해당하는 지갑을 꺼내는 api call (수정 후 저장은 main에 goTo 함수에서)
-        fetch(PrivateAddr.getLocalAddr() + "wallet/list?email=" + this.state.email)
+        fetch(PrivateAddr.getAddr() + "wallet/list?email=" + this.state.email)
             .then((response) => response.json())
             .then((responseJson) => {
                 this.setState({walletList: responseJson, load: true});

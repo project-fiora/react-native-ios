@@ -6,7 +6,7 @@ import {
     Image,
     StyleSheet,
     Text, TouchableOpacity,
-    View, Dimensions
+    View,
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 
