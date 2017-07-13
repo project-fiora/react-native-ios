@@ -76,7 +76,7 @@ export default class Main extends Component {
         } else if(p=='price'){
             this.setState({
                 title:'시세 정보',
-                enableRightBtn: true, rightBtnText: '다른사이트', rightBtnGoTo: 'cryptocompare'
+                enableRightBtn: true, rightBtnText: '다른 정보', rightBtnGoTo: 'cryptocompare'
             });
         } else if(p=='cryptocompare'){
             this.setState({

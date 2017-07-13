@@ -24,29 +24,20 @@ export default class Cryptocompare extends Component {
                 {title:'BTC',krw:'',btc:'',btcKrw:'',usd:'',usdKrw:'',usdKrwPremium:'',percent:''},
                 {title:'ETH',krw:'',btc:'',btcKrw:'',usd:'',usdKrw:'',usdKrwPremium:'',percent:''},
             ],
+            cryptoList:[
+                {},{}
+            ],
         };
-        this.getPriceInfo();
     }
 
     componentDidMount() {
-        this.getFromStorage('cryptocompare');
-    }
-
-    async getFromStorage(keyName){
-        try {
-            const value = await AsyncStorage.getItem(keyName);
-            if (value !== null){
-                this.setState({infoList:JSON.parse(value).responseJson});
-            }
-        } catch (error) {
-            // Error retrieving data
-            alert(error);
-        }
+        this.getRate();
+        this.getCryptocompare();
     }
 
     _onRefresh() {
         this.setState({refreshing: true});
-        this.getPriceInfo();
+        this.getCryptocompare();
     }
 
     getPriceInfo() {
@@ -54,6 +45,30 @@ export default class Cryptocompare extends Component {
             .then((response) => response.json())
             .then((responseJson) => {
                 this.setState({infoList: responseJson, refreshing:false, load:true});
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    }
+
+    getRate() {
+        fetch("https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.xchange%20where%20pair%20in%20(%22USD%22%2C%22KRW%22)&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=")
+            .then((response) => response.json())
+            .then((responseJson) => {
+                console.log(responseJson.query.results.rate[1].Rate);
+                this.setState({rate: responseJson.query.results.rate[1].Rate});
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    }
+
+    getCryptocompare(){
+        fetch("https://min-api.cryptocompare.com/data/pricemultifull?fsyms=BTC,ETH,ETC,XRP,LTC,DASH&tsyms=BTC,KRW,BTC,USD")
+            .then((response) => response.json())
+            .then((responseJson) => {
+                console.log(responseJson.RAW);
+                this.setState({cryptoList:responseJson.RAW, refreshing:false, load:true});
             })
             .catch((error) => {
                 console.error(error);
@@ -87,7 +102,6 @@ export default class Cryptocompare extends Component {
                 </Text>
                 {this.state.load == true &&
                     <View>
-
                         <View style={styles.thead}>
                             <View style={styles.th1}>
                                 <Text style={styles.htxt}>{tableHead[0]}</Text>
@@ -102,24 +116,90 @@ export default class Cryptocompare extends Component {
                                 <Text style={styles.htxt}>{tableHead[3]}</Text>
                             </View>
                         </View>
-                        {this.state.infoList.map((info, i) => {
-                            return (
-                                <View key={i} style={styles.tr}>
-                                    <View style={styles.td1}>
-                                        <Text style={styles.title}>{info.title}</Text>
-                                    </View>
-                                    <View style={styles.td2}>
-                                        <Text style={styles.txt}>{parseFloat(info.krw).toFixed(1)}</Text>
-                                    </View>
-                                    <View style={styles.td3}>
-                                        <Text style={styles.txt}>{parseFloat(info.usdKrw).toFixed(1)}</Text>
-                                    </View>
-                                    <View style={styles.td4}>
-                                        <Text style={styles.txt}>{parseFloat(info.usd).toFixed(2)}</Text>
-                                    </View>
-                                </View>
-                            );
-                        })}
+                        <View style={styles.tr}>
+                            <View style={styles.td1}>
+                                <Text style={styles.title}>{Object.getOwnPropertyNames(this.state.cryptoList)[0]}</Text>
+                            </View>
+                            <View style={styles.td2}>
+                                <Text style={styles.txt}>{this.state.cryptoList.BTC.KRW.PRICE}</Text>
+                            </View>
+                            <View style={styles.td3}>
+                                <Text style={styles.txt}>{(parseFloat(this.state.cryptoList.BTC.USD.PRICE)*parseFloat(this.state.rate)).toFixed(2)}</Text>
+                            </View>
+                            <View style={styles.td4}>
+                                <Text style={styles.txt}>{this.state.cryptoList.BTC.USD.PRICE}</Text>
+                            </View>
+                        </View>
+                        <View style={styles.tr}>
+                            <View style={styles.td1}>
+                                <Text style={styles.title}>{Object.getOwnPropertyNames(this.state.cryptoList)[1]}</Text>
+                            </View>
+                            <View style={styles.td2}>
+                                <Text style={styles.txt}>{this.state.cryptoList.ETH.KRW.PRICE}</Text>
+                            </View>
+                            <View style={styles.td3}>
+                                <Text style={styles.txt}>{(parseFloat(this.state.cryptoList.ETH.USD.PRICE)*parseFloat(this.state.rate)).toFixed(2)}</Text>
+                            </View>
+                            <View style={styles.td4}>
+                                <Text style={styles.txt}>{this.state.cryptoList.ETH.USD.PRICE}</Text>
+                            </View>
+                        </View>
+                        <View style={styles.tr}>
+                            <View style={styles.td1}>
+                                <Text style={styles.title}>{Object.getOwnPropertyNames(this.state.cryptoList)[2]}</Text>
+                            </View>
+                            <View style={styles.td2}>
+                                <Text style={styles.txt}>{this.state.cryptoList.ETC.KRW.PRICE}</Text>
+                            </View>
+                            <View style={styles.td3}>
+                                <Text style={styles.txt}>{(parseFloat(this.state.cryptoList.ETC.USD.PRICE)*parseFloat(this.state.rate)).toFixed(2)}</Text>
+                            </View>
+                            <View style={styles.td4}>
+                                <Text style={styles.txt}>{this.state.cryptoList.ETC.USD.PRICE}</Text>
+                            </View>
+                        </View>
+                        <View style={styles.tr}>
+                            <View style={styles.td1}>
+                                <Text style={styles.title}>{Object.getOwnPropertyNames(this.state.cryptoList)[3]}</Text>
+                            </View>
+                            <View style={styles.td2}>
+                                <Text style={styles.txt}>{this.state.cryptoList.XRP.KRW.PRICE}</Text>
+                            </View>
+                            <View style={styles.td3}>
+                                <Text style={styles.txt}>{(parseFloat(this.state.cryptoList.XRP.USD.PRICE)*parseFloat(this.state.rate)).toFixed(2)}</Text>
+                            </View>
+                            <View style={styles.td4}>
+                                <Text style={styles.txt}>{this.state.cryptoList.XRP.USD.PRICE}</Text>
+                            </View>
+                        </View>
+                        <View style={styles.tr}>
+                            <View style={styles.td1}>
+                                <Text style={styles.title}>{Object.getOwnPropertyNames(this.state.cryptoList)[4]}</Text>
+                            </View>
+                            <View style={styles.td2}>
+                                <Text style={styles.txt}>{this.state.cryptoList.LTC.KRW.PRICE}</Text>
+                            </View>
+                            <View style={styles.td3}>
+                                <Text style={styles.txt}>{(parseFloat(this.state.cryptoList.LTC.USD.PRICE)*parseFloat(this.state.rate)).toFixed(2)}</Text>
+                            </View>
+                            <View style={styles.td4}>
+                                <Text style={styles.txt}>{this.state.cryptoList.LTC.USD.PRICE}</Text>
+                            </View>
+                        </View>
+                        <View style={styles.tr}>
+                            <View style={styles.td1}>
+                                <Text style={styles.title}>{Object.getOwnPropertyNames(this.state.cryptoList)[5]}</Text>
+                            </View>
+                            <View style={styles.td2}>
+                                <Text style={styles.txt}>{this.state.cryptoList.DASH.KRW.PRICE}</Text>
+                            </View>
+                            <View style={styles.td3}>
+                                <Text style={styles.txt}>{(parseFloat(this.state.cryptoList.DASH.USD.PRICE)*parseFloat(this.state.rate)).toFixed(2)}</Text>
+                            </View>
+                            <View style={styles.td4}>
+                                <Text style={styles.txt}>{this.state.cryptoList.DASH.USD.PRICE}</Text>
+                            </View>
+                        </View>
                         <View style={styles.betweenTable}/>
                         {/*////////////////////////////////여기까지 첫번째 테이블////////////////////////////////*/}
                         <View style={styles.thead}>
@@ -132,29 +212,152 @@ export default class Cryptocompare extends Component {
                             <View style={styles.th6}>
                                 <Text style={styles.htxt}>{tableHead[5]}</Text>
                             </View>
-                            {/*<View s*tyle={styles.th7}>*/}
-                            {/*<Text style={styles.htxt}>{tableHead[6]}</Text>*/}
-                            {/*</View>*/}
                         </View>
-                        {this.state.infoList.map((info, i) => {
-                            const space = " ";
-                            return (
-                                <View key={i} style={styles.tr}>
-                                    <View style={styles.td1}>
-                                        <Text style={styles.title}>{info.title}</Text>
-                                    </View>
-                                    <View style={styles.td5}>
-                                        <Text style={styles.txt}>{parseFloat(info.usdKrwPremium).toFixed(1)}{space}({info.percent}%)</Text>
-                                    </View>
-                                    <View style={styles.td6}>
-                                        <Text style={styles.txt}>{parseFloat(info.btc).toFixed(8)}</Text>
-                                    </View>
-                                    {/*<View style={styles.td7}>*/}
-                                    {/*<Text style={styles.txt}></Text>*/}
-                                    {/*</View>*/}
-                                </View>
-                            );
-                        })}
+                        <View style={styles.tr}>
+                            <View style={styles.td1}>
+                                <Text style={styles.title}>
+                                    {Object.getOwnPropertyNames(this.state.cryptoList)[0]}
+                                </Text>
+                            </View>
+                            <View style={styles.td5}>
+                                <Text style={styles.txt}>
+                                    {(()=>{
+                                            var KRW = parseFloat(this.state.cryptoList.BTC.KRW.PRICE);
+                                            var USDKRW = (parseFloat(this.state.cryptoList.BTC.USD.PRICE)*parseFloat(this.state.rate)).toFixed(2);
+                                            var KR_US = (KRW - USDKRW).toFixed(1);
+                                            var percent = (100/(KRW/KR_US)).toFixed(2);
+                                            return KR_US + " (" + percent + "%)";
+                                        }
+                                    )()}
+                                </Text>
+                            </View>
+                            <View style={styles.td6}>
+                                <Text style={styles.txt}>
+                                    {this.state.cryptoList.BTC.BTC.PRICE}
+                                </Text>
+                            </View>
+                        </View>
+                        <View style={styles.tr}>
+                            <View style={styles.td1}>
+                                <Text style={styles.title}>
+                                    {Object.getOwnPropertyNames(this.state.cryptoList)[1]}
+                                </Text>
+                            </View>
+                            <View style={styles.td5}>
+                                <Text style={styles.txt}>
+                                    {(()=>{
+                                            var KRW = parseFloat(this.state.cryptoList.ETH.KRW.PRICE);
+                                            var USDKRW = (parseFloat(this.state.cryptoList.ETH.USD.PRICE)*parseFloat(this.state.rate)).toFixed(2);
+                                            var KR_US = (KRW - USDKRW).toFixed(1);
+                                            var percent = (100/(KRW/KR_US)).toFixed(2);
+                                            return KR_US + " (" + percent + "%)";
+                                        }
+                                    )()}
+                                </Text>
+                            </View>
+                            <View style={styles.td6}>
+                                <Text style={styles.txt}>
+                                    {this.state.cryptoList.ETH.BTC.PRICE}
+                                </Text>
+                            </View>
+                        </View>
+                        <View style={styles.tr}>
+                            <View style={styles.td1}>
+                                <Text style={styles.title}>
+                                    {Object.getOwnPropertyNames(this.state.cryptoList)[2]}
+                                </Text>
+                            </View>
+                            <View style={styles.td5}>
+                                <Text style={styles.txt}>
+                                    {(()=>{
+                                            var KRW = parseFloat(this.state.cryptoList.ETC.KRW.PRICE);
+                                            var USDKRW = (parseFloat(this.state.cryptoList.ETC.USD.PRICE)*parseFloat(this.state.rate)).toFixed(2);
+                                            var KR_US = (KRW - USDKRW).toFixed(1);
+                                            var percent = (100/(KRW/KR_US)).toFixed(2);
+                                            return KR_US + " (" + percent + "%)";
+                                        }
+                                    )()}
+                                </Text>
+                            </View>
+                            <View style={styles.td6}>
+                                <Text style={styles.txt}>
+                                    {this.state.cryptoList.ETC.BTC.PRICE}
+                                </Text>
+                            </View>
+                        </View>
+                        <View style={styles.tr}>
+                            <View style={styles.td1}>
+                                <Text style={styles.title}>
+                                    {Object.getOwnPropertyNames(this.state.cryptoList)[3]}
+                                </Text>
+                            </View>
+                            <View style={styles.td5}>
+                                <Text style={styles.txt}>
+                                    {(()=>{
+                                            var KRW = parseFloat(this.state.cryptoList.XRP.KRW.PRICE);
+                                            var USDKRW = (parseFloat(this.state.cryptoList.XRP.USD.PRICE)*parseFloat(this.state.rate)).toFixed(2);
+                                            var KR_US = (KRW - USDKRW).toFixed(1);
+                                            var percent = (100/(KRW/KR_US)).toFixed(2);
+                                            return KR_US + " (" + percent + "%)";
+                                        }
+                                    )()}
+                                </Text>
+                            </View>
+                            <View style={styles.td6}>
+                                <Text style={styles.txt}>
+                                    {this.state.cryptoList.XRP.BTC.PRICE}
+                                </Text>
+                            </View>
+                        </View>
+                        <View style={styles.tr}>
+                            <View style={styles.td1}>
+                                <Text style={styles.title}>
+                                    {Object.getOwnPropertyNames(this.state.cryptoList)[4]}
+                                </Text>
+                            </View>
+                            <View style={styles.td5}>
+                                <Text style={styles.txt}>
+                                    {(()=>{
+                                            var KRW = parseFloat(this.state.cryptoList.LTC.KRW.PRICE);
+                                            var USDKRW = (parseFloat(this.state.cryptoList.LTC.USD.PRICE)*parseFloat(this.state.rate)).toFixed(2);
+                                            var KR_US = (KRW - USDKRW).toFixed(1);
+                                            var percent = (100/(KRW/KR_US)).toFixed(2);
+                                            return KR_US + " (" + percent + "%)";
+                                        }
+                                    )()}
+                                </Text>
+                            </View>
+                            <View style={styles.td6}>
+                                <Text style={styles.txt}>
+                                    {this.state.cryptoList.LTC.BTC.PRICE}
+                                </Text>
+                            </View>
+                        </View>
+                        <View style={styles.tr}>
+                            <View style={styles.td1}>
+                                <Text style={styles.title}>
+                                    {Object.getOwnPropertyNames(this.state.cryptoList)[5]}
+                                </Text>
+                            </View>
+                            <View style={styles.td5}>
+                                <Text style={styles.txt}>
+                                    {(()=>{
+                                            var KRW = parseFloat(this.state.cryptoList.DASH.KRW.PRICE);
+                                            var USDKRW = (parseFloat(this.state.cryptoList.DASH.USD.PRICE)*parseFloat(this.state.rate)).toFixed(2);
+                                            var KR_US = (KRW - USDKRW).toFixed(1);
+                                            var percent = (100/(KRW/KR_US)).toFixed(2);
+                                            return KR_US + " (" + percent + "%)";
+                                        }
+                                    )()}
+                                </Text>
+                            </View>
+                            <View style={styles.td6}>
+                                <Text style={styles.txt}>
+                                    {this.state.cryptoList.DASH.BTC.PRICE}
+                                </Text>
+                            </View>
+                        </View>
+
                         <Text style={styles.origin}>
                             데이터 출처 : https://www.cryptocompare.com/
                         </Text>
