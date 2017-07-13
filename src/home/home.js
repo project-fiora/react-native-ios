@@ -25,7 +25,7 @@ export default class Home extends Component {
     }
 
     componentDidMount(){
-        this.getPriceInfo();
+        // this.getPriceInfo();
         this.getWalletList();
     }
 
@@ -51,16 +51,16 @@ export default class Home extends Component {
     //     }
     // }
 
-    getPriceInfo() { //시세정보를 미리 가져와서 AsyncStorage에 저장
-        fetch(PrivateAddr.getAddr() + "price/info")
-            .then((response) => response.json())
-            .then((responseJson) => {
-                this.setStorage('priceInfo',JSON.stringify({responseJson}));
-            })
-            .catch((error) => {
-                console.error(error);
-            });
-    }
+    // getPriceInfo() { //시세정보를 미리 가져와서 AsyncStorage에 저장
+    //     fetch(PrivateAddr.getAddr() + "price/info")
+    //         .then((response) => response.json())
+    //         .then((responseJson) => {
+    //             this.setStorage('priceInfo',JSON.stringify({responseJson}));
+    //         })
+    //         .catch((error) => {
+    //             console.error(error);
+    //         });
+    // }
 
     getWalletList() { //내지갑정보를 미리 가져와서 AsyncStorage에 저장
         fetch(PrivateAddr.getAddr() + "wallet/list?email=" + this.state.email)

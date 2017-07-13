@@ -19,6 +19,7 @@ import MyWalletAdd from '../myWallet/myWalletAdd';
 
 import Exchange from '../exchange/exchange';
 import Price from '../price/price';
+import Coinmarketcap from "../price/coinmarketcap";
 import Cryptocompare from '../price/cryptocompare';
 
 import More from '../more/more';
@@ -30,6 +31,7 @@ import NoticeDetail from "../more/notice/noticeDetail";
 
 import Version from '../more/version';
 import Inquire from '../more/inquire';
+
 
 
 
@@ -118,7 +120,7 @@ export default class Main extends Component {
                     </View>
                     <View style={styles.hr}/>
                     {this.props.goTo === 'home' && <Home/>}
-                    {this.props.goTo === 'price' && <Price/>}
+                    {this.props.goTo === 'price' && <Coinmarketcap/>}
                         {this.props.goTo === 'cryptocompare' && <Cryptocompare/>}
                     {this.props.goTo === 'myWallet' && <MyWallet/>}
                         {this.props.goTo === 'myWalletEdit' && <MyWalletEdit/>}

@@ -20,13 +20,7 @@ export default class Cryptocompare extends Component {
         this.state = {
             load:false,
             refreshing:false,
-            infoList: [
-                {title:'BTC',krw:'',btc:'',btcKrw:'',usd:'',usdKrw:'',usdKrwPremium:'',percent:''},
-                {title:'ETH',krw:'',btc:'',btcKrw:'',usd:'',usdKrw:'',usdKrwPremium:'',percent:''},
-            ],
-            cryptoList:[
-                {},{}
-            ],
+            cryptoList:[{}],
         };
     }
 
@@ -40,16 +34,16 @@ export default class Cryptocompare extends Component {
         this.getCryptocompare();
     }
 
-    getPriceInfo() {
-        fetch(PrivateAddr.getAddr() + "price/cryptocompare")
-            .then((response) => response.json())
-            .then((responseJson) => {
-                this.setState({infoList: responseJson, refreshing:false, load:true});
-            })
-            .catch((error) => {
-                console.error(error);
-            });
-    }
+    // getPriceInfo() {
+    //     fetch(PrivateAddr.getAddr() + "price/cryptocompare")
+    //         .then((response) => response.json())
+    //         .then((responseJson) => {
+    //             this.setState({infoList: responseJson, refreshing:false, load:true});
+    //         })
+    //         .catch((error) => {
+    //             console.error(error);
+    //         });
+    // }
 
     getRate() {
         fetch("https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.xchange%20where%20pair%20in%20(%22USD%22%2C%22KRW%22)&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=")
@@ -127,7 +121,7 @@ export default class Cryptocompare extends Component {
                                 <Text style={styles.txt}>{(parseFloat(this.state.cryptoList.BTC.USD.PRICE)*parseFloat(this.state.rate)).toFixed(2)}</Text>
                             </View>
                             <View style={styles.td4}>
-                                <Text style={styles.txt}>{this.state.cryptoList.BTC.USD.PRICE}</Text>
+                                <Text style={styles.txt}>{(this.state.cryptoList.BTC.USD.PRICE).toFixed(1)}</Text>
                             </View>
                         </View>
                         <View style={styles.tr}>
@@ -141,7 +135,7 @@ export default class Cryptocompare extends Component {
                                 <Text style={styles.txt}>{(parseFloat(this.state.cryptoList.ETH.USD.PRICE)*parseFloat(this.state.rate)).toFixed(2)}</Text>
                             </View>
                             <View style={styles.td4}>
-                                <Text style={styles.txt}>{this.state.cryptoList.ETH.USD.PRICE}</Text>
+                                <Text style={styles.txt}>{(this.state.cryptoList.ETH.USD.PRICE).toFixed(1)}</Text>
                             </View>
                         </View>
                         <View style={styles.tr}>
@@ -155,7 +149,7 @@ export default class Cryptocompare extends Component {
                                 <Text style={styles.txt}>{(parseFloat(this.state.cryptoList.ETC.USD.PRICE)*parseFloat(this.state.rate)).toFixed(2)}</Text>
                             </View>
                             <View style={styles.td4}>
-                                <Text style={styles.txt}>{this.state.cryptoList.ETC.USD.PRICE}</Text>
+                                <Text style={styles.txt}>{(this.state.cryptoList.ETC.USD.PRICE).toFixed(1)}</Text>
                             </View>
                         </View>
                         <View style={styles.tr}>
@@ -169,7 +163,7 @@ export default class Cryptocompare extends Component {
                                 <Text style={styles.txt}>{(parseFloat(this.state.cryptoList.XRP.USD.PRICE)*parseFloat(this.state.rate)).toFixed(2)}</Text>
                             </View>
                             <View style={styles.td4}>
-                                <Text style={styles.txt}>{this.state.cryptoList.XRP.USD.PRICE}</Text>
+                                <Text style={styles.txt}>{(this.state.cryptoList.XRP.USD.PRICE).toFixed(1)}</Text>
                             </View>
                         </View>
                         <View style={styles.tr}>
@@ -183,7 +177,7 @@ export default class Cryptocompare extends Component {
                                 <Text style={styles.txt}>{(parseFloat(this.state.cryptoList.LTC.USD.PRICE)*parseFloat(this.state.rate)).toFixed(2)}</Text>
                             </View>
                             <View style={styles.td4}>
-                                <Text style={styles.txt}>{this.state.cryptoList.LTC.USD.PRICE}</Text>
+                                <Text style={styles.txt}>{(this.state.cryptoList.LTC.USD.PRICE).toFixed(1)}</Text>
                             </View>
                         </View>
                         <View style={styles.tr}>
@@ -197,7 +191,7 @@ export default class Cryptocompare extends Component {
                                 <Text style={styles.txt}>{(parseFloat(this.state.cryptoList.DASH.USD.PRICE)*parseFloat(this.state.rate)).toFixed(2)}</Text>
                             </View>
                             <View style={styles.td4}>
-                                <Text style={styles.txt}>{this.state.cryptoList.DASH.USD.PRICE}</Text>
+                                <Text style={styles.txt}>{(this.state.cryptoList.DASH.USD.PRICE).toFixed(1)}</Text>
                             </View>
                         </View>
                         <View style={styles.betweenTable}/>
@@ -412,7 +406,7 @@ const styles = StyleSheet.create({
         opacity: 0.5,
     },
     th3: {
-        width: 95,
+        width: 105,
         borderWidth: 1,
         borderRadius: 7,
         borderColor: '#FFFFFF',
@@ -424,7 +418,7 @@ const styles = StyleSheet.create({
         opacity: 0.5,
     },
     th4: {
-        width: 80,
+        width: 70,
         borderWidth: 1,
         borderRadius: 7,
         borderColor: '#FFFFFF',
@@ -485,7 +479,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 7,
         borderColor: '#FFFFFF',
-        opacity: 0.8,
+        opacity: 0.5,
+        backgroundColor:'#22214B',
         padding: 2,
         alignItems: 'center',
         margin: 1,
@@ -502,7 +497,7 @@ const styles = StyleSheet.create({
         margin: 1,
     },
     td3: { //USDKRW
-        width: 95,
+        width: 105,
         borderWidth: 1,
         borderRadius: 7,
         borderColor: '#FFFFFF',
@@ -513,7 +508,7 @@ const styles = StyleSheet.create({
         margin: 1,
     },
     td4: { //USD
-        width: 80,
+        width: 70,
         borderWidth: 1,
         borderRadius: 7,
         borderColor: '#FFFFFF',
@@ -559,7 +554,6 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         fontSize: 15,
         fontWeight: 'bold',
-        opacity: 0.8
     },
     htxt: {
         color: '#FFFFFF',

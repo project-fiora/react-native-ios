@@ -1,47 +1,28 @@
 /**
- * Created by kusob on 2017. 6. 26..
+ * Created by kusob on 2017. 7. 14..
  */
+
 import React, {Component} from 'react';
 import {
     RefreshControl,
     ScrollView,
     StyleSheet,
     Text,
-    View, AsyncStorage
+    View,
 } from 'react-native';
 
-import PrivateAddr from '../common/private/address';
-
-export default class Price extends Component {
+export default class Coinmarketcap extends Component {
     constructor(props) {
         super(props);
 
-
         this.state = {
-            refreshing:false,
-            infoList: [
-                {shortSite: '', price: '', circulatingSupply: '', volume: '', change: '', graphImg:'', div:0},
-            ],
+            refreshing:true,
             list:[],
         };
-        this.getPriceInfo();
     }
 
     componentDidMount() {
-        this.getFromStorage('priceInfo');
-    }
-
-    async getFromStorage(keyName){
-        try {
-            const value = await AsyncStorage.getItem(keyName);
-            if (value !== null){
-                // We have data!!
-                this.setState({infoList:JSON.parse(value).responseJson});
-            }
-        } catch (error) {
-            // Error retrieving data
-            alert(error);
-        }
+        this.getPriceInfo();
     }
 
     _onRefresh() {
@@ -50,10 +31,10 @@ export default class Price extends Component {
     }
 
     getPriceInfo() {
-        fetch(PrivateAddr.getAddr() + "price/info")
+        fetch("https://api.coinmarketcap.com/v1/ticker/?limit=6")
             .then((response) => response.json())
             .then((responseJson) => {
-                this.setState({infoList: responseJson, refreshing:false});
+                this.setState({list: responseJson, refreshing:false});
             })
             .catch((error) => {
                 console.error(error);
@@ -89,17 +70,18 @@ export default class Price extends Component {
                         <Text style={styles.htxt}>{tableHead[2]}</Text>
                     </View>
                 </View>
-                {this.state.infoList.map((info, i) => {
+                {this.state.list.map((info, i) => {
+                    const space = " ";
                     return (
                         <View key={i} style={styles.tr}>
                             <View style={styles.td1}>
-                                <Text style={styles.title}>{info.shortSite}</Text>
+                                <Text style={styles.title}>{info.symbol}</Text>
                             </View>
                             <View style={styles.td2}>
-                                <Text style={styles.txt}>{info.price}</Text>
+                                <Text style={styles.txt}>${space}{parseFloat(info.price_usd).toFixed(1)}</Text>
                             </View>
                             <View style={styles.td}>
-                                <Text style={styles.txt}>{info.circulatingSupply}</Text>
+                                <Text style={styles.txt}>{info.available_supply}{space}{info.symbol}</Text>
                             </View>
                         </View>
                     );
@@ -120,20 +102,20 @@ export default class Price extends Component {
                         <Text style={styles.htxt}>{tableHead[4]}</Text>
                     </View>
                 </View>
-                {this.state.infoList.map((info, i) => {
+                {this.state.list.map((info, i) => {
                     return (
                         <View key={i} style={styles.tr}>
                             <View style={styles.td1}>
-                                <Text style={styles.title}>{info.shortSite}</Text>
+                                <Text style={styles.title}>{info.symbol}</Text>
                             </View>
                             <View style={styles.td6}>
-                                <Text style={styles.txt}>{parseFloat(info.div).toFixed(8)}</Text>
+                                <Text style={styles.txt}>{parseFloat(info.price_btc).toFixed(8)}</Text>
                             </View>
                             <View style={styles.td4}>
-                                <Text style={styles.txt}>{info.volume}</Text>
+                                <Text style={styles.txt}>${parseFloat(info["24h_volume_usd"]).toFixed(0)}</Text>
                             </View>
                             <View style={styles.td5}>
-                                <Text style={styles.txt}>{info.change}</Text>
+                                <Text style={styles.txt}>{info.percent_change_24h} %</Text>
                             </View>
                         </View>
                     );
@@ -260,7 +242,7 @@ const styles = StyleSheet.create({
         opacity: 0.8,
         padding: 2,
         paddingLeft:7,
-        alignItems: 'flex-start',
+        alignItems: 'flex-end',
         margin: 1,
     },
     td: { //supply
@@ -282,7 +264,7 @@ const styles = StyleSheet.create({
         opacity: 0.8,
         padding: 2,
         paddingLeft:7,
-        alignItems: 'flex-start',
+        alignItems: 'flex-end',
         margin: 1,
     },
     td5: {
@@ -292,7 +274,7 @@ const styles = StyleSheet.create({
         borderColor: '#FFFFFF',
         opacity: 0.8,
         padding: 2,
-        alignItems: 'center',
+        alignItems: 'flex-end',
         margin: 1,
     },
     td6: { //비율
