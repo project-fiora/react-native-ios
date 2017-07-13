@@ -8,10 +8,8 @@ import {
     ScrollView,
     StyleSheet,
     Text,
-    View, AsyncStorage, Image
+    View, Image
 } from 'react-native';
-
-import PrivateAddr from '../common/private/address';
 
 export default class Cryptocompare extends Component {
     constructor(props) {
@@ -347,7 +345,7 @@ export default class Cryptocompare extends Component {
                             </View>
                             <View style={styles.td6}>
                                 <Text style={styles.txt}>
-                                    {this.state.cryptoList.DASH.BTC.PRICE}
+                                    {parseFloat(this.state.cryptoList.DASH.BTC.PRICE).toFixed(8)}
                                 </Text>
                             </View>
                         </View>

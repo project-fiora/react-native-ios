@@ -42,7 +42,7 @@ export default class Coinmarketcap extends Component {
     }
 
     render() {
-        const tableHead = ['분류', 'Price', '순환공급량', 'Volume', '변화율', '비율(BTC)' ];
+        const tableHead = ['분류', '비율(BTC)', '순환공급량', 'Volume', '변화율', 'Price' ];
         return (
             <ScrollView
                 refreshControl={
@@ -71,17 +71,16 @@ export default class Coinmarketcap extends Component {
                     </View>
                 </View>
                 {this.state.list.map((info, i) => {
-                    const space = " ";
                     return (
                         <View key={i} style={styles.tr}>
                             <View style={styles.td1}>
                                 <Text style={styles.title}>{info.symbol}</Text>
                             </View>
                             <View style={styles.td2}>
-                                <Text style={styles.txt}>${space}{parseFloat(info.price_usd).toFixed(1)}</Text>
+                                <Text style={styles.txt}>{parseFloat(info.price_btc).toFixed(8)}</Text>
                             </View>
                             <View style={styles.td}>
-                                <Text style={styles.txt}>{info.available_supply}{space}{info.symbol}</Text>
+                                <Text style={styles.txt}>{info.available_supply} {info.symbol}</Text>
                             </View>
                         </View>
                     );
@@ -109,13 +108,13 @@ export default class Coinmarketcap extends Component {
                                 <Text style={styles.title}>{info.symbol}</Text>
                             </View>
                             <View style={styles.td6}>
-                                <Text style={styles.txt}>{parseFloat(info.price_btc).toFixed(8)}</Text>
+                                <Text style={styles.txt}>$ {parseFloat(info.price_usd).toFixed(1)}</Text>
                             </View>
                             <View style={styles.td4}>
                                 <Text style={styles.txt}>${parseFloat(info["24h_volume_usd"]).toFixed(0)}</Text>
                             </View>
                             <View style={styles.td5}>
-                                <Text style={styles.txt}>{info.percent_change_24h} %</Text>
+                                <Text style={styles.txt}>{parseFloat(info.percent_change_24h).toFixed(2)} %</Text>
                             </View>
                         </View>
                     );
@@ -234,14 +233,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         margin: 1,
     },
-    td2: { //price
+    td2: { //비율?
         width: 125,
         borderWidth: 1,
         borderRadius: 7,
         borderColor: '#FFFFFF',
         opacity: 0.8,
         padding: 2,
-        paddingLeft:7,
+        paddingRight:7,
         alignItems: 'flex-end',
         margin: 1,
     },
@@ -263,7 +262,7 @@ const styles = StyleSheet.create({
         borderColor: '#FFFFFF',
         opacity: 0.8,
         padding: 2,
-        paddingLeft:7,
+        paddingRight:7,
         alignItems: 'flex-end',
         margin: 1,
     },
@@ -277,14 +276,15 @@ const styles = StyleSheet.create({
         alignItems: 'flex-end',
         margin: 1,
     },
-    td6: { //비율
+    td6: { //price
         width: 95,
         borderWidth: 1,
         borderRadius: 7,
         borderColor: '#FFFFFF',
         opacity: 0.8,
         padding: 2,
-        alignItems: 'center',
+        paddingRight:7,
+        alignItems: 'flex-end',
         margin: 1,
     },
     title: {

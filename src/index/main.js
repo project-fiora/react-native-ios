@@ -18,7 +18,7 @@ import MyWalletEditDetail from '../myWallet/myWalletEditDetail';
 import MyWalletAdd from '../myWallet/myWalletAdd';
 
 import Exchange from '../exchange/exchange';
-import Price from '../price/price';
+
 import Coinmarketcap from "../price/coinmarketcap";
 import Cryptocompare from '../price/cryptocompare';
 

@@ -6,7 +6,7 @@ import {
     ScrollView,
     StyleSheet,
     Text, TouchableOpacity,
-    View, AsyncStorage, Image
+    View, Image
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 
@@ -27,24 +27,10 @@ export default class MyWallet extends Component {
             walletSite: '',
             walletAddr: '',
         };
-        //this.getFromStorage('walletList');
     }
 
     goTo(part) {
         Actions.main({goTo: part});
-    }
-
-    async getFromStorage(keyName) {
-        try {
-            const value = await AsyncStorage.getItem(keyName);
-            if (value !== null) {
-                // We have data!!
-                this.setState({walletList: JSON.parse(value).responseJson});
-            }
-        } catch (error) {
-            // Error retrieving data
-            alert(error);
-        }
     }
 
     componentDidMount() {
