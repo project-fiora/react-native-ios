@@ -4,6 +4,7 @@
 
 import React, {Component} from 'react';
 import {
+    Image,
     ScrollView,
     StyleSheet,
     Text, TouchableHighlight,
@@ -49,7 +50,9 @@ export default class MyWalletEdit extends Component {
         return (
             <ScrollView contentContainerStyle={styles.frame}>
                 {this.state.load == false &&
-                <Text style={styles.explain}>로딩 중...</Text>
+                <Image
+                    source={require('../common/img/loading.gif')}
+                    style={styles.loadingIcon}/>
                 }
                 {this.state.load == true &&
                 <View>
@@ -79,6 +82,11 @@ const styles = StyleSheet.create({
     frame: {
         alignItems: 'center',
         paddingBottom: 85,
+    },
+    loadingIcon: {
+        width: 40,
+        height: 40,
+        marginTop: 40,
     },
     explain: {
         color: '#FFFFFF',

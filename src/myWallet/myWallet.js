@@ -6,7 +6,7 @@ import {
     ScrollView,
     StyleSheet,
     Text, TouchableOpacity,
-    View, AsyncStorage
+    View, AsyncStorage, Image
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 
@@ -72,7 +72,9 @@ export default class MyWallet extends Component {
             <ScrollView contentContainerStyle={styles.frame}>
                 <View style={styles.content}>
                     {this.state.load == false &&
-                    <Text style={styles.contentText}>로딩 중...</Text>
+                    <Image
+                        source={require('../common/img/loading.gif')}
+                        style={styles.loadingIcon}/>
                     }
                     {this.state.load == true &&
                     <View>
@@ -111,7 +113,7 @@ export default class MyWallet extends Component {
 
                         <Text style={styles.contentText}>
                             지갑이름 : {this.state.walletList[this.state.currentWallet].walletName}{'\n'}
-                             사이트 : {this.state.walletList[this.state.currentWallet].walletSite}{'\n'}
+                            사이트 : {this.state.walletList[this.state.currentWallet].walletSite}{'\n'}
                             지갑주소 : {this.state.walletList[this.state.currentWallet].walletAddr}{'\n'}
                         </Text>
                     </View>
@@ -138,22 +140,27 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         fontSize: 17,
         marginTop: 10,
-        opacity:0.8,
+        opacity: 0.8,
     },
-    selectIcon:{
-        position:'absolute',
-        top:38,
-        right:38,
+    loadingIcon: {
+        width: 40,
+        height: 40,
+        marginTop: 40,
+    },
+    selectIcon: {
+        position: 'absolute',
+        top: 38,
+        right: 38,
         color: '#FFFFFF',
         fontSize: 17,
-        opacity:0.9,
+        opacity: 0.9,
     },
-    titleText:{
-        textAlign:'center',
+    titleText: {
+        textAlign: 'center',
         color: '#FFFFFF',
         fontSize: 17,
         marginBottom: 10,
-        opacity:0.8,
+        opacity: 0.8,
     },
     selectBoxWrapper: {
         alignSelf: 'center',
@@ -165,7 +172,7 @@ const styles = StyleSheet.create({
         borderColor: '#FFFFFF',
         borderWidth: 1,
         borderRadius: 10,
-        paddingLeft:15,
+        paddingLeft: 15,
     },
     selectBox: {
         color: '#FFFFFF',

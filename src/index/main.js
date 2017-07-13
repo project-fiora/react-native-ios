@@ -19,12 +19,19 @@ import MyWalletAdd from '../myWallet/myWalletAdd';
 
 import Exchange from '../exchange/exchange';
 import Price from '../price/price';
+import Cryptocompare from '../price/cryptocompare';
 
 import More from '../more/more';
 import Option from '../more/option/option';
+import OptionDetail from "../more/option/optionDetail";
+
 import Notice from '../more/notice/notice';
+import NoticeDetail from "../more/notice/noticeDetail";
+
 import Version from '../more/version';
 import Inquire from '../more/inquire';
+
+
 
 export default class Main extends Component {
     constructor(props) {
@@ -67,13 +74,24 @@ export default class Main extends Component {
         } else if(p=='exchange'){
             this.setState({title:'자동 거래'});
         } else if(p=='price'){
-            this.setState({title:'시세 정보'});
+            this.setState({
+                title:'시세 정보',
+                enableRightBtn: true, rightBtnText: '다른사이트', rightBtnGoTo: 'cryptocompare'
+            });
+        } else if(p=='cryptocompare'){
+            this.setState({
+                title:'시세 정보', deep: true, back:'price'
+            });
         } else if(p=='more'){
             this.setState({title:'더보기'});
         } else if(p=='option'){
             this.setState({title:'옵션', deep:true, back:'more'});
+        } else if(p=='optionDetail'){
+            this.setState({title:this.props.title, deep:true, back:'option'});
         } else if(p=='notice'){
             this.setState({title:'공지사항', deep:true, back:'more'});
+        } else if(p=='noticeDetail'){
+            this.setState({title:this.props.title, deep:true, back:'notice'});
         } else if(p=='version'){
             this.setState({title:'버전정보', deep:true, back:'more'});
         } else if(p=='inquire'){
@@ -87,7 +105,11 @@ export default class Main extends Component {
 
     render() {
         return (
-            <ImageBackground imageStyle={styles.backgroundImg} source={require('../common/img/background.png')} style={styles.container}>
+            <ImageBackground
+                imageStyle={styles.backgroundImg}
+                source={require('../common/img/background.png')}
+                style={styles.container}
+            >
                 <View style={styles.wrapper}>
                     <View style={styles.summaryTitleWrapper}>
                         <Text style={styles.summaryTitle}>
@@ -97,10 +119,13 @@ export default class Main extends Component {
                     <View style={styles.hr}/>
                     {this.props.goTo === 'home' && <Home/>}
                     {this.props.goTo === 'price' && <Price/>}
+                        {this.props.goTo === 'cryptocompare' && <Cryptocompare/>}
                     {this.props.goTo === 'myWallet' && <MyWallet/>}
                         {this.props.goTo === 'myWalletEdit' && <MyWalletEdit/>}
                         {this.props.goTo === 'myWalletEditDetail' &&
-                            <MyWalletEditDetail id={this.props.id} walletSite={this.props.walletSite}/>
+                            <MyWalletEditDetail id={this.props.id}
+                                                walletSite={this.props.walletSite}
+                            />
                         }
                         {this.props.goTo === 'myWalletAdd' && <MyWalletAdd/>}
 
@@ -108,7 +133,14 @@ export default class Main extends Component {
 
                     {this.props.goTo === 'more' && <More/>}
                         {this.props.goTo === 'option' && <Option/>}
+                            {this.props.goTo === 'optionDetail' && <OptionDetail/>}
                         {this.props.goTo === 'notice' && <Notice/>}
+                            {this.props.goTo === 'noticeDetail' &&
+                                <NoticeDetail id={this.props.id}
+                                              content={this.props.content}
+                                              date={this.props.date}
+                                />
+                            }
                         {this.props.goTo === 'version' && <Version/>}
                         {this.props.goTo === 'inquire' && <Inquire/>}
                 </View>
@@ -127,7 +159,8 @@ export default class Main extends Component {
                         underlayColor={'#AAAAAA'}
                         onPress={() => this.goTo(this.state.back)}
                     >
-                        <Image source={require('../common/img/navArrow.png')} style={styles.navBackArrow}/>
+                        <Image source={require('../common/img/navArrow.png')}
+                               style={styles.navBackArrow}/>
                     </TouchableOpacity>
                 }
                 <TabButton/>

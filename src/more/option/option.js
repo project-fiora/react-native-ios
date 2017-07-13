@@ -32,7 +32,7 @@ export default class Option extends Component {
 
 class OptionBtn extends Component {
     goTo(title) {
-        Actions.optionDetail({title:title});
+        Actions.main({goTo:'optionDetail', title:title});
     }
 
     render() {

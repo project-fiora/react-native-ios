@@ -77,7 +77,7 @@ export default class Price extends Component {
                         tintColor='#FFFFFF'
                     />
                 }
-                style={styles.priceWrapper}
+                contentContainerStyle={styles.priceWrapper}
             >
                 <Text style={styles.explain}>
                     실시간 시세 차이에 주의하세요!{'\n'}
@@ -153,7 +153,7 @@ export default class Price extends Component {
 
 const styles = StyleSheet.create({
     priceWrapper: {
-        paddingLeft: 10,
+        alignItems:'center'
     },
     explain: {
         color: '#FFFFFF',
@@ -329,8 +329,9 @@ const styles = StyleSheet.create({
     },
     origin:{
         marginTop:10,
-        marginRight:10,
+        marginRight:12,
         textAlign:'right',
+        alignSelf:'flex-end',
         color:'#FFFFFF',
         fontSize:13,
     },

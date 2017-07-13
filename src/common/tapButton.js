@@ -1,6 +1,7 @@
 /**
  * Created by kusob on 2017. 6. 26..
  */
+
 import React, {Component} from "react";
 import {Image, Text, View, StyleSheet, TouchableOpacity} from "react-native";
 import {Actions} from 'react-native-router-flux';

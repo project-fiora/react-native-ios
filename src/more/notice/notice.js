@@ -16,7 +16,7 @@ export default class Notice extends Component {
         super(props);
 
         this.state = {
-            noticeList:[],
+            noticeList: [],
         };
     }
 
@@ -25,10 +25,10 @@ export default class Notice extends Component {
     }
 
     getList() {
-        fetch(PrivateAddr.getAddr()+"notice")
+        fetch(PrivateAddr.getAddr() + "notice")
             .then((response) => response.json())
             .then((responseJson) => {
-                this.setState({ noticeList: responseJson });
+                this.setState({noticeList: responseJson});
             })
             .catch((error) => {
                 console.error(error);
@@ -37,16 +37,14 @@ export default class Notice extends Component {
 
     render() {
         return (
-            <View>
-                <View style={styles.box}>
-                    {this.state.noticeList.map((notice, i) => {
-                        return (<NoticeBtn title={notice.title}
-                                              content={notice.content}
-                                              date={notice.date}
-                                              key={i}/>);
-                        })
-                    }
-                </View>
+            <View style={styles.box}>
+                {this.state.noticeList.map((notice, i) => {
+                    return (<NoticeBtn title={notice.title}
+                                       content={notice.content}
+                                       date={notice.date}
+                                       key={i}/>);
+                })
+                }
             </View>
         );
     }
@@ -54,7 +52,7 @@ export default class Notice extends Component {
 
 class NoticeBtn extends Component {
     goTo(id, title, content, date) {
-        Actions.noticeDetail({id:id, title:title, content:content, date:date});
+        Actions.main({goTo: 'noticeDetail', id: id, title: title, content: content, date: date});
     }
 
     render() {
@@ -62,7 +60,9 @@ class NoticeBtn extends Component {
             <View style={styles.btn}>
                 <TouchableOpacity
                     underlayColor={'#AAAAAA'}
-                    onPress={() => this.goTo(this.props.id, this.props.title, this.props.content, this.props.date)}
+                    onPress={() =>
+                        this.goTo(this.props.id, this.props.title, this.props.content, this.props.date)
+                    }
                 >
                     <Text style={styles.menuText}>
                         <Image source={this.props.img} style={styles.menuIcon}/>
@@ -75,9 +75,6 @@ class NoticeBtn extends Component {
 }
 
 var styles = StyleSheet.create({
-    frame: {
-        flex: 1,
-    },
     box: {
         // borderBottomWidth: 0.5,
         // borderColor: '#A0A0A0',
@@ -88,16 +85,16 @@ var styles = StyleSheet.create({
         padding: 20,
     },
     menuIcon: {
-        resizeMode:'stretch',
+        resizeMode: 'stretch',
         width: 17,
         height: 17,
-        marginTop:4,
-        opacity:0.7
+        marginTop: 4,
+        opacity: 0.7
     },
     menuText: {
-        backgroundColor:'transparent',
+        backgroundColor: 'transparent',
         fontSize: 17,
-        color:'white',
-        opacity:0.9
+        color: 'white',
+        opacity: 0.9
     }
 });

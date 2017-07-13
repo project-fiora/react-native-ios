@@ -18,8 +18,6 @@ export default class Root extends Component {
                 <Scene key="root" direction="vertical" hideNavBar>
                     <Scene key="title" component={Title} initial={true}/>
                     <Scene key="main" component={Main}/>
-                    <Scene key="noticeDetail" component={NoticeDetail}/>
-                    <Scene key="optionDetail" component={OptionDetail}/>
                 </Scene>
             </Router>
         );

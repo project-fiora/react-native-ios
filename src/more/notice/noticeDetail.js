@@ -4,13 +4,9 @@
 
 import React, {Component} from 'react';
 import {
-    Image,
     StyleSheet, Text,
     View
 } from 'react-native';
-
-import TabButton from '../../common/tapButton';
-
 
 export default class NoticeDetail extends Component {
     constructor(props) {
@@ -19,59 +15,39 @@ export default class NoticeDetail extends Component {
 
     render() {
         return (
-            <Image source={require('../../common/img/background.png')} style={styles.container}>
-                <View style={styles.frame}>
-                    <Text style={styles.summaryTitle}>
-                        {this.props.title}
-                    </Text>
-                    <View style={styles.dateWrapper}>
-                        <Text style={styles.dateTime}>
-                            {this.props.date}
-                        </Text>
-                    </View>
-                    <Text style={styles.txt}>
-                        { this.props.content.split('\\n').map( (line, i) => {
-                            return (<Text key={i}>{line}{'\n'}</Text>)
-                        })
-                        }
-                    </Text>
-                </View>
-                <TabButton/>
-            </Image>
+            <View style={styles.frame}>
+                <Text style={styles.dateTime}>
+                    {this.props.date}
+                </Text>
+                { this.props.content.split('\\n').map((line, i) => {
+                    return (<Text style={styles.txt} key={i}>{line}{'\n'}</Text>)
+                })
+                }
+            </View>
         );
     }
 }
 
 var styles = StyleSheet.create({
-    container: {
-        flex:1,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'stretch',
-        width:'100%',
-        height:'100%',
-        resizeMode: 'cover',
-        paddingTop:50,
-        paddingLeft:25,
-        paddingRight:25,
-    },
     frame: {
-        flex:1,
-        paddingTop:70,
-        paddingRight:30,
-        paddingLeft:30,
-        paddingBottom:30,
+        padding: 30,
     },
-    summaryTitle:{
-
+    summaryTitle: {
+        textAlign: 'center',
+        color: '#FFFFFF',
+        opacity: 0.8,
+        fontSize: 20,
     },
-    dateWrapper:{
-
+    dateTime: {
+        textAlign: 'right',
+        color:'#FFFFFF',
+        opacity:0.8,
+        fontSize:15,
+        marginBottom:15,
     },
-    dateTime:{
-
-    },
-    txt:{
-
+    txt: {
+        color:'#FFFFFF',
+        opacity:0.8,
+        fontSize:17,
     },
 });

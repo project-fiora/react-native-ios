@@ -22,7 +22,6 @@ export default class OptionDetail extends Component {
 
     render() {
         return (
-            <Image source={require('../../common/img/background.png')} style={styles.container}>
                 <View style={styles.frame}>
                     {/*<Text style={styles.summaryTitle}>*/}
                         {/*{this.state.title}*/}
@@ -34,25 +33,11 @@ export default class OptionDetail extends Component {
                         {/*}*/}
                     {/*</Text>*/}
                 </View>
-                <TabButton/>
-            </Image>
         );
     }
 }
 
 var styles = StyleSheet.create({
-    container: {
-        flex:1,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'stretch',
-        width:'100%',
-        height:'100%',
-        resizeMode: 'cover',
-        paddingTop:50,
-        paddingLeft:25,
-        paddingRight:25,
-    },
     frame: {
         flex:1,
         paddingTop:70,
