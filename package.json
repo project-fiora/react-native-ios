@@ -18,6 +18,7 @@
     "react-native-select-list": "^1.0.5",
     "react-native-table-component": "^1.0.1",
     "react-timer-mixin": "latest",
+    "realm": "^1.10.0",
     "request-promise": "^4.2.1"
   },
   "devDependencies": {

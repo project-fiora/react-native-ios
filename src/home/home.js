@@ -17,19 +17,38 @@ export default class Home extends Component {
             email:'boseokjung@gmail.com',
             walletList:[],
         };
+        let realm = new Realm({
+            schema: [{name: 'Dog', properties: {name: 'string'}}]
+        });
+        realm.write(() => {
+            realm.create('Dog', {name: 'Rex'});
+        });
     }
 
     async componentDidMount(){
         await AsyncStorage.removeItem('PepperoniAppTemplateAppState:Latest'); //AsyncStorage clear
+
+
+        let realm = new Realm({schema: [Dog]});
+        let dogs = realm.objects('Dog');
+        let tanDogs = dogs.filtered('name == "Rex"');
+        this.setState({rex:tanDogs});
     }
 
     render() {
+
+
+
+
+
+
         return (
             <ScrollView contentContainerStyle={styles.homeWrapper}>
                 <Text style={styles.txt}>
                     보유중인 자산 :
                     <Image source={require('../common/img/dollar.png')} style={styles.dollarIcon}/>
                     {this.state.dollar}{'\n'}
+                    {this.state.rex}
                 </Text>
                 <Text style={styles.warningText}>
                     ** 이 앱을 사용하는 도중에 발생하는

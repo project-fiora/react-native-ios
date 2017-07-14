@@ -32,22 +32,10 @@ export default class Cryptocompare extends Component {
         this.getCryptocompare();
     }
 
-    // getPriceInfo() {
-    //     fetch(PrivateAddr.getAddr() + "price/cryptocompare")
-    //         .then((response) => response.json())
-    //         .then((responseJson) => {
-    //             this.setState({infoList: responseJson, refreshing:false, load:true});
-    //         })
-    //         .catch((error) => {
-    //             console.error(error);
-    //         });
-    // }
-
     getRate() {
         fetch("https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.xchange%20where%20pair%20in%20(%22USD%22%2C%22KRW%22)&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=")
             .then((response) => response.json())
             .then((responseJson) => {
-                console.log(responseJson.query.results.rate[1].Rate);
                 this.setState({rate: responseJson.query.results.rate[1].Rate});
             })
             .catch((error) => {
@@ -59,7 +47,6 @@ export default class Cryptocompare extends Component {
         fetch("https://min-api.cryptocompare.com/data/pricemultifull?fsyms=BTC,ETH,ETC,XRP,LTC,DASH&tsyms=BTC,KRW,BTC,USD")
             .then((response) => response.json())
             .then((responseJson) => {
-                console.log(responseJson.RAW);
                 this.setState({cryptoList:responseJson.RAW, refreshing:false, load:true});
             })
             .catch((error) => {

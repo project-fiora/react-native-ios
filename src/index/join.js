@@ -30,33 +30,6 @@ export default class Join extends Component {
         };
     }
 
-    // joinTest(){
-    //     fetch(PrivateAddr.getLocalAddr()+'member/join', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Accept': 'application/json',
-    //             'Content-Type': 'application/json',
-    //         },
-    //         body: JSON.stringify({
-    //             email: this.state.email,
-    //             password: this.state.passwd,
-    //             nickname: this.state.name
-    //         })
-    //     }).then((response) => {return response.json()})
-    //         .then((responseJson) => {
-    //             if(responseJson.message=="SUCCESS"){
-    //                 ()=>this.goTitle();
-    //                 alert('회원가입에 성공했습니다!');
-    //             } else {
-    //                 alert('오류가 발생했습니다.\n다시 시도해주세요!');
-    //             }
-    //         })
-    //         .catch((error) => {
-    //             alert('Network Connection Failed');
-    //             console.error(error);
-    //         }).done();
-    // }
-
     join() {//회원가입 POST api call
         if(this.state.confirmAuth){
             if(this.state.passwd!=""&&this.state.passwd2!=""){

@@ -3,13 +3,11 @@
  */
 
 import React,{ Component } from 'react';
-import {StyleSheet} from 'react-native';
+
 import {Scene, Router} from 'react-native-router-flux';
 
 import Title from './src/index/title';
 import Main from './src/index/main';
-import NoticeDetail from './src/more/notice/noticeDetail';
-import OptionDetail from './src/more/option/optionDetail';
 
 export default class Root extends Component {
     render() {

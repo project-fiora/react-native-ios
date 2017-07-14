@@ -15,9 +15,6 @@ export default class Title extends Component {
 
         this.state = {
             currentPage: 'title',
-            email: '',
-            passwd: '',
-            passwd2:'',
         };
     }
 

@@ -101,7 +101,10 @@ export default class MyWallet extends Component {
                             지갑이름 : {this.state.walletList[this.state.currentWallet].walletName}{'\n'}
                             사이트 : {this.state.walletList[this.state.currentWallet].walletSite}{'\n'}
                             지갑주소 : {this.state.walletList[this.state.currentWallet].walletAddr}{'\n'}
+                            보유 BTC : {this.state.walletList[this.state.currentWallet].walletBTC}{'\n'}
+                            QR 코드
                         </Text>
+                        <Image source={require('../common/img/ask.png')} style={styles.qrCode}/>
                     </View>
                     }
                 </View>
@@ -127,6 +130,7 @@ const styles = StyleSheet.create({
         fontSize: 17,
         marginTop: 10,
         opacity: 0.8,
+        marginBottom:20,
     },
     loadingIcon: {
         width: 40,
@@ -163,6 +167,10 @@ const styles = StyleSheet.create({
     selectBox: {
         color: '#FFFFFF',
         fontSize: 17,
+    },
+    qrCode:{
+        width:100,
+        height:100,
     },
 
 });

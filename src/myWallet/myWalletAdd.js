@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import {Select, Option} from 'react-native-select-list';
 import {Actions} from 'react-native-router-flux';
+const Realm = require('realm');
 
 import PrivateAddr from '../common/private/address';
 
