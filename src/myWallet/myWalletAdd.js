@@ -11,7 +11,7 @@ import {
 import {Select, Option} from 'react-native-select-list';
 import {Actions} from 'react-native-router-flux';
 
-import PrivateAddr from '../common/private/address';
+import Common from '../common/common';
 
 export default class MyWalletAdd extends Component {
     constructor(props) {
@@ -21,85 +21,40 @@ export default class MyWalletAdd extends Component {
             id: '',
             passwd: '',
             email:'boseokjung@gmail.com',
-            walletName: '',
-            walletSite: '',
-            walletAddr: '',
-            tmp:{name: "추가된 지갑"},
+            wallet:{},
+            walletList:[],
         };
-    }
-
-    componentDidMount(){
-        this.getFromStorage(this.state.email);
+        this.getFromStorage();
     }
 
     async addWallet(){
         try {
-            var tmpStorage = this.state.storage.slice();
-            tmpStorage.push(this.state.tmp);
-            await AsyncStorage.setItem(this.state.email, JSON.stringify(tmpStorage));
+            var tmpStorage = this.state.walletList.slice();
+            var tmp = Common.clone(this.state.wallet);
+            tmp.name = this.state.walletName;
+            tmp.site = this.state.walletSite;
+            tmp.addr = this.state.walletAddr;
+            tmpStorage.push(tmp);
+            console.log(tmpStorage);
+            await AsyncStorage.setItem(this.state.email+"_walletList", JSON.stringify(tmpStorage));
         } catch (error) {
             // Error saving data
-            alert(error);
+            alert("addWallet : "+error);
         }
     }
 
-    // async setStorage(keyName, value){
-    //     try {
-    //         await AsyncStorage.setItem(keyName, value);
-    //     } catch (error) {
-    //         // Error saving data
-    //         alert(error);
-    //     }
-    // }
-    //
-    async getFromStorage(keyName){
+    async getFromStorage() {
         try {
-            const value = await AsyncStorage.getItem(keyName);
-            if (value !== null){
+            const value = await AsyncStorage.getItem(this.state.email+"_walletList");
+            if (value !== null) {
                 // We have data!!
-                this.setState({storage:JSON.parse(value)});
+                this.setState({walletList: JSON.parse(value)});
             }
         } catch (error) {
             // Error retrieving data
             alert(error);
         }
     }
-
-    // async addWallet() {
-    //     try {
-    //         await AsyncStorage.setItem("walletList", value);
-    //     } catch (error) {
-    //         // Error saving data
-    //         alert(error);
-    //     }
-        // fetch(PrivateAddr.getAddr() + 'wallet/add', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Accept': 'application/json',
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify({
-        //         email: this.state.email,
-        //         walletName: this.state.walletName,
-        //         walletSite: this.state.walletSite,
-        //         walletAddr: this.state.walletAddr
-        //     })
-        // }).then((response) => {
-        //     return response.json()
-        // })
-        //     .then((responseJson) => {
-        //         if (responseJson.message == "SUCCESS") {
-        //             alert('지갑을 추가했습니다!');
-        //             Actions.main({goTo: 'myWallet'});
-        //         } else {
-        //             alert('오류가 발생했습니다.\n다시 시도해주세요!');
-        //         }
-        //     })
-        //     .catch((error) => {
-        //         alert('Network Connection Failed');
-        //         console.error(error);
-        //     }).done();
-    // }
 
     render(){
         return (

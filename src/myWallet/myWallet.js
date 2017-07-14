@@ -10,8 +10,6 @@ import {
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 
-import PrivateAddr from '../common/private/address';
-
 export default class MyWallet extends Component {
     constructor(props) {
         super(props);
@@ -21,12 +19,9 @@ export default class MyWallet extends Component {
             site: '',
             email: 'boseokjung@gmail.com',
             load: false,
+            empty: false,
             onClickBox: false,
             currentWallet: 0,
-            walletName: '',
-            walletSite: '',
-            walletAddr: '',
-            storage:[],
         };
     }
 
@@ -35,44 +30,22 @@ export default class MyWallet extends Component {
     }
 
     componentDidMount() {
-        // this.getWalletList();
-        this.getFromStorage();
-    }
-
-
-    async setStorage(keyName, value) {
-        try {
-            await AsyncStorage.setItem(keyName, value);
-        } catch (error) {
-            // Error saving data
-            alert(error);
-        }
+        this.getFromStorage(); //getWalletList
     }
 
     async getFromStorage() {
         try {
-            const value = await AsyncStorage.getItem(this.state.email);
+            const value = await AsyncStorage.getItem(this.state.email+"_walletList");
             if (value !== null) {
                 // We have data!!
-                this.setState({storage: JSON.parse(value)});
+                this.setState({walletList: JSON.parse(value), load:true});
+            } else {
+                this.setState({load:true, empty:true});
             }
         } catch (error) {
             // Error retrieving data
             alert(error);
         }
-    }
-
-    getWalletList() {
-
-        //this.props.id에 해당하는 지갑을 꺼내는 api call (수정 후 저장은 main에 goTo 함수에서)
-        // fetch(PrivateAddr.getAddr() + "wallet/list?email=" + this.state.email)
-        //     .then((response) => response.json())
-        //     .then((responseJson) => {
-        //         this.setState({walletList: responseJson, load: true});
-        //     })
-        //     .catch((error) => {
-        //         console.error(error);
-        //     });
     }
 
     showWallet(i) {
@@ -88,14 +61,19 @@ export default class MyWallet extends Component {
                         <Image
                             source={require('../common/img/loading.gif')}
                             style={styles.loadingIcon}/>
-                        {this.state.storage.map((l, i) => {
-                            return(
-                                <Text key={i}>{l.name}</Text>
-                            );
-                        })}
+
                     </View>
                     }
-                    {this.state.load == true &&
+                    {(this.state.load == true && this.state.empty == true) &&
+                    <View>
+                        <Text style={styles.titleText}>
+                            아직 지갑이 한개도 없어요!{'\n'}
+                            오른쪽 상단의 지갑 관리 버튼을 통해서{'\n'}
+                            지갑을 추가하세요!
+                        </Text>
+                    </View>
+                    }
+                    {(this.state.load == true && this.state.empty == false) &&
                     <View>
                         <Text style={styles.selectIcon}>▼</Text>
                         <Text style={styles.titleText}>아래 버튼을 눌러서 지갑을 선택하세요!</Text>
@@ -105,7 +83,7 @@ export default class MyWallet extends Component {
                         >
                             <View style={styles.selectBoxWrapper}>
                                 <Text style={styles.selectBox}>
-                                    {this.state.walletList[this.state.currentWallet].walletName}
+                                    {this.state.walletList[this.state.currentWallet].name}
                                 </Text>
                             </View>
                         </TouchableOpacity>
@@ -121,7 +99,7 @@ export default class MyWallet extends Component {
                                             >
                                                 <View style={styles.selectBoxWrapper}>
                                                     <Text style={styles.selectBox}>
-                                                        {wallet.walletName}
+                                                        {wallet.name}
                                                     </Text>
                                                 </View>
                                             </TouchableOpacity>
@@ -131,10 +109,10 @@ export default class MyWallet extends Component {
                         })()}
 
                         <Text style={styles.contentText}>
-                            지갑이름 : {this.state.walletList[this.state.currentWallet].walletName}{'\n'}
-                            사이트 : {this.state.walletList[this.state.currentWallet].walletSite}{'\n'}
-                            지갑주소 : {this.state.walletList[this.state.currentWallet].walletAddr}{'\n'}
-                            보유 BTC : {this.state.walletList[this.state.currentWallet].walletBTC}{'\n'}
+                            지갑이름 : {this.state.walletList[this.state.currentWallet].name}{'\n'}
+                            사이트 : {this.state.walletList[this.state.currentWallet].site}{'\n'}
+                            지갑주소 : {this.state.walletList[this.state.currentWallet].addr}{'\n'}
+                            보유 BTC : {this.state.walletList[this.state.currentWallet].btc}{'\n'}
                             QR 코드
                         </Text>
                         <Image source={require('../common/img/ask.png')} style={styles.qrCode}/>

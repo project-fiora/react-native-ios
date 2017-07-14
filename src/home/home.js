@@ -15,27 +15,12 @@ export default class Home extends Component {
             refreshing:false,
             dollar: 2000,
             email:'boseokjung@gmail.com',
-            walletList:[
-                {name: "보석1"},
-                {name: "보석2"},
-                {name: "보석3"},
-                {name: "보석4"},
-                {name: "보석5"},
-            ],
         };
     }
 
-    async componentDidMount(){
-        try {
-            AsyncStorage.setItem(this.state.email, JSON.stringify(this.state.walletList));
-        } catch (error) {
-            // Error saving data
-            alert(error);
-        }
-    }
-
     async clearStorage(){
-        AsyncStorage.removeItem('PepperoniAppTemplateAppState:Latest'); //AsyncStorage clear
+        // AsyncStorage.removeItem('PepperoniAppTemplateAppState:Latest'); //AsyncStorage clear
+        AsyncStorage.clear();
     }
 
     render() {
@@ -52,7 +37,7 @@ export default class Home extends Component {
                 <Text style={styles.warningText2}>
                     모든 책임은 사용자 본인에게 있습니다 **
                 </Text>
-                <Text onPress={this.clearStorage}>앱 저장소 초기화</Text>
+                <Text onPress={this.clearStorage}>앱 asyncStorage 초기화</Text>
             </ScrollView>
         );
     }
