@@ -6,7 +6,7 @@ import {
     ScrollView,
     StyleSheet,
     Text, TouchableOpacity,
-    View, Image
+    View, Image, AsyncStorage
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 
@@ -26,6 +26,7 @@ export default class MyWallet extends Component {
             walletName: '',
             walletSite: '',
             walletAddr: '',
+            storage:[],
         };
     }
 
@@ -34,19 +35,44 @@ export default class MyWallet extends Component {
     }
 
     componentDidMount() {
-        this.getWalletList();
+        // this.getWalletList();
+        this.getFromStorage();
+    }
+
+
+    async setStorage(keyName, value) {
+        try {
+            await AsyncStorage.setItem(keyName, value);
+        } catch (error) {
+            // Error saving data
+            alert(error);
+        }
+    }
+
+    async getFromStorage() {
+        try {
+            const value = await AsyncStorage.getItem(this.state.email);
+            if (value !== null) {
+                // We have data!!
+                this.setState({storage: JSON.parse(value)});
+            }
+        } catch (error) {
+            // Error retrieving data
+            alert(error);
+        }
     }
 
     getWalletList() {
+
         //this.props.id에 해당하는 지갑을 꺼내는 api call (수정 후 저장은 main에 goTo 함수에서)
-        fetch(PrivateAddr.getAddr() + "wallet/list?email=" + this.state.email)
-            .then((response) => response.json())
-            .then((responseJson) => {
-                this.setState({walletList: responseJson, load: true});
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+        // fetch(PrivateAddr.getAddr() + "wallet/list?email=" + this.state.email)
+        //     .then((response) => response.json())
+        //     .then((responseJson) => {
+        //         this.setState({walletList: responseJson, load: true});
+        //     })
+        //     .catch((error) => {
+        //         console.error(error);
+        //     });
     }
 
     showWallet(i) {
@@ -58,9 +84,16 @@ export default class MyWallet extends Component {
             <ScrollView contentContainerStyle={styles.frame}>
                 <View style={styles.content}>
                     {this.state.load == false &&
-                    <Image
-                        source={require('../common/img/loading.gif')}
-                        style={styles.loadingIcon}/>
+                    <View>
+                        <Image
+                            source={require('../common/img/loading.gif')}
+                            style={styles.loadingIcon}/>
+                        {this.state.storage.map((l, i) => {
+                            return(
+                                <Text key={i}>{l.name}</Text>
+                            );
+                        })}
+                    </View>
                     }
                     {this.state.load == true &&
                     <View>
@@ -130,7 +163,7 @@ const styles = StyleSheet.create({
         fontSize: 17,
         marginTop: 10,
         opacity: 0.8,
-        marginBottom:20,
+        marginBottom: 20,
     },
     loadingIcon: {
         width: 40,
@@ -168,9 +201,9 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         fontSize: 17,
     },
-    qrCode:{
-        width:100,
-        height:100,
+    qrCode: {
+        width: 100,
+        height: 100,
     },
 
 });

@@ -4,14 +4,12 @@
 
 import React, {Component} from 'react';
 import {
-    Image, ScrollView,
     StyleSheet,
-    Text, TextInput, TouchableHighlight, TouchableOpacity,
-    View
+    Text, TextInput, TouchableHighlight,
+    View, AsyncStorage
 } from 'react-native';
 import {Select, Option} from 'react-native-select-list';
 import {Actions} from 'react-native-router-flux';
-const Realm = require('realm');
 
 import PrivateAddr from '../common/private/address';
 
@@ -26,40 +24,84 @@ export default class MyWalletAdd extends Component {
             walletName: '',
             walletSite: '',
             walletAddr: '',
+            tmp:{name: "추가된 지갑"},
         };
     }
 
-    addWallet() {
-        fetch(PrivateAddr.getAddr() + 'wallet/add', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                email: this.state.email,
-                walletName: this.state.walletName,
-                walletSite: this.state.walletSite,
-                walletAddr: this.state.walletAddr
-            })
-        }).then((response) => {
-            return response.json()
-        })
-            .then((responseJson) => {
-                if (responseJson.message == "SUCCESS") {
-                    alert('지갑을 추가했습니다!');
-                    Actions.main({goTo: 'myWallet'});
-                } else {
-                    alert('오류가 발생했습니다.\n다시 시도해주세요!');
-                }
-            })
-            .catch((error) => {
-                alert('Network Connection Failed');
-                console.error(error);
-            }).done();
+    componentDidMount(){
+        this.getFromStorage(this.state.email);
     }
 
-    render() {
+    async addWallet(){
+        try {
+            var tmpStorage = this.state.storage.slice();
+            tmpStorage.push(this.state.tmp);
+            await AsyncStorage.setItem(this.state.email, JSON.stringify(tmpStorage));
+        } catch (error) {
+            // Error saving data
+            alert(error);
+        }
+    }
+
+    // async setStorage(keyName, value){
+    //     try {
+    //         await AsyncStorage.setItem(keyName, value);
+    //     } catch (error) {
+    //         // Error saving data
+    //         alert(error);
+    //     }
+    // }
+    //
+    async getFromStorage(keyName){
+        try {
+            const value = await AsyncStorage.getItem(keyName);
+            if (value !== null){
+                // We have data!!
+                this.setState({storage:JSON.parse(value)});
+            }
+        } catch (error) {
+            // Error retrieving data
+            alert(error);
+        }
+    }
+
+    // async addWallet() {
+    //     try {
+    //         await AsyncStorage.setItem("walletList", value);
+    //     } catch (error) {
+    //         // Error saving data
+    //         alert(error);
+    //     }
+        // fetch(PrivateAddr.getAddr() + 'wallet/add', {
+        //     method: 'POST',
+        //     headers: {
+        //         'Accept': 'application/json',
+        //         'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify({
+        //         email: this.state.email,
+        //         walletName: this.state.walletName,
+        //         walletSite: this.state.walletSite,
+        //         walletAddr: this.state.walletAddr
+        //     })
+        // }).then((response) => {
+        //     return response.json()
+        // })
+        //     .then((responseJson) => {
+        //         if (responseJson.message == "SUCCESS") {
+        //             alert('지갑을 추가했습니다!');
+        //             Actions.main({goTo: 'myWallet'});
+        //         } else {
+        //             alert('오류가 발생했습니다.\n다시 시도해주세요!');
+        //         }
+        //     })
+        //     .catch((error) => {
+        //         alert('Network Connection Failed');
+        //         console.error(error);
+        //     }).done();
+    // }
+
+    render(){
         return (
             <View style={styles.frame}>
                 <Text style={styles.explain}>여기서 지갑을 추가해보세요!</Text>

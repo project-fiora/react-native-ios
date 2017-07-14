@@ -15,40 +15,36 @@ export default class Home extends Component {
             refreshing:false,
             dollar: 2000,
             email:'boseokjung@gmail.com',
-            walletList:[],
+            walletList:[
+                {name: "보석1"},
+                {name: "보석2"},
+                {name: "보석3"},
+                {name: "보석4"},
+                {name: "보석5"},
+            ],
         };
-        let realm = new Realm({
-            schema: [{name: 'Dog', properties: {name: 'string'}}]
-        });
-        realm.write(() => {
-            realm.create('Dog', {name: 'Rex'});
-        });
     }
 
     async componentDidMount(){
-        await AsyncStorage.removeItem('PepperoniAppTemplateAppState:Latest'); //AsyncStorage clear
+        try {
+            AsyncStorage.setItem(this.state.email, JSON.stringify(this.state.walletList));
+        } catch (error) {
+            // Error saving data
+            alert(error);
+        }
+    }
 
-
-        let realm = new Realm({schema: [Dog]});
-        let dogs = realm.objects('Dog');
-        let tanDogs = dogs.filtered('name == "Rex"');
-        this.setState({rex:tanDogs});
+    async clearStorage(){
+        AsyncStorage.removeItem('PepperoniAppTemplateAppState:Latest'); //AsyncStorage clear
     }
 
     render() {
-
-
-
-
-
-
         return (
             <ScrollView contentContainerStyle={styles.homeWrapper}>
                 <Text style={styles.txt}>
                     보유중인 자산 :
                     <Image source={require('../common/img/dollar.png')} style={styles.dollarIcon}/>
                     {this.state.dollar}{'\n'}
-                    {this.state.rex}
                 </Text>
                 <Text style={styles.warningText}>
                     ** 이 앱을 사용하는 도중에 발생하는
@@ -56,6 +52,7 @@ export default class Home extends Component {
                 <Text style={styles.warningText2}>
                     모든 책임은 사용자 본인에게 있습니다 **
                 </Text>
+                <Text onPress={this.clearStorage}>앱 저장소 초기화</Text>
             </ScrollView>
         );
     }
