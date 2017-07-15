@@ -45,7 +45,7 @@ export default class Home extends Component {
                 <Text style={styles.warningText2}>
                     모든 책임은 사용자 본인에게 있습니다 **
                 </Text>
-                <Text onPress={this.clearStorage}>앱 Realm Storage 초기화</Text>
+                <Text style={styles.btn} onPress={this.clearStorage}>앱 Realm Storage 초기화</Text>
             </ScrollView>
         );
     }
@@ -81,5 +81,11 @@ const styles = StyleSheet.create({
         color:'#FFFFFF',
         opacity:0.8,
         fontSize:15,
+    },
+    btn:{
+        marginTop:20,
+        color:'#FFFFFF',
+        opacity:0.8,
+        fontSize:25,
     },
 });

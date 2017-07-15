@@ -61,24 +61,32 @@ export default class MyWalletEditDetail extends Component {
     }
 
     editWallet(){
-        realm.write(() => {
-           try{
-               let myWallet = realm.objects('Wallet').filtered('owner=="'+this.state.email+'" AND id=='+parseInt(this.state.id));
-               realm.delete(myWallet);
-               realm.create('Wallet', {
-                   id: this.state.myWallet[0].id,
-                   owner: this.state.myWallet[0].owner,
-                   name: this.state.myWallet[0].name,
-                   site: this.state.myWallet[0].site,
-                   addr: this.state.myWallet[0].addr,
-               }, true);
-               alert('수정 성공!');
-               Actions.main({goTo:'myWallet'});
-           } catch(err){
-               alert('수정실패 '+err);
-               return false;
-           }
-        });
+        if(this.state.myWallet[0].name==""){
+            alert('지갑 이름을 입력하세요!');
+            return false;
+        } else if(this.state.myWallet[0].addr){
+            alert('지갑 주소를 입력하세요!');
+            return false;
+        } else {
+            realm.write(() => {
+                try{
+                    let myWallet = realm.objects('Wallet').filtered('owner=="'+this.state.email+'" AND id=='+parseInt(this.state.id));
+                    realm.delete(myWallet);
+                    realm.create('Wallet', {
+                        id: this.state.myWallet[0].id,
+                        owner: this.state.myWallet[0].owner,
+                        name: this.state.myWallet[0].name,
+                        site: this.state.myWallet[0].site,
+                        addr: this.state.myWallet[0].addr,
+                    }, true);
+                    alert('수정 성공!');
+                    Actions.main({goTo:'myWallet'});
+                } catch(err){
+                    alert('수정실패 '+err);
+                    return false;
+                }
+            });
+        }
     }
 
 

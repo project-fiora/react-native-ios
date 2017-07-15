@@ -18,36 +18,45 @@ export default class MyWalletAdd extends Component {
         super(props);
 
         this.state = {
-            passwd: '',
             email:'boseokjung@gmail.com',
             name:'',
             addr:'',
-            site:'',
+            site:'none',
         };
     }
 
     addWallet(){
-        try{
-            let wallets = realm.objects('Wallet').filtered('owner="'+this.state.email+'"');
-            var size = wallets.length;
-            realm.write(() => {
-                realm.create('Wallet',
-                    {
-                        id: size+1,
-                        owner: this.state.email,
-                        name: this.state.name,
-                        addr: this.state.addr,
-                        site:this.state.site
-                    }
-                );
-            });
-            alert('지갑을 추가했습니다!');
-            Actions.main({goTo:'myWallet'});
-        }catch(err){
-            alert('add wallet : '+err);
+        if(this.state.site=="none"){
+            alert("지갑 사이트를 선택하세요!");
+            return false;
+        } else if(this.state.name==""){
+            alert("지갑 이름을 입력하세요!");
+            return false;
+        } else if(this.state.name==""){
+            alert("지갑 주소를 입력하세요!");
+            return false;
+        } else {
+            try{
+                let wallets = realm.objects('Wallet').filtered('owner="'+this.state.email+'"');
+                var size = wallets.length;
+                realm.write(() => {
+                    realm.create('Wallet',
+                        {
+                            id: size+1,
+                            owner: this.state.email,
+                            name: this.state.name,
+                            addr: this.state.addr,
+                            site:this.state.site
+                        }
+                    );
+                });
+                alert('지갑을 추가했습니다!');
+                Actions.main({goTo:'myWallet'});
+            }catch(err){
+                alert('add wallet : '+err);
+            }
         }
     }
-
 
     render(){
         return (
