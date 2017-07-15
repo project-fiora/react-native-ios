@@ -6,9 +6,10 @@ import {
     ScrollView,
     StyleSheet,
     Text, TouchableOpacity,
-    View, Image, AsyncStorage
+    View, Image
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
+import realm from '../common/realm';
 
 export default class MyWallet extends Component {
     constructor(props) {
@@ -19,7 +20,6 @@ export default class MyWallet extends Component {
             site: '',
             email: 'boseokjung@gmail.com',
             load: false,
-            empty: false,
             onClickBox: false,
             currentWallet: 0,
         };
@@ -30,22 +30,14 @@ export default class MyWallet extends Component {
     }
 
     componentDidMount() {
-        this.getFromStorage(); //getWalletList
+        this.getMyWallet();
     }
 
-    async getFromStorage() {
-        try {
-            const value = await AsyncStorage.getItem(this.state.email+"_walletList");
-            if (value !== null) {
-                // We have data!!
-                this.setState({walletList: JSON.parse(value), load:true});
-            } else {
-                this.setState({load:true, empty:true});
-            }
-        } catch (error) {
-            // Error retrieving data
-            alert(error);
-        }
+    getMyWallet(){
+        // let realm = Common.newWallet();
+        let wallets = realm.objects('Wallet');
+        let myWallets = wallets.filtered('owner=="boseokjung@gmail.com"');
+        this.setState({walletList:myWallets, load:true});
     }
 
     showWallet(i) {
@@ -64,7 +56,7 @@ export default class MyWallet extends Component {
 
                     </View>
                     }
-                    {(this.state.load == true && this.state.empty == true) &&
+                    {(this.state.load == true && this.state.walletList.length==0) &&
                     <View>
                         <Text style={styles.titleText}>
                             아직 지갑이 한개도 없어요!{'\n'}
@@ -73,7 +65,7 @@ export default class MyWallet extends Component {
                         </Text>
                     </View>
                     }
-                    {(this.state.load == true && this.state.empty == false) &&
+                    {(this.state.load == true && this.state.walletList.length!=0) &&
                     <View>
                         <Text style={styles.selectIcon}>▼</Text>
                         <Text style={styles.titleText}>아래 버튼을 눌러서 지갑을 선택하세요!</Text>
@@ -107,15 +99,18 @@ export default class MyWallet extends Component {
                                 })
                             }
                         })()}
-
+                        {this.state.walletList.length!=0 &&
                         <Text style={styles.contentText}>
+                            지갑번호 : {this.state.walletList[this.state.currentWallet].id}{'\n'}
                             지갑이름 : {this.state.walletList[this.state.currentWallet].name}{'\n'}
                             사이트 : {this.state.walletList[this.state.currentWallet].site}{'\n'}
                             지갑주소 : {this.state.walletList[this.state.currentWallet].addr}{'\n'}
                             보유 BTC : {this.state.walletList[this.state.currentWallet].btc}{'\n'}
-                            QR 코드
+                            QR 코드{'\n'}
+                            <Image source={require('../common/img/ask.png')} style={styles.qrCode}/>
                         </Text>
-                        <Image source={require('../common/img/ask.png')} style={styles.qrCode}/>
+                        }
+
                     </View>
                     }
                 </View>
@@ -180,6 +175,7 @@ const styles = StyleSheet.create({
         fontSize: 17,
     },
     qrCode: {
+        marginTop:15,
         width: 100,
         height: 100,
     },

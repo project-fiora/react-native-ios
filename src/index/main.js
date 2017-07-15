@@ -125,7 +125,7 @@ export default class Main extends Component {
                     {this.props.goTo === 'myWallet' && <MyWallet/>}
                         {this.props.goTo === 'myWalletEdit' && <MyWalletEdit/>}
                         {this.props.goTo === 'myWalletEditDetail' &&
-                            <MyWalletEditDetail i={this.props.i}/>
+                            <MyWalletEditDetail id={this.props.id}/>
                         }
                         {this.props.goTo === 'myWalletAdd' && <MyWalletAdd/>}
 

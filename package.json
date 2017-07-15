@@ -11,7 +11,8 @@
     "react-native": "0.46.1",
     "react-native-checkbox": "^1.1.0",
     "react-native-router-flux": "^3.39.1",
-    "react-native-select-list": "^1.0.5"
+    "react-native-select-list": "^1.0.5",
+    "realm": "^1.10.0"
   },
   "devDependencies": {
     "babel-jest": "20.0.3",

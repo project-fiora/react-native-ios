@@ -4,74 +4,65 @@
 
 import React, {Component} from 'react';
 import {
+    ScrollView,
     StyleSheet,
     Text, TextInput, TouchableHighlight,
-    View, AsyncStorage
+    View,
 } from 'react-native';
 import {Select, Option} from 'react-native-select-list';
 import {Actions} from 'react-native-router-flux';
-
-import Common from '../common/common';
+import realm from '../common/realm';
 
 export default class MyWalletAdd extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            id: '',
             passwd: '',
             email:'boseokjung@gmail.com',
-            wallet:{},
-            walletList:[],
+            name:'',
+            addr:'',
+            site:'',
         };
-        this.getFromStorage();
     }
 
-    async addWallet(){
-        try {
-            var tmpStorage = this.state.walletList.slice();
-            var tmp = Common.clone(this.state.wallet);
-            tmp.id = this.state.walletList.length;
-            tmp.name = this.state.walletName;
-            tmp.site = this.state.walletSite;
-            tmp.addr = this.state.walletAddr;
-            tmpStorage.push(tmp);
-            console.log(tmpStorage);
-            await AsyncStorage.setItem(this.state.email+"_walletList", JSON.stringify(tmpStorage));
+    addWallet(){
+        try{
+            let wallets = realm.objects('Wallet').filtered('owner="'+this.state.email+'"');
+            var size = wallets.length;
+            realm.write(() => {
+                realm.create('Wallet',
+                    {
+                        id: size+1,
+                        owner: this.state.email,
+                        name: this.state.name,
+                        addr: this.state.addr,
+                        site:this.state.site
+                    }
+                );
+            });
             alert('지갑을 추가했습니다!');
-            Actions.main({goTo: 'myWallet'});
-        } catch (error) {
-            // Error saving data
-            alert("addWallet : "+error);
+            Actions.main({goTo:'myWallet'});
+        }catch(err){
+            alert('add wallet : '+err);
         }
     }
 
-    async getFromStorage() {
-        try {
-            const value = await AsyncStorage.getItem(this.state.email+"_walletList");
-            if (value !== null) {
-                // We have data!!
-                this.setState({walletList: JSON.parse(value)});
-            }
-        } catch (error) {
-            // Error retrieving data
-            alert(error);
-        }
-    }
 
     render(){
         return (
-            <View style={styles.frame}>
+        <View>
+            <ScrollView contentContainerStyle={styles.frame}>
                 <Text style={styles.explain}>여기서 지갑을 추가해보세요!</Text>
                 <Select
-                    onSelect={(site) => this.setState({walletSite: site})}
+                    onSelect={(site) => this.setState({site: site})}
                     selectStyle={styles.selectSite}
                     selectTextStyle={styles.selectText}
                     listStyle={styles.selectList}
                     listHeight={200}
                 >
                     <Option
-                        value=''
+                        value='none'
                         optionStyle={styles.selectOption}
                         optionTextStyle={styles.selectOptionText}
                     >
@@ -123,7 +114,7 @@ export default class MyWalletAdd extends Component {
                 <TextInput
                     style={styles.inputId}
                     value={this.state.walletName}
-                    onChangeText={(walletName) => this.setState({walletName: walletName})}
+                    onChangeText={(walletName) => this.setState({name: walletName})}
                     placeholder={'지갑 이름'}
                     placeholderTextColor="#FFFFFF"
                     autoCapitalize = 'none'
@@ -133,21 +124,23 @@ export default class MyWalletAdd extends Component {
                 <TextInput
                     style={styles.inputWalletAddr}
                     value={this.state.walletAddr}
-                    onChangeText={(addr) => this.setState({walletAddr: addr})}
+                    onChangeText={(addr) => this.setState({addr: addr})}
                     placeholder={'지갑 주소'}
                     placeholderTextColor="#FFFFFF"
                     autoCapitalize = 'none'
                     maxLength={200}
                     multiline={false}
                 />
-                <TouchableHighlight
-                    style={styles.rightBtn}
-                    underlayColor={'#000000'}
-                    onPress={() => this.addWallet()}
-                >
-                    <Text style={styles.rightBtnText}>저장</Text>
-                </TouchableHighlight>
-            </View>
+
+            </ScrollView>
+            <TouchableHighlight
+                style={styles.rightBtn}
+                underlayColor={'#000000'}
+                onPress={() => this.addWallet()}
+            >
+                <Text style={styles.rightBtnText}>저장</Text>
+            </TouchableHighlight>
+        </View>
         );
     }
 }

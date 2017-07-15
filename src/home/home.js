@@ -4,8 +4,9 @@
 import React, {Component} from 'react';
 import {
     Image, ScrollView, StyleSheet,
-    Text, AsyncStorage
+    Text,
 } from 'react-native';
+import realm from '../common/realm';
 
 export default class Home extends Component {
     constructor(props) {
@@ -18,9 +19,16 @@ export default class Home extends Component {
         };
     }
 
-    async clearStorage(){
-        // AsyncStorage.removeItem('PepperoniAppTemplateAppState:Latest'); //AsyncStorage clear
-        AsyncStorage.clear();
+    clearStorage(){
+        try{
+            realm.write(() => {
+                // let allWallets = realm.objects('Wallet');
+                // realm.delete(allWallets);
+                realm.deleteAll();
+            });
+        }catch(err){
+            alert("clear : "+err);
+        }
     }
 
     render() {
@@ -37,7 +45,7 @@ export default class Home extends Component {
                 <Text style={styles.warningText2}>
                     모든 책임은 사용자 본인에게 있습니다 **
                 </Text>
-                <Text onPress={this.clearStorage}>앱 asyncStorage 초기화</Text>
+                <Text onPress={this.clearStorage}>앱 Realm Storage 초기화</Text>
             </ScrollView>
         );
     }

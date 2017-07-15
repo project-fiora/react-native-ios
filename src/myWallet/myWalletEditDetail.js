@@ -4,78 +4,83 @@
 
 import React, {Component} from 'react';
 import {
-    StyleSheet,
-    Text, TextInput, TouchableHighlight, View, AsyncStorage
+    StyleSheet, Alert,
+    Text, TextInput, TouchableHighlight, View,
 } from 'react-native';
 import {Select, Option} from 'react-native-select-list';
 import {Actions} from 'react-native-router-flux';
-
-import Common from '../common/common';
+import realm from '../common/realm';
+import Common from "../common/common";
 
 export default class MyWalletEditDetail extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            walletList:[],
-            walletId:this.props.id,
-            walletName: '',
-            walletAddr:'',
-            walletSite:'',
+            id:this.props.id,
+            name: '',
+            addr:'',
+            site:'',
             email: 'boseokjung@gmail.com',
-            passwd: ''
+            passwd: '',
+            myWallet:[{name:'',site:'',addr:''}],
         };
-        this.getFromStorage();
     }
 
     componentDidMount(){
-
+        this.getMyWallet();
     }
 
-    async getFromStorage() {
-        try {
-            const value = await AsyncStorage.getItem(this.state.email+"_walletList");
-            if (value !== null) {
-                // We have data!!
-                this.setState({walletList: JSON.parse(value)});
-            }
-        } catch (error) {
-            // Error retrieving data
-            alert(error);
-        }
+    getMyWallet(){
+        let myWallet = realm.objects('Wallet').filtered('owner=="'+this.state.email+'" AND id=='+parseInt(this.state.id));
+        this.setState({myWallet:myWallet, load:true});
     }
 
-    async editWallet(){ //////////////
-        try {
-            var tmpStorage = this.state.walletList.slice();
-            var tmp = Common.clone(this.state.wallet);
-            tmp.name = this.state.walletName;
-            tmp.site = this.state.walletSite;
-            tmp.addr = this.state.walletAddr;
-            tmpStorage.push(tmp);
-            console.log(tmpStorage);
-            await AsyncStorage.setItem(this.state.email+"_walletList", JSON.stringify(tmpStorage));
-            alert('지갑을 추가했습니다!');
-            Actions.main({goTo: 'myWallet'});
-        } catch (error) {
-            // Error saving data
-            alert("editWallet : "+error);
-        }
+    removeWallet(){
+        Alert.alert(
+            '경고!',
+            '지갑이 삭제됩니다.\n정말 지우실건가요!?',
+            [
+                {text: 'Cancel', onPress: () => {return false}, style: 'cancel'},
+                {text: 'OK', onPress: () => {
+                    realm.write(() => {
+                        try{
+                            let myWallet = realm.objects('Wallet').filtered('owner=="'+this.state.email+'" AND id=='+parseInt(this.state.id));
+                            realm.delete(myWallet);
+                            alert('삭제 성공!');
+                            Actions.main({goTo:'myWallet'});
+                        } catch(err){
+                            alert('삭제실패 '+err);
+                            return false;
+                        }
+                    });
+                }},
+            ],
+            { cancelable: false }
+        )
     }
 
-    async removeWallet(){ //////////
-        try {
-            var tmpStorage = this.state.walletList.slice(this.props.i-1,1);
-            console.log("지우고나서 Storage");
-            console.log(tmpStorage); //지워졌는지 확인
-            await AsyncStorage.setItem(this.state.email+"_walletList", JSON.stringify(tmpStorage));
-            alert('지갑을 삭제했습니다!');
-            Actions.main({goTo: 'myWallet'});
-        } catch (error) {
-            // Error saving data
-            alert("removeWallet : "+error);
-        }
+    editWallet(){
+        realm.write(() => {
+           try{
+               let myWallet = realm.objects('Wallet').filtered('owner=="'+this.state.email+'" AND id=='+parseInt(this.state.id));
+               realm.delete(myWallet);
+               realm.create('Wallet', {
+                   id: this.state.myWallet[0].id,
+                   owner: this.state.myWallet[0].owner,
+                   name: this.state.myWallet[0].name,
+                   site: this.state.myWallet[0].site,
+                   addr: this.state.myWallet[0].addr,
+               }, true);
+               alert('수정 성공!');
+               Actions.main({goTo:'myWallet'});
+           } catch(err){
+               alert('수정실패 '+err);
+               return false;
+           }
+        });
     }
+
 
     render() {
         return (
@@ -83,8 +88,14 @@ export default class MyWalletEditDetail extends Component {
                 <Text style={styles.explain}>여기에서 지갑 정보를 수정해보세요!</Text>
                 <TextInput
                     style={styles.inputWalletName}
-                    value={this.state.walletName}
-                    onChangeText={(name) => this.setState({walletName: name})}
+                    value={this.state.myWallet[0].name}
+                    onChangeText={(name) => {
+                        var stateCopy = Object.assign({}, this.state);
+                        stateCopy.myWallet = stateCopy.myWallet.slice();
+                        stateCopy.myWallet[0] = Object.assign({}, stateCopy.myWallet[0]);
+                        stateCopy.myWallet[0].name = name;
+                        this.setState(stateCopy);
+                    }}
                     placeholder={'지갑 이름'}
                     placeholderTextColor="#FFFFFF"
                     autoCapitalize = 'none'
@@ -93,18 +104,24 @@ export default class MyWalletEditDetail extends Component {
                 />
                 <Text style={styles.selectSiteText}>사이트를 선택하세요!</Text>
                 <Select
-                    onSelect={(site) => this.setState({walletSite: site})}
+                    onSelect={(site) => {
+                        var stateCopy = Object.assign({}, this.state);
+                        stateCopy.myWallet = stateCopy.myWallet.slice();
+                        stateCopy.myWallet[0] = Object.assign({}, stateCopy.myWallet[0]);
+                        stateCopy.myWallet[0].site = site;
+                        this.setState(stateCopy);
+                    }}
                     selectStyle={styles.selectSite}
                     selectTextStyle={styles.selectText}
                     listStyle={styles.selectList}
                     listHeight={200}
                 >
                     <Option
-                        value={this.props.walletSite}
+                        value={this.state.myWallet[0].site}
                         optionStyle={styles.selectOption}
                         optionTextStyle={styles.selectOptionText}
                     >
-                        {this.props.walletSite}(현재사이트)
+                        변경없음
                     </Option>
                     <Option
                         value='coinone.co.kr'
@@ -132,8 +149,14 @@ export default class MyWalletEditDetail extends Component {
 
                 <TextInput
                     style={styles.inputWalletAddr}
-                    value={this.state.walletAddr}
-                    onChangeText={(addr) => this.setState({walletAddr: addr})}
+                    value={this.state.myWallet[0].addr}
+                    onChangeText={(addr) => {
+                        var stateCopy = Object.assign({}, this.state);
+                        stateCopy.myWallet = stateCopy.myWallet.slice();
+                        stateCopy.myWallet[0] = Object.assign({}, stateCopy.myWallet[0]);
+                        stateCopy.myWallet[0].addr = addr;
+                        this.setState(stateCopy);
+                    }}
                     placeholder={'지갑 주소'}
                     placeholderTextColor="#FFFFFF"
                     autoCapitalize = 'none'
@@ -170,7 +193,8 @@ export default class MyWalletEditDetail extends Component {
 //             stateCopy.walletList = stateCopy.walletList.slice();
 //             stateCopy.walletList[i] = Object.assign({}, stateCopy.walletList[i]);
 //             stateCopy.walletList[i].name = name;
-//             this.setState(stateCopy);}
+//             this.setState(stateCopy);
+//             }
 //         }
 //         key={i}
 //     />
