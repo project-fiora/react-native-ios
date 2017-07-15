@@ -5,77 +5,76 @@
 import React, {Component} from 'react';
 import {
     StyleSheet,
-    Text, TextInput, TouchableHighlight, View,
+    Text, TextInput, TouchableHighlight, View, AsyncStorage
 } from 'react-native';
 import {Select, Option} from 'react-native-select-list';
 import {Actions} from 'react-native-router-flux';
 
-import PrivateAddr from '../common/private/address';
+import Common from '../common/common';
 
 export default class MyWalletEditDetail extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
+            walletList:[],
             walletId:this.props.id,
             walletName: '',
             walletAddr:'',
-            walletSite:this.props.walletSite,
-            email: '',
+            walletSite:'',
+            email: 'boseokjung@gmail.com',
             passwd: ''
         };
-        this.getWallet();
+        this.getFromStorage();
     }
 
     componentDidMount(){
 
     }
 
-    getWallet(){
-        //this.props.id에 해당하는 지갑을 꺼내는 api call (수정 후 저장은 main에 goTo 함수에서)
-        fetch(PrivateAddr.getAddr()+"wallet/info?walletId="+this.props.id)
-            .then((response) => response.json())
-            .then((responseJson) => {
-                this.setState({
-                    walletId: responseJson.walletId,
-                    walletName: responseJson.walletName,
-                    walletSite: responseJson.walletSite,
-                    walletAddr: responseJson.walletAddr,
-                });
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+    async getFromStorage() {
+        try {
+            const value = await AsyncStorage.getItem(this.state.email+"_walletList");
+            if (value !== null) {
+                // We have data!!
+                this.setState({walletList: JSON.parse(value)});
+            }
+        } catch (error) {
+            // Error retrieving data
+            alert(error);
+        }
     }
 
-    editWallet() {
-        fetch(PrivateAddr.getAddr() + 'wallet/edit', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                walletId: this.props.id,
-                walletName: this.state.walletName,
-                walletSite: this.state.walletSite,
-                walletAddr: this.state.walletAddr,
-            })
-        }).then((response) => {
-            return response.json()
-        })
-            .then((responseJson) => {
-                if (responseJson.message == "SUCCESS") {
-                    alert('지갑정보를 수정했습니다!');
-                    Actions.main({goTo: 'myWalletEdit'});
-                } else {
-                    alert('오류가 발생했습니다.\n다시 시도해주세요!');
-                }
-            })
-            .catch((error) => {
-                alert('Network Connection Failed');
-                console.error(error);
-            }).done();
+    async editWallet(){ //////////////
+        try {
+            var tmpStorage = this.state.walletList.slice();
+            var tmp = Common.clone(this.state.wallet);
+            tmp.name = this.state.walletName;
+            tmp.site = this.state.walletSite;
+            tmp.addr = this.state.walletAddr;
+            tmpStorage.push(tmp);
+            console.log(tmpStorage);
+            await AsyncStorage.setItem(this.state.email+"_walletList", JSON.stringify(tmpStorage));
+            alert('지갑을 추가했습니다!');
+            Actions.main({goTo: 'myWallet'});
+        } catch (error) {
+            // Error saving data
+            alert("editWallet : "+error);
+        }
+    }
+
+    async removeWallet(){ //////////
+        try {
+            var tmpStorage = this.state.walletList.slice(this.props.i-1,1);
+            console.log("지우고나서 Storage");
+            console.log(tmpStorage); //지워졌는지 확인
+            await AsyncStorage.setItem(this.state.email+"_walletList", JSON.stringify(tmpStorage));
+            alert('지갑을 삭제했습니다!');
+            Actions.main({goTo: 'myWallet'});
+        } catch (error) {
+            // Error saving data
+            alert("removeWallet : "+error);
+        }
     }
 
     render() {
@@ -141,6 +140,15 @@ export default class MyWalletEditDetail extends Component {
                     maxLength={200}
                     multiline={false}
                 />
+
+                <TouchableHighlight
+                    style={styles.removeBtn}
+                    underlayColor={'#000000'}
+                    onPress={() => this.removeWallet()}
+                >
+                    <Text style={styles.rightBtnText}>지갑 삭제</Text>
+                </TouchableHighlight>
+
                 <TouchableHighlight
                     style={styles.rightBtn}
                     underlayColor={'#000000'}
@@ -237,6 +245,17 @@ const styles = StyleSheet.create({
         opacity:0.3,
         marginBottom:5,
         paddingLeft:12,
+    },
+    removeBtn:{
+        width: 80,
+        height: 30,
+        borderWidth: 1,
+        borderRadius: 20,
+        borderColor: '#FFFFFF',
+        padding: 5,
+        alignItems: 'center',
+        justifyContent:'center',
+        opacity:0.6
     },
     rightBtn: {
         position:'absolute',

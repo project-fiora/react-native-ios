@@ -31,12 +31,15 @@ export default class MyWalletAdd extends Component {
         try {
             var tmpStorage = this.state.walletList.slice();
             var tmp = Common.clone(this.state.wallet);
+            tmp.id = this.state.walletList.length;
             tmp.name = this.state.walletName;
             tmp.site = this.state.walletSite;
             tmp.addr = this.state.walletAddr;
             tmpStorage.push(tmp);
             console.log(tmpStorage);
             await AsyncStorage.setItem(this.state.email+"_walletList", JSON.stringify(tmpStorage));
+            alert('지갑을 추가했습니다!');
+            Actions.main({goTo: 'myWallet'});
         } catch (error) {
             // Error saving data
             alert("addWallet : "+error);

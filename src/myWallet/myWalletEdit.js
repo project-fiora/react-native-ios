@@ -8,11 +8,9 @@ import {
     ScrollView,
     StyleSheet,
     Text, TouchableHighlight,
-    View,
+    View, AsyncStorage
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
-
-import PrivateAddr from '../common/private/address';
 
 export default class MyWalletEdit extends Component {
     constructor(props) {
@@ -22,27 +20,31 @@ export default class MyWalletEdit extends Component {
             walletList: [],
             email: 'boseokjung@gmail.com',
             load: false,
+            empty: false,
         };
     }
 
     componentDidMount() {
-        this.getWalletList();
+        this.getFromStorage();
     }
 
-    getWalletList() {
-        fetch(PrivateAddr.getAddr() + "wallet/list?email=" + this.state.email)
-            .then((response) => response.json())
-            .then((responseJson) => {
-                this.setState({walletList: responseJson, load: true});
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+    async getFromStorage() {
+        try {
+            const value = await AsyncStorage.getItem(this.state.email+"_walletList");
+            if (value !== null) {
+                // We have data!!
+                this.setState({walletList: JSON.parse(value), load:true});
+            } else {
+                this.setState({load:true, empty:true});
+            }
+        } catch (error) {
+            // Error retrieving data
+            alert(error);
+        }
     }
 
-
-    goTo(part, id, site) {
-        Actions.main({goTo: part, id: id, walletSite: site});
+    goTo(part, i) {
+        Actions.main({goTo: part, i:i});
     }
 
     render() {
@@ -54,7 +56,12 @@ export default class MyWalletEdit extends Component {
                     source={require('../common/img/loading.gif')}
                     style={styles.loadingIcon}/>
                 }
-                {this.state.load == true &&
+                {(this.state.load == true && this.state.empty == true) &&
+                    <View>
+                        <Text style={styles.explain}>관리 할 지갑이 없어요!</Text>
+                    </View>
+                }
+                {(this.state.load == true && this.state.empty == false) &&
                 <View>
                     <Text style={styles.explain}>관리 할 지갑을 선택하세요</Text>
                     {this.state.walletList.map((wallet, i) => {
@@ -62,11 +69,11 @@ export default class MyWalletEdit extends Component {
                             <TouchableHighlight
                                 style={styles.list}
                                 underlayColor={'#000000'}
-                                onPress={() => this.goTo('myWalletEditDetail', this.state.walletList[i].walletId, this.state.walletList[i].walletSite)}
+                                onPress={() => this.goTo('myWalletEditDetail', i)}
                                 key={i}
                             >
                                 <Text style={styles.listText}>
-                                    {wallet.walletName}
+                                    {wallet.name}
                                 </Text>
                             </TouchableHighlight>
                         );
