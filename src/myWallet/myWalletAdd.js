@@ -35,20 +35,17 @@ export default class MyWalletAdd extends Component {
     }
 
     addWallet(){
-        if(this.state.currentSite==0){
+        if(this.state.site=='none'){
             alert("지갑 사이트를 선택하세요!");
             return false;
         } else if(this.state.name==""){
             alert("지갑 이름을 입력하세요!");
             return false;
-        } else if(this.state.name==""){
+        } else if(this.state.addr==""){
             alert("지갑 주소를 입력하세요!");
             return false;
         } else {
             try{
-                // let wallets = realm.objects('Wallet')
-                //                    .filtered('owner="'+this.state.email+'"');
-                // var size = wallets.length;
                 realm.write(() => {
                     realm.create('Wallet',
                         {
@@ -97,7 +94,7 @@ export default class MyWalletAdd extends Component {
                 {(() => {
                     if (this.state.onClickBox == true) {
                         return this.state.siteList.map((site, i) => {
-                            // if (this.state.currentSite != i)
+                            if (i != 0)
                                 return (
                                     <TouchableOpacity
                                         underlayColor={'#AAAAAA'}
