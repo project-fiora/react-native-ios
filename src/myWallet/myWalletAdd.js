@@ -6,10 +6,10 @@ import React, {Component} from 'react';
 import {
     ScrollView,
     StyleSheet,
-    Text, TextInput, TouchableHighlight,
+    Text, TextInput, TouchableHighlight, TouchableOpacity,
     View,
 } from 'react-native';
-import {Select, Option} from 'react-native-select-list';
+
 import {Actions} from 'react-native-router-flux';
 import realm from '../common/realm';
 import Common from "../common/common";
@@ -19,15 +19,23 @@ export default class MyWalletAdd extends Component {
         super(props);
 
         this.state = {
+            onClickBox:false,
             email:'boseokjung@gmail.com',
             name:'',
             addr:'',
             site:'none',
+            siteList:[
+                { site:'사이트를 선택하세요!', value:'none' },
+                { site:'coinone.co.kr', value:'coinone.co.kr' },
+                { site:'bithumb.com‎', value:'bithumb.com‎' },
+                { site:'korbit.co.kr', value:'korbit.co.kr' },
+            ],
+            currentSite:0,
         };
     }
 
     addWallet(){
-        if(this.state.site=="none"){
+        if(this.state.currentSite==0){
             alert("지갑 사이트를 선택하세요!");
             return false;
         } else if(this.state.name==""){
@@ -60,48 +68,54 @@ export default class MyWalletAdd extends Component {
         }
     }
 
+    setSite(i, value) {
+        this.setState({currentSite: i,site:value, onClickBox: !this.state.onClickBox});
+    }
+
     render(){
         return (
         <View>
             <ScrollView contentContainerStyle={styles.frame}>
                 <Text style={styles.explain}>여기서 지갑을 추가해보세요!</Text>
-                <Select
-                    onSelect={(site) => this.setState({site: site})}
-                    selectStyle={styles.selectSite}
-                    selectTextStyle={styles.selectText}
-                    listStyle={styles.selectList}
-                    listHeight={200}
+                <TouchableOpacity
+                    underlayColor={'#AAAAAA'}
+                    onPress={() => this.setState({onClickBox: !this.state.onClickBox})}
                 >
-                    <Option
-                        value='none'
-                        optionStyle={styles.selectOption}
-                        optionTextStyle={styles.selectOptionText}
-                    >
-                        사이트를 선택하세요!
-                    </Option>
-                    <Option
-                        value='coinone.co.kr'
-                        optionStyle={styles.selectOption}
-                        optionTextStyle={styles.selectOptionText}
-                    >
-                        coinone.co.kr
-                    </Option>
-                    <Option
-                        value='bithumb.com'
-                        optionStyle={styles.selectOption}
-                        optionTextStyle={styles.selectOptionText}
-                    >
-                        bithumb.com‎
-                    </Option>
-                    <Option
-                        value='korbit.co.kr'
-                        optionStyle={styles.selectOption}
-                        optionTextStyle={styles.selectOptionText}
-                        last
-                    >
-                        korbit.co.kr
-                    </Option>
-                </Select>
+                    <View style={styles.selectBoxWrapper}>
+                        <View style={styles.selectBoxRow}>
+                            <Text style={styles.selectBoxText}>
+                                {this.state.siteList[this.state.currentSite].site}
+                            </Text>
+                            <View style={styles.selectBoxIconWrapper}>
+                                <Text style={styles.selectIcon}>
+                                    ▼
+                                </Text>
+                            </View>
+                        </View>
+                    </View>
+                </TouchableOpacity>
+                {(() => {
+                    if (this.state.onClickBox == true) {
+                        return this.state.siteList.map((site, i) => {
+                            // if (this.state.currentSite != i)
+                                return (
+                                    <TouchableOpacity
+                                        underlayColor={'#AAAAAA'}
+                                        onPress={() => this.setSite(i,site.value)}
+                                        key={i}
+                                    >
+                                        <View style={styles.selectBoxWrapper}>
+                                            <View style={styles.selectBoxRow}>
+                                                <Text style={styles.selectBoxText}>
+                                                    {site.site}
+                                                </Text>
+                                            </View>
+                                        </View>
+                                    </TouchableOpacity>
+                                );
+                        })
+                    }
+                })()}
                 <TextInput
                     style={styles.inputId}
                     value={this.state.id}
@@ -129,7 +143,7 @@ export default class MyWalletAdd extends Component {
                     placeholder={'지갑 이름'}
                     placeholderTextColor="#FFFFFF"
                     autoCapitalize = 'none'
-                    maxLength={10}
+                    maxLength={13}
                     multiline={false}
                 />
                 <TextInput
@@ -167,30 +181,35 @@ const styles = StyleSheet.create({
         fontSize:20,
         margin:15,
     },
-    selectSite:{
-        marginBottom:5,
-        width:220,
-        height:50,
+    selectBoxWrapper: {
         alignSelf: 'center',
-        backgroundColor:'#000000',
-        opacity:0.4,
-        borderRadius:15,
-        paddingLeft:17,
+        justifyContent: 'center',
+        backgroundColor: '#000000',
+        width: 220,
+        height: 40,
+        opacity: 0.4,
+        borderColor: '#FFFFFF',
+        borderWidth: 1,
+        borderRadius: 10,
+        paddingLeft: 17,
+        paddingRight: 15,
     },
-    selectText:{
-        color:'#FFFFFF',
+    selectBoxRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
     },
-    selectList:{
-        backgroundColor:'#000000',
-        opacity:0.6,
-        alignSelf: 'center',
-        borderRadius:15,
+    selectBoxText: {
+        alignSelf: 'flex-start',
+        color: '#FFFFFF',
+        fontSize: 15,
     },
-    selectOption:{
-
+    selectBoxIconWrapper: {
+        alignItems: 'flex-end',
     },
-    selectOptionText:{
-        color:'#FFFFFF',
+    selectIcon: {
+        color: '#FFFFFF',
+        fontSize: 15,
+        opacity: 0.9,
     },
     inputId:{
         width:220,
@@ -203,6 +222,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         backgroundColor: '#000000',
         opacity:0.3,
+        marginTop:10,
         marginBottom:5,
         paddingLeft:20,
     },

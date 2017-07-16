@@ -84,13 +84,13 @@ export default class Main extends Component {
             });
         } else if(p=='friendWalletMng'){
             this.setState({
-                title: '친구 관리',
+                title: '친구 관리', enableBackBtn:true, backBtnGoTo:'friendWallet',
                 enableRightBtn: true, rightBtnText: '친구 추가', rightBtnGoTo: 'friendWalletAdd'
             });
         } else if(p=='friendWalletAdd'){
             this.setState({
-                title: '친구 추가', enableBackBtn: true, backBtnGoTo: 'friendWalletMng',
-                enableRightBtn: true, rightBtnText: '요청 전송', rightBtnGoTo: 'friendWallet'
+                title: '친구 추가', enableBackBtn:true, backBtnGoTo:'friendWalletMng',
+                enableBackBtn: true, backBtnGoTo: 'friendWalletMng',
             });
         } else if(p=='exchange'){
             this.setState({title:'자동 거래'});
@@ -164,7 +164,7 @@ export default class Main extends Component {
                     {this.props.goTo === 'myWallet' && <MyWallet/>}
                         {this.props.goTo === 'myWalletMng' && <MyWalletMng/>}
                         {this.props.goTo === 'myWalletEdit' &&
-                            <MyWalletEdit id={this.props.id}/>
+                            <MyWalletEdit id={this.props.id} site={this.props.site}/>
                         }
                         {this.props.goTo === 'myWalletAdd' && <MyWalletAdd/>}
 

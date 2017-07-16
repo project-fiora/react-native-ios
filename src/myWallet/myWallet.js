@@ -71,11 +71,9 @@ export default class MyWallet extends Component {
                         >
                             <View style={styles.selectBoxWrapper}>
                                 <View style={styles.selectBoxRow}>
-                                    <View style={styles.selectBoxTextWrapper}>
-                                        <Text style={styles.selectBox}>
-                                            {this.state.walletList[this.state.currentWallet].name}
-                                        </Text>
-                                    </View>
+                                    <Text style={styles.selectBoxText}>
+                                        {this.state.walletList[this.state.currentWallet].name}
+                                    </Text>
                                     <View style={styles.selectBoxIconWrapper}>
                                         <Text style={styles.selectIcon}>
                                             ▼
@@ -95,9 +93,11 @@ export default class MyWallet extends Component {
                                                 key={i}
                                             >
                                                 <View style={styles.selectBoxWrapper}>
-                                                    <Text style={styles.selectBox}>
-                                                        {wallet.name}
-                                                    </Text>
+                                                    <View style={styles.selectBoxRow}>
+                                                        <Text style={styles.selectBoxText}>
+                                                            {wallet.name}
+                                                        </Text>
+                                                    </View>
                                                 </View>
                                             </TouchableOpacity>
                                         );
@@ -112,13 +112,12 @@ export default class MyWallet extends Component {
                             지갑주소 : {this.state.walletList[this.state.currentWallet].addr}{'\n'}
                             보유 BTC : {this.state.walletList[this.state.currentWallet].btc}{'\n'}
                             QR 코드{'\n'}
-                            {/*{this.state.walletList[this.state.currentWallet].qrCode==(null||""||"none") &&*/}
-                            {/*<Image source={require('../common/img/no.png')} style={styles.qrCode}/>*/}
-                            {/*}*/}
-                            {/*{this.state.walletList[this.state.currentWallet].qrCode!=(null||""||"none") &&*/}
-                            {/*<Image source={require('../common/img/dollar.png')} style={styles.qrCode}/>*/}
-                            {/*}*/}
-
+                            {this.state.walletList[this.state.currentWallet].qrCode==(null||""||"none") &&
+                            <Image source={require('../common/img/no.png')} style={styles.qrCode}/>
+                            }
+                            {this.state.walletList[this.state.currentWallet].qrCode!=(null||""||"none") &&
+                            <Image source={require('../common/img/dollar.png')} style={styles.qrCode}/>
+                            }
                         </Text>
                         }
 
@@ -166,28 +165,25 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         justifyContent: 'center',
         backgroundColor: '#000000',
-        width: 200,
+        width: 220,
         height: 35,
         opacity: 0.4,
         borderColor: '#FFFFFF',
         borderWidth: 1,
         borderRadius: 10,
-        paddingLeft: 15,
+        paddingLeft: 17,
         paddingRight: 15,
     },
     selectBoxRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
-    selectBoxTextWrapper: {
-        alignSelf:'flex-start',
-    },
-    selectBox: {
+    selectBoxText: {
+        alignSelf: 'flex-start',
         color: '#FFFFFF',
         fontSize: 17,
     },
-    selectBoxIconWrapper:{
-        alignSelf: 'flex-end',
+    selectBoxIconWrapper: {
         alignItems: 'flex-end',
     },
     selectIcon: {

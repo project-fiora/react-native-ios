@@ -33,8 +33,8 @@ export default class MyWalletMng extends Component {
         this.setState({walletList:wallets, load:true});
     }
 
-    goTo(part, i) {
-        Actions.main({goTo: part, id:i});
+    goTo(part, i, site) {
+        Actions.main({goTo: part, id:i, site:site});
     }
 
     render() {
@@ -59,7 +59,7 @@ export default class MyWalletMng extends Component {
                             <TouchableHighlight
                                 style={styles.list}
                                 underlayColor={'#000000'}
-                                onPress={() => this.goTo('myWalletEdit', wallet.id)}
+                                onPress={() => this.goTo('myWalletEdit', wallet.id, wallet.site)}
                                 key={i}
                             >
                                 <Text style={styles.listText}>

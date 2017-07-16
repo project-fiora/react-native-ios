@@ -2,10 +2,6 @@
  * Created by kusob on 2017. 7. 16..
  */
 
-/**
- * Created by kusob on 2017. 7. 7..
- */
-
 import React, {Component} from 'react';
 import {
     ScrollView,
@@ -13,47 +9,31 @@ import {
     Text, TextInput, TouchableHighlight,
     View,
 } from 'react-native';
-import {Select, Option} from 'react-native-select-list';
 import {Actions} from 'react-native-router-flux';
-import realm from '../common/realm';
 
 export default class FriendWalletAdd extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            friendEmail:'holein0ne@naver.com',
-            name:'',
-            addr:'',
+            friendEmail:'',
+            friendName:'',
         };
     }
 
     requestFriend(){
-        if(this.state.name==""){
-            alert("친구 지갑 이름을 입력하세요!");
+        if(this.state.friendEmail==""){
+            alert("이메일 주소를 입력하세요!");
             return false;
-        } else if(this.state.name==""){
-            alert("친구 지갑 주소를 입력하세요!");
+        } else if(this.state.friendName==""){
+            alert("이름을 입력하세요!");
             return false;
-        } else { //친구신청 post api call
+        } else {
             try{
-                let wallets = realm.objects('FriendWallet')
-                                   .filtered('owner="'+this.state.friendEmail+'"');
-                var size = wallets.length;
-                realm.write(() => {
-                    realm.create('FriendWallet',
-                        {
-                            id: size+1,
-                            owner: this.state.friendEmail,
-                            name: this.state.name,
-                            addr: this.state.addr,
-                            site:this.state.site
-                        }
-                    );
-                });
-                alert('지갑을 추가했습니다!');
+                //친구신청 post api call
+                alert('친구 요청 메시지를 발송했습니다!');
                 Actions.main({goTo:'friendWallet'});
-            }catch(err){
+            } catch(err){
                 alert('add wallet : '+err);
             }
         }
@@ -63,25 +43,28 @@ export default class FriendWalletAdd extends Component {
         return (
             <View>
                 <ScrollView contentContainerStyle={styles.frame}>
-                    <Text style={styles.explain}>여기서 친구를 추가해보세요!</Text>
+                    <Text style={styles.explain}>
+                        여기서 친구를 추가해보세요!{'\n'}
+                        친구 요청이 수락되면, 친구의 지갑을 볼 수 있습니다!
+                    </Text>
                     <TextInput
                         style={styles.inputId}
-                        value={this.state.walletName}
-                        onChangeText={(walletName) => this.setState({name: walletName})}
-                        placeholder={'친구 지갑 이름'}
+                        value={this.state.friendEmail}
+                        onChangeText={(email) => this.setState({friendEmail: email})}
+                        placeholder={'지갑을 요청할 친구의 이메일 주소'}
                         placeholderTextColor="#FFFFFF"
                         autoCapitalize = 'none'
-                        maxLength={10}
+                        maxLength={50}
                         multiline={false}
                     />
                     <TextInput
-                        style={styles.inputWalletAddr}
-                        value={this.state.walletAddr}
-                        onChangeText={(addr) => this.setState({addr: addr})}
-                        placeholder={'친구 지갑 주소'}
+                        style={styles.inputId}
+                        value={this.state.friendName}
+                        onChangeText={(name) => this.setState({friendName: name})}
+                        placeholder={'친구의 지갑 그룹 이름'}
                         placeholderTextColor="#FFFFFF"
                         autoCapitalize = 'none'
-                        maxLength={200}
+                        maxLength={15}
                         multiline={false}
                     />
 
@@ -106,36 +89,11 @@ const styles = StyleSheet.create({
     explain:{
         color:'#FFFFFF',
         opacity:0.8,
-        fontSize:20,
+        fontSize:15,
         margin:15,
     },
-    selectSite:{
-        marginBottom:5,
-        width:220,
-        height:50,
-        alignSelf: 'center',
-        backgroundColor:'#000000',
-        opacity:0.4,
-        borderRadius:15,
-        paddingLeft:17,
-    },
-    selectText:{
-        color:'#FFFFFF',
-    },
-    selectList:{
-        backgroundColor:'#000000',
-        opacity:0.6,
-        alignSelf: 'center',
-        borderRadius:15,
-    },
-    selectOption:{
-
-    },
-    selectOptionText:{
-        color:'#FFFFFF',
-    },
     inputId:{
-        width:220,
+        width:240,
         height: 50,
         fontSize: 15,
         color:'#FFFFFF',
@@ -146,21 +104,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#000000',
         opacity:0.3,
         marginBottom:5,
-        paddingLeft:20,
-    },
-    inputWalletAddr:{
-        width:320,
-        height: 45,
-        fontSize: 13,
-        color:'#FFFFFF',
-        borderColor: '#FFFFFF',
-        borderWidth: 1,
-        borderRadius: 15,
-        alignSelf: 'center',
-        backgroundColor: '#000000',
-        opacity:0.3,
-        marginBottom:5,
-        paddingLeft:12,
+        paddingLeft:15,
     },
     rightBtn: {
         position:'absolute',

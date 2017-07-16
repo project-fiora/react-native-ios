@@ -72,9 +72,18 @@ export default class FriendWallet extends Component {
                             onPress={() => this.setState({onClickBox: !this.state.onClickBox})}
                         >
                             <View style={styles.selectBoxWrapper}>
-                                <Text style={styles.selectBox}>
-                                    {this.state.friendWalletList[this.state.currentWallet].name}
-                                </Text>
+                                <View style={styles.selectBoxRow}>
+                                    <View style={styles.selectBoxTextWrapper}>
+                                        <Text style={styles.selectBox}>
+                                            {this.state.walletList[this.state.currentWallet].name}
+                                        </Text>
+                                    </View>
+                                    <View style={styles.selectBoxIconWrapper}>
+                                        <Text style={styles.selectIcon}>
+                                            ▼
+                                        </Text>
+                                    </View>
+                                </View>
                             </View>
                         </TouchableOpacity>
                         {(() => {
@@ -141,14 +150,6 @@ const styles = StyleSheet.create({
         height: 30,
         marginTop: 30,
     },
-    selectIcon: {
-        position: 'absolute',
-        top: 38,
-        right: 38,
-        color: '#FFFFFF',
-        fontSize: 17,
-        opacity: 0.9,
-    },
     titleText: {
         textAlign: 'center',
         color: '#FFFFFF',
@@ -160,17 +161,34 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         justifyContent: 'center',
         backgroundColor: '#000000',
-        width: 200,
+        width: 220,
         height: 35,
         opacity: 0.4,
         borderColor: '#FFFFFF',
         borderWidth: 1,
         borderRadius: 10,
-        paddingLeft: 15,
+        paddingLeft: 17,
+        paddingRight: 15,
+    },
+    selectBoxRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    selectBoxTextWrapper: {
+        alignSelf:'flex-start',
     },
     selectBox: {
         color: '#FFFFFF',
         fontSize: 17,
+    },
+    selectBoxIconWrapper:{
+        alignSelf: 'flex-end',
+        alignItems: 'flex-end',
+    },
+    selectIcon: {
+        color: '#FFFFFF',
+        fontSize: 17,
+        opacity: 0.9,
     },
     qrCode: {
         marginTop:15,

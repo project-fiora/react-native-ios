@@ -19,7 +19,6 @@ class Common extends Component{
 
     static generateWalletId(){
         var id = parseInt(new Date().getTime());
-        console.log(id);
         return id;
     }
 }

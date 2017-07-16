@@ -5,26 +5,33 @@
 import React, {Component} from 'react';
 import {
     StyleSheet, Alert,
-    Text, TextInput, TouchableHighlight, View,
+    Text, TextInput, TouchableHighlight, View, TouchableOpacity,
 } from 'react-native';
-import {Select, Option} from 'react-native-select-list';
 import {Actions} from 'react-native-router-flux';
 import realm from '../common/realm';
 import Common from "../common/common";
 
-export default class MyWalletEditDetail extends Component {
+export default class MyWalletEdit extends Component {
     constructor(props) {
         super(props);
 
+        console.log("props.id"+this.props.id);
         this.state = {
-            id:parseInt(this.props.id),
+            onClickBox:false,
+            id:this.props.id,
             name: '',
             addr:'',
-            site:'',
             email: 'boseokjung@gmail.com',
             passwd: '',
-            myWallet:[{name:'',site:'',addr:''}],
+            myWallet:[{id:'', name:'',owner:'',site:'',addr:''}],
+            site:this.props.site,
+            siteList:[
+                { site:'coinone.co.kr'},
+                { site:'bithumb.com‎'},
+                { site:'korbit.co.kr'},
+            ],
         };
+
     }
 
     componentDidMount(){
@@ -32,7 +39,7 @@ export default class MyWalletEditDetail extends Component {
     }
 
     getMyWallet(){
-        let myWallet = realm.objects('Wallet').filtered('owner=="'+this.state.email+'" AND id=='+parseInt(this.state.id));
+        let myWallet = realm.objects('Wallet').filtered('owner=="'+this.state.email+'" AND id=='+this.props.id);
         this.setState({myWallet:myWallet, load:true});
     }
 
@@ -64,22 +71,23 @@ export default class MyWalletEditDetail extends Component {
         if(this.state.myWallet[0].name==""){
             alert('지갑 이름을 입력하세요!');
             return false;
-        } else if(this.state.myWallet[0].addr){
+        } else if(this.state.myWallet[0].addr==""){
             alert('지갑 주소를 입력하세요!');
             return false;
         } else {
+            console.log("owner:"+this.state.myWallet[0].owner);
             realm.write(() => {
                 try{
-                    let myWallet = realm.objects('Wallet')
-                                        .filtered('owner=="'+this.state.email+'" AND id=='+this.state.id);
-                    realm.delete(myWallet);
                     realm.create('Wallet', {
-                        id: this.state.myWallet[0].id,
+                        id: Common.generateWalletId(),
                         owner: this.state.myWallet[0].owner,
                         name: this.state.myWallet[0].name,
-                        site: this.state.myWallet[0].site,
+                        site: this.state.site,
                         addr: this.state.myWallet[0].addr,
                     }, true);
+                    let myWallet = realm.objects('Wallet')
+                                        .filtered('owner=="'+this.state.email+'" AND id=='+this.props.id);
+                    realm.delete(myWallet);
                     alert('수정 성공!');
                     Actions.main({goTo:'myWallet'});
                 } catch(err){
@@ -90,6 +98,9 @@ export default class MyWalletEditDetail extends Component {
         }
     }
 
+    setSite(site) {
+        this.setState({site:site, onClickBox: !this.state.onClickBox});
+    }
 
     render() {
         return (
@@ -112,50 +123,47 @@ export default class MyWalletEditDetail extends Component {
                     multiline={false}
                 />
                 <Text style={styles.selectSiteText}>사이트를 선택하세요!</Text>
-                <Select
-                    onSelect={(site) => {
-                        var stateCopy = Object.assign({}, this.state);
-                        stateCopy.myWallet = stateCopy.myWallet.slice();
-                        stateCopy.myWallet[0] = Object.assign({}, stateCopy.myWallet[0]);
-                        stateCopy.myWallet[0].site = site;
-                        this.setState(stateCopy);
-                    }}
-                    selectStyle={styles.selectSite}
-                    selectTextStyle={styles.selectText}
-                    listStyle={styles.selectList}
-                    listHeight={200}
+                {/*-------------SELECT BOX START---------------*/}
+                <TouchableOpacity
+                    underlayColor={'#AAAAAA'}
+                    onPress={() => this.setState({onClickBox: !this.state.onClickBox})}
                 >
-                    <Option
-                        value={this.state.myWallet[0].site}
-                        optionStyle={styles.selectOption}
-                        optionTextStyle={styles.selectOptionText}
-                    >
-                        변경없음
-                    </Option>
-                    <Option
-                        value='coinone.co.kr'
-                        optionStyle={styles.selectOption}
-                        optionTextStyle={styles.selectOptionText}
-                    >
-                        coinone.co.kr
-                    </Option>
-                    <Option
-                        value='bithumb.com'
-                        optionStyle={styles.selectOption}
-                        optionTextStyle={styles.selectOptionText}
-                    >
-                        bithumb.com‎
-                    </Option>
-                    <Option
-                        value='korbit.co.kr'
-                        optionStyle={styles.selectOption}
-                        optionTextStyle={styles.selectOptionText}
-                        last
-                    >
-                        korbit.co.kr
-                    </Option>
-                </Select>
-
+                    <View style={styles.selectBoxWrapper}>
+                        <View style={styles.selectBoxRow}>
+                            <Text style={styles.selectBoxText}>
+                                {this.state.site}
+                            </Text>
+                            <View style={styles.selectBoxIconWrapper}>
+                                <Text style={styles.selectIcon}>
+                                    ▼
+                                </Text>
+                            </View>
+                        </View>
+                    </View>
+                </TouchableOpacity>
+                {(() => {
+                    if (this.state.onClickBox == true) {
+                        return this.state.siteList.map((site, i) => {
+                            // if (this.state.currentSite != i)
+                            return (
+                                <TouchableOpacity
+                                    underlayColor={'#AAAAAA'}
+                                    onPress={() => this.setSite(site.site)}
+                                    key={i}
+                                >
+                                    <View style={styles.selectBoxWrapper}>
+                                        <View style={styles.selectBoxRow}>
+                                            <Text style={styles.selectBoxText}>
+                                                {site.site}
+                                            </Text>
+                                        </View>
+                                    </View>
+                                </TouchableOpacity>
+                            );
+                        })
+                    }
+                })()}
+                {/*-------------SELECT BOX END---------------*/}
                 <TextInput
                     style={styles.inputWalletAddr}
                     value={this.state.myWallet[0].addr}
@@ -234,36 +242,35 @@ const styles = StyleSheet.create({
         marginBottom:5,
         paddingLeft:20,
     },
-    selectSiteText:{
-        color:'#FFFFFF',
-        fontSize:14,
-        opacity:0.8,
-        margin:5,
-    },
-    selectSite:{
-        marginBottom:5,
-        width:220,
-        height:50,
+    selectBoxWrapper: {
         alignSelf: 'center',
-        backgroundColor:'#000000',
-        opacity:0.4,
-        borderRadius:15,
-        paddingLeft:15,
+        justifyContent: 'center',
+        backgroundColor: '#000000',
+        width: 220,
+        height: 40,
+        opacity: 0.4,
+        borderColor: '#FFFFFF',
+        borderWidth: 1,
+        borderRadius: 10,
+        paddingLeft: 17,
+        paddingRight: 15,
     },
-    selectText:{
-        color:'#FFFFFF',
+    selectBoxRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
     },
-    selectList:{
-        backgroundColor:'#000000',
-        opacity:0.6,
-        alignSelf: 'center',
-        borderRadius:15,
+    selectBoxText: {
+        alignSelf: 'flex-start',
+        color: '#FFFFFF',
+        fontSize: 15,
     },
-    selectOption:{
-
+    selectBoxIconWrapper: {
+        alignItems: 'flex-end',
     },
-    selectOptionText:{
-        color:'#FFFFFF',
+    selectIcon: {
+        color: '#FFFFFF',
+        fontSize: 15,
+        opacity: 0.9,
     },
     inputWalletAddr:{
         width:320,
@@ -276,6 +283,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         backgroundColor: '#000000',
         opacity:0.3,
+        marginTop:10,
         marginBottom:5,
         paddingLeft:12,
     },
