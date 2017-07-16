@@ -7,6 +7,7 @@ import {
     Text,
 } from 'react-native';
 import realm from '../common/realm';
+import Common from "../common/common";
 
 export default class Home extends Component {
     constructor(props) {

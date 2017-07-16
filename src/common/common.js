@@ -16,6 +16,12 @@ class Common extends Component{
         }
         return copy;
     }
+
+    static generateWalletId(){
+        var id = parseInt(new Date().getTime());
+        console.log(id);
+        return id;
+    }
 }
 
 export default Common;

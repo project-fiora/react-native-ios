@@ -10,7 +10,19 @@ class Wallet extends Realm.Object {}
 Wallet.schema = {
     name: 'Wallet',
     properties: {
-        id:'int',
+        id:{ type: 'int', indexed: true },
+        owner:{ type: 'string', indexed: true },
+        name: 'string',
+        addr:'string',
+        site:'string'
+    }
+};
+
+class FriendWallet extends Realm.Object {}
+FriendWallet.schema = {
+    name: 'FriendWallet',
+    properties: {
+        id:{ type: 'int', indexed: true },
         owner:{ type: 'string', indexed: true },
         name: 'string',
         addr:'string',
@@ -19,4 +31,4 @@ Wallet.schema = {
 };
 
 var key = new Int8Array(64);
-export default new Realm({schema: [Wallet, ], encryptionKey: key});
+export default new Realm({schema: [Wallet, FriendWallet], encryptionKey: key});

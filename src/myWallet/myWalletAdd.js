@@ -12,6 +12,7 @@ import {
 import {Select, Option} from 'react-native-select-list';
 import {Actions} from 'react-native-router-flux';
 import realm from '../common/realm';
+import Common from "../common/common";
 
 export default class MyWalletAdd extends Component {
     constructor(props) {
@@ -37,12 +38,13 @@ export default class MyWalletAdd extends Component {
             return false;
         } else {
             try{
-                let wallets = realm.objects('Wallet').filtered('owner="'+this.state.email+'"');
-                var size = wallets.length;
+                // let wallets = realm.objects('Wallet')
+                //                    .filtered('owner="'+this.state.email+'"');
+                // var size = wallets.length;
                 realm.write(() => {
                     realm.create('Wallet',
                         {
-                            id: size+1,
+                            id: Common.generateWalletId(),
                             owner: this.state.email,
                             name: this.state.name,
                             addr: this.state.addr,

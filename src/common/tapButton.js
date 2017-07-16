@@ -13,6 +13,7 @@ export default class TabButton extends Component {
                 <Tap img={images.home} text="홈" goTo="home"/>
                 <Tap img={images.price} text="시세" goTo="price"/>
                 <Tap img={images.wallet} text="내지갑" goTo="myWallet"/>
+                <Tap img={images.friendWallet} text="친구지갑" goTo="friendWallet"/>
                 <Tap img={images.exchange} text="자동거래" goTo="exchange"/>
                 <Tap img={images.more} text="더보기" goTo="more"/>
             </View>
@@ -48,6 +49,7 @@ class Tap extends Component {
 const images = {
     home: require('./img/home.png'),
     wallet: require('./img/wallet2.png'),
+    friendWallet: require('./img/friend.png'),
     exchange: require('./img/exchange2.png'),
     price: require('./img/price.png'),
     more: require('./img/more.png'),

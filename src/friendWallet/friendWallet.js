@@ -1,6 +1,7 @@
 /**
- * Created by kusob on 2017. 6. 26..
+ * Created by kusob on 2017. 7. 16..
  */
+
 import React, {Component} from 'react';
 import {
     ScrollView,
@@ -11,13 +12,14 @@ import {
 import {Actions} from 'react-native-router-flux';
 import realm from '../common/realm';
 
-export default class MyWallet extends Component {
+export default class FriendWallet extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            walletList: [],
-            email: 'boseokjung@gmail.com',
+            friendWalletList: [],
+            site: '',
+            friendEmail: 'holein0ne@naver.com',
             load: false,
             onClickBox: false,
             currentWallet: 0,
@@ -32,10 +34,10 @@ export default class MyWallet extends Component {
         this.getMyWallet();
     }
 
-    getMyWallet() {
-        let wallets = realm.objects('Wallet');
-        let myWallets = wallets.filtered('owner="' + this.state.email + '"');
-        this.setState({walletList: myWallets, load: true});
+    getMyWallet(){
+        let wallets = realm.objects('FriendWallet');
+        let friendWallets = wallets.filtered('owner="'+this.state.friendEmail+'"');
+        this.setState({friendWalletList:friendWallets, load:true});
     }
 
     showWallet(i) {
@@ -53,40 +55,31 @@ export default class MyWallet extends Component {
                             style={styles.loadingIcon}/>
                     </View>
                     }
-                    {(this.state.load == true && this.state.walletList.length == 0) &&
+                    {(this.state.load == true && this.state.friendWalletList.length==0) &&
                     <View>
                         <Text style={styles.titleText}>
-                            아직 지갑이 한개도 없어요!{'\n'}
-                            오른쪽 상단의 지갑 관리 버튼을 통해서{'\n'}
-                            지갑을 추가하세요!
+                            아직 친구 지갑이 한개도 없어요!{'\n'}
+                            오른쪽 상단의 친구 추가 버튼을 통해서{'\n'}
+                            친구 지갑을 요청해보세요!
                         </Text>
                     </View>
                     }
-                    {(this.state.load == true && this.state.walletList.length != 0) &&
+                    {(this.state.load == true && this.state.friendWalletList.length!=0) &&
                     <View>
-                        <Text style={styles.titleText}>아래 버튼을 눌러서 지갑을 선택하세요!</Text>
+                        <Text style={styles.titleText}>아래 버튼을 눌러서 친구 지갑을 선택하세요!</Text>
                         <TouchableOpacity
                             underlayColor={'#AAAAAA'}
                             onPress={() => this.setState({onClickBox: !this.state.onClickBox})}
                         >
                             <View style={styles.selectBoxWrapper}>
-                                <View style={styles.selectBoxRow}>
-                                    <View style={styles.selectBoxTextWrapper}>
-                                        <Text style={styles.selectBox}>
-                                            {this.state.walletList[this.state.currentWallet].name}
-                                        </Text>
-                                    </View>
-                                    <View style={styles.selectBoxIconWrapper}>
-                                        <Text style={styles.selectIcon}>
-                                            ▼
-                                        </Text>
-                                    </View>
-                                </View>
+                                <Text style={styles.selectBox}>
+                                    {this.state.friendWalletList[this.state.currentWallet].name}
+                                </Text>
                             </View>
                         </TouchableOpacity>
                         {(() => {
                             if (this.state.onClickBox == true) {
-                                return this.state.walletList.map((wallet, i) => {
+                                return this.state.friendWalletList.map((wallet, i) => {
                                     if (this.state.currentWallet != i)
                                         return (
                                             <TouchableOpacity
@@ -104,21 +97,15 @@ export default class MyWallet extends Component {
                                 })
                             }
                         })()}
-                        {this.state.walletList.length != 0 &&
+                        {this.state.friendWalletList.length!=0 &&
                         <Text style={styles.contentText}>
-                            지갑번호 : {this.state.walletList[this.state.currentWallet].id}{'\n'}
-                            지갑이름 : {this.state.walletList[this.state.currentWallet].name}{'\n'}
-                            사이트 : {this.state.walletList[this.state.currentWallet].site}{'\n'}
-                            지갑주소 : {this.state.walletList[this.state.currentWallet].addr}{'\n'}
-                            보유 BTC : {this.state.walletList[this.state.currentWallet].btc}{'\n'}
+                            지갑번호 : {this.state.friendWalletList[this.state.currentWallet].id}{'\n'}
+                            지갑이름 : {this.state.friendWalletList[this.state.currentWallet].name}{'\n'}
+                            사이트 : {this.state.friendWalletList[this.state.currentWallet].site}{'\n'}
+                            지갑주소 : {this.state.friendWalletList[this.state.currentWallet].addr}{'\n'}
+                            보유 BTC : {this.state.friendWalletList[this.state.currentWallet].btc}{'\n'}
                             QR 코드{'\n'}
-                            {/*{this.state.walletList[this.state.currentWallet].qrCode==(null||""||"none") &&*/}
-                            {/*<Image source={require('../common/img/no.png')} style={styles.qrCode}/>*/}
-                            {/*}*/}
-                            {/*{this.state.walletList[this.state.currentWallet].qrCode!=(null||""||"none") &&*/}
-                            {/*<Image source={require('../common/img/dollar.png')} style={styles.qrCode}/>*/}
-                            {/*}*/}
-
+                            <Image source={require('../common/img/no.png')} style={styles.qrCode}/>
                         </Text>
                         }
 
@@ -154,7 +141,14 @@ const styles = StyleSheet.create({
         height: 30,
         marginTop: 30,
     },
-
+    selectIcon: {
+        position: 'absolute',
+        top: 38,
+        right: 38,
+        color: '#FFFFFF',
+        fontSize: 17,
+        opacity: 0.9,
+    },
     titleText: {
         textAlign: 'center',
         color: '#FFFFFF',
@@ -173,30 +167,13 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 10,
         paddingLeft: 15,
-        paddingRight: 15,
-    },
-    selectBoxRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    selectBoxTextWrapper: {
-        alignSelf:'flex-start',
     },
     selectBox: {
         color: '#FFFFFF',
         fontSize: 17,
     },
-    selectBoxIconWrapper:{
-        alignSelf: 'flex-end',
-        alignItems: 'flex-end',
-    },
-    selectIcon: {
-        color: '#FFFFFF',
-        fontSize: 17,
-        opacity: 0.9,
-    },
     qrCode: {
-        marginTop: 15,
+        marginTop:15,
         width: 100,
         height: 100,
     },

@@ -12,10 +12,14 @@ import {Actions} from 'react-native-router-flux';
 
 import TabButton from '../common/tapButton';
 import Home from '../home/home';
+
 import MyWallet from '../myWallet/myWallet';
+import MyWalletMng from "../myWallet/myWalletMng";
 import MyWalletEdit from '../myWallet/myWalletEdit';
-import MyWalletEditDetail from '../myWallet/myWalletEditDetail';
 import MyWalletAdd from '../myWallet/myWalletAdd';
+
+import FriendWallet from '../friendWallet/friendWallet';
+import FriendWalletAdd from '../friendWallet/friendWalletAdd';
 
 import Exchange from '../exchange/exchange';
 
@@ -32,17 +36,14 @@ import NoticeDetail from "../more/notice/noticeDetail";
 import Version from '../more/version';
 import Inquire from '../more/inquire';
 
-
-
-
 export default class Main extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
             title:'',
-            deep:false,
-            back:'',
+            enableBackBtn:false,
+            backBtnGoTo:'',
             enableRightBtn:false,
             rightBtnGoTo:'',
             rightBtnText:'',
@@ -50,7 +51,7 @@ export default class Main extends Component {
         };
     }
 
-    componentWillMount() {
+    componentWillMount() { //title, backBtn handler
         var p = this.props.goTo;
 
         if (p == 'home') {
@@ -58,20 +59,38 @@ export default class Main extends Component {
         } else if (p == 'myWallet') {
             this.setState({
                 title: '내지갑',
-                enableRightBtn: true, rightBtnText: '지갑 관리', rightBtnGoTo: 'myWalletEdit'
+                enableRightBtn: true, rightBtnText: '지갑 관리', rightBtnGoTo: 'myWalletMng'
             });
-        } else if (p == 'myWalletEdit') {
+        } else if (p == 'myWalletMng') {
             this.setState({
-                title: '지갑 관리', deep: true, back: 'myWallet',
+                title: '지갑 관리',
+                enableBackBtn: true, backBtnGoTo: 'myWallet',
                 enableRightBtn: true, rightBtnText: '지갑 추가', rightBtnGoTo: 'myWalletAdd'
             });
-        } else if(p=='myWalletEditDetail'){
+        } else if(p=='myWalletEdit'){
             this.setState({
-                title: '지갑 수정', deep: true, back: 'myWalletEdit',
+                title: '지갑 수정',
+                enableBackBtn: true, backBtnGoTo: 'myWalletMng',
             });
         } else if(p=='myWalletAdd'){
             this.setState({
-                title: '지갑 추가', deep: true, back: 'myWalletEdit',
+                title: '지갑 추가',
+                enableBackBtn: true, backBtnGoTo: 'myWalletMng',
+            });
+        } else if(p=='friendWallet'){
+            this.setState({
+                title: '친구 지갑',
+                enableRightBtn: true, rightBtnText: '친구 관리', rightBtnGoTo: 'friendWalletMng'
+            });
+        } else if(p=='friendWalletMng'){
+            this.setState({
+                title: '친구 관리',
+                enableRightBtn: true, rightBtnText: '친구 추가', rightBtnGoTo: 'friendWalletAdd'
+            });
+        } else if(p=='friendWalletAdd'){
+            this.setState({
+                title: '친구 추가', enableBackBtn: true, backBtnGoTo: 'friendWalletMng',
+                enableRightBtn: true, rightBtnText: '요청 전송', rightBtnGoTo: 'friendWallet'
             });
         } else if(p=='exchange'){
             this.setState({title:'자동 거래'});
@@ -82,22 +101,41 @@ export default class Main extends Component {
             });
         } else if(p=='cryptocompare'){
             this.setState({
-                title:'시세 정보', deep: true, back:'price'
+                title:'시세 정보',
+                enableBackBtn: true, backBtnGoTo:'price'
             });
         } else if(p=='more'){
-            this.setState({title:'더보기'});
+            this.setState({
+                title:'더보기'
+            });
         } else if(p=='option'){
-            this.setState({title:'옵션', deep:true, back:'more'});
+            this.setState({
+                title:'옵션',
+                enableBackBtn:true, backBtnGoTo:'more'});
         } else if(p=='optionDetail'){
-            this.setState({title:this.props.title, deep:true, back:'option'});
+            this.setState({
+                title:this.props.title,
+                enableBackBtn:true, backBtnGoTo:'option'});
         } else if(p=='notice'){
-            this.setState({title:'공지사항', deep:true, back:'more'});
+            this.setState({
+                title:'공지사항',
+                enableBackBtn:true, backBtnGoTo:'more'
+            });
         } else if(p=='noticeDetail'){
-            this.setState({title:this.props.title, deep:true, back:'notice'});
+            this.setState({
+                title:this.props.title,
+                enableBackBtn:true, backBtnGoTo:'notice'
+            });
         } else if(p=='version'){
-            this.setState({title:'버전정보', deep:true, back:'more'});
+            this.setState({
+                title:'버전정보',
+                enableBackBtn:true, backBtnGoTo:'more'
+            });
         } else if(p=='inquire'){
-            this.setState({title:'문의하기', deep:true, back:'more'});
+            this.setState({
+                title:'문의하기',
+                enableBackBtn:true, backBtnGoTo:'more'
+            });
         }
     }
 
@@ -122,13 +160,16 @@ export default class Main extends Component {
                     {this.props.goTo === 'home' && <Home/>}
                     {this.props.goTo === 'price' && <Coinmarketcap/>}
                         {this.props.goTo === 'cryptocompare' && <Cryptocompare/>}
+
                     {this.props.goTo === 'myWallet' && <MyWallet/>}
-                        {this.props.goTo === 'myWalletEdit' && <MyWalletEdit/>}
-                        {this.props.goTo === 'myWalletEditDetail' &&
-                            <MyWalletEditDetail id={this.props.id}/>
+                        {this.props.goTo === 'myWalletMng' && <MyWalletMng/>}
+                        {this.props.goTo === 'myWalletEdit' &&
+                            <MyWalletEdit id={this.props.id}/>
                         }
                         {this.props.goTo === 'myWalletAdd' && <MyWalletAdd/>}
 
+                    {this.props.goTo === 'friendWallet' && <FriendWallet/>}
+                        {this.props.goTo === 'friendWalletAdd' && <FriendWalletAdd/>}
                     {this.props.goTo === 'exchange' && <Exchange/>}
 
                     {this.props.goTo === 'more' && <More/>}
@@ -153,11 +194,11 @@ export default class Main extends Component {
                         <Text style={styles.rightBtnText}>{this.state.rightBtnText}</Text>
                     </TouchableHighlight>
                 }
-                {this.state.deep == true &&
+                {this.state.enableBackBtn == true &&
                     <TouchableOpacity
                         style={styles.navBackBtn}
                         underlayColor={'#AAAAAA'}
-                        onPress={() => this.goTo(this.state.back)}
+                        onPress={() => this.goTo(this.state.backBtnGoTo)}
                     >
                         <Image source={require('../common/img/navArrow.png')}
                                style={styles.navBackArrow}/>
