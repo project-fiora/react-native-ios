@@ -6,13 +6,11 @@ import React, {Component} from 'react';
 import {
     ScrollView,
     StyleSheet,
-    Text, TextInput, TouchableHighlight, TouchableOpacity,
+    Text, TextInput, TouchableHighlight,
     View,
 } from 'react-native';
 
 import {Actions} from 'react-native-router-flux';
-import realm from '../common/realm';
-import Common from "../common/common";
 
 export default class MyWalletAdd extends Component {
     constructor(props) {
@@ -23,22 +21,15 @@ export default class MyWalletAdd extends Component {
             email:'boseokjung@gmail.com',
             name:'',
             addr:'',
-            site:'none',
-            siteList:[
-                { site:'사이트를 선택하세요!', value:'none' },
-                { site:'coinone.co.kr', value:'coinone.co.kr' },
-                { site:'bithumb.com‎', value:'bithumb.com‎' },
-                { site:'korbit.co.kr', value:'korbit.co.kr' },
-            ],
-            currentSite:0,
         };
     }
 
+    qrScanner(){
+
+    }
+
     addWallet(){
-        if(this.state.site=='none'){
-            alert("지갑 사이트를 선택하세요!");
-            return false;
-        } else if(this.state.name==""){
+        if(this.state.name==""){
             alert("지갑 이름을 입력하세요!");
             return false;
         } else if(this.state.addr==""){
@@ -46,17 +37,7 @@ export default class MyWalletAdd extends Component {
             return false;
         } else {
             try{
-                realm.write(() => {
-                    realm.create('Wallet',
-                        {
-                            id: Common.generateWalletId(),
-                            owner: this.state.email,
-                            name: this.state.name,
-                            addr: this.state.addr,
-                            site:this.state.site
-                        }
-                    );
-                });
+                //
                 alert('지갑을 추가했습니다!');
                 Actions.main({goTo:'myWallet'});
             }catch(err){
@@ -65,87 +46,24 @@ export default class MyWalletAdd extends Component {
         }
     }
 
-    setSite(i, value) {
-        this.setState({currentSite: i,site:value, onClickBox: !this.state.onClickBox});
-    }
-
     render(){
         return (
         <View>
             <ScrollView contentContainerStyle={styles.frame}>
                 <Text style={styles.explain}>여기서 지갑을 추가해보세요!</Text>
-                <TouchableOpacity
-                    underlayColor={'#AAAAAA'}
-                    onPress={() => this.setState({onClickBox: !this.state.onClickBox})}
-                >
-                    <View style={styles.selectBoxWrapper}>
-                        <View style={styles.selectBoxRow}>
-                            <Text style={styles.selectBoxText}>
-                                {this.state.siteList[this.state.currentSite].site}
-                            </Text>
-                            <View style={styles.selectBoxIconWrapper}>
-                                <Text style={styles.selectIcon}>
-                                    ▼
-                                </Text>
-                            </View>
-                        </View>
-                    </View>
-                </TouchableOpacity>
-                {(() => {
-                    if (this.state.onClickBox == true) {
-                        return this.state.siteList.map((site, i) => {
-                            if (i != 0)
-                                return (
-                                    <TouchableOpacity
-                                        underlayColor={'#AAAAAA'}
-                                        onPress={() => this.setSite(i,site.value)}
-                                        key={i}
-                                    >
-                                        <View style={styles.selectBoxWrapper}>
-                                            <View style={styles.selectBoxRow}>
-                                                <Text style={styles.selectBoxText}>
-                                                    {site.site}
-                                                </Text>
-                                            </View>
-                                        </View>
-                                    </TouchableOpacity>
-                                );
-                        })
-                    }
-                })()}
                 <TextInput
                     style={styles.inputId}
-                    value={this.state.id}
-                    onChangeText={(id) => this.setState({id: id})}
-                    placeholder={'아이디'}
+                    value={this.state.name}
+                    onChangeText={(name) => this.setState({name: name})}
+                    placeholder={'지갑 이름'}
                     placeholderTextColor="#FFFFFF"
                     autoCapitalize = 'none'
-                    maxLength={40}
-                    multiline={false}
-                />
-                <TextInput
-                    style={styles.inputId}
-                    value={this.state.passwd}
-                    onChangeText={(passwd) => this.setState({passwd: passwd})}
-                    placeholder={'비밀번호'}
-                    placeholderTextColor="#FFFFFF"
-                    secureTextEntry={true}
                     maxLength={20}
                     multiline={false}
                 />
                 <TextInput
-                    style={styles.inputId}
-                    value={this.state.walletName}
-                    onChangeText={(walletName) => this.setState({name: walletName})}
-                    placeholder={'지갑 이름'}
-                    placeholderTextColor="#FFFFFF"
-                    autoCapitalize = 'none'
-                    maxLength={13}
-                    multiline={false}
-                />
-                <TextInput
                     style={styles.inputWalletAddr}
-                    value={this.state.walletAddr}
+                    value={this.state.addr}
                     onChangeText={(addr) => this.setState({addr: addr})}
                     placeholder={'지갑 주소'}
                     placeholderTextColor="#FFFFFF"
@@ -154,6 +72,14 @@ export default class MyWalletAdd extends Component {
                     multiline={false}
                 />
 
+                <Text style={styles.explainQRcode}>QR코드를 스캔해서 편하게 지갑주소를 입력하세요!</Text>
+                <TouchableHighlight
+                    style={styles.scannerBtn}
+                    underlayColor={'#000000'}
+                    onPress={() => this.qrScanner()}
+                >
+                    <Text style={styles.rightBtnText}>QR코드 스캐너</Text>
+                </TouchableHighlight>
             </ScrollView>
             <TouchableHighlight
                 style={styles.rightBtn}
@@ -178,38 +104,8 @@ const styles = StyleSheet.create({
         fontSize:20,
         margin:15,
     },
-    selectBoxWrapper: {
-        alignSelf: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#000000',
-        width: 220,
-        height: 40,
-        opacity: 0.4,
-        borderColor: '#FFFFFF',
-        borderWidth: 1,
-        borderRadius: 10,
-        paddingLeft: 17,
-        paddingRight: 15,
-    },
-    selectBoxRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    selectBoxText: {
-        alignSelf: 'flex-start',
-        color: '#FFFFFF',
-        fontSize: 15,
-    },
-    selectBoxIconWrapper: {
-        alignItems: 'flex-end',
-    },
-    selectIcon: {
-        color: '#FFFFFF',
-        fontSize: 15,
-        opacity: 0.9,
-    },
     inputId:{
-        width:220,
+        width:230,
         height: 50,
         fontSize: 15,
         color:'#FFFFFF',
@@ -219,12 +115,11 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         backgroundColor: '#000000',
         opacity:0.3,
-        marginTop:10,
-        marginBottom:5,
-        paddingLeft:20,
+        marginBottom:10,
+        paddingLeft:15,
     },
     inputWalletAddr:{
-        width:320,
+        width:230,
         height: 45,
         fontSize: 13,
         color:'#FFFFFF',
@@ -234,8 +129,25 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         backgroundColor: '#000000',
         opacity:0.3,
-        marginBottom:5,
-        paddingLeft:12,
+        marginBottom:10,
+        paddingLeft:15,
+    },
+    explainQRcode:{
+        color:'#FFFFFF',
+        opacity:0.8,
+        fontSize:15,
+        margin:10,
+    },
+    scannerBtn:{
+        width: 150,
+        height: 40,
+        borderWidth: 1,
+        borderRadius: 20,
+        borderColor: '#FFFFFF',
+        padding: 5,
+        alignItems: 'center',
+        justifyContent:'center',
+        opacity:0.6
     },
     rightBtn: {
         position:'absolute',
