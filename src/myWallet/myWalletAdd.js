@@ -39,7 +39,7 @@ export default class MyWalletAdd extends Component {
         }
     }
 
-    qrScanner() {
+    async qrScanner() {
         try {
             AsyncStorage.setItem('walletAddNameTmp', this.state.name);
             Actions.scanner();
@@ -49,7 +49,7 @@ export default class MyWalletAdd extends Component {
 
     }
 
-    addWallet() {
+    async addWallet() {
         if (this.state.name == "") {
             alert("지갑 이름을 입력하세요!");
             return false;
@@ -59,10 +59,11 @@ export default class MyWalletAdd extends Component {
         } else {
             try {
                 //post api call
+                AsyncStorage.removeItem('walletAddNameTmp');
                 alert('지갑을 추가했습니다!');
                 Actions.main({goTo: 'myWallet'});
             } catch (err) {
-                alert('add wallet : ' + err);
+                alert('지갑추가실패 : ' + err);
             }
         }
     }

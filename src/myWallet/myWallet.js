@@ -21,7 +21,6 @@ export default class MyWallet extends Component {
             load: false,
             onClickBox: false,
             currentWallet: 0,
-            code:'1',
         };
     }
 
@@ -31,7 +30,6 @@ export default class MyWallet extends Component {
 
     componentDidMount() {
         this.getMyWallet();
-
     }
 
     getMyWallet() {
@@ -48,9 +46,6 @@ export default class MyWallet extends Component {
         return (
             <ScrollView contentContainerStyle={styles.frame}>
                 <View style={styles.content}>
-                    <Text onPress={
-                        ()=>this.setState({code:AsyncStorage.getItem('qrcode')})
-                    }>{this.state.code}</Text>
                     {this.state.load == false &&
                     <View>
                         <Image
@@ -117,16 +112,8 @@ export default class MyWallet extends Component {
                             지갑주소 : {this.state.walletList[this.state.currentWallet].addr}{'\n'}
                             보유 BTC : {this.state.walletList[this.state.currentWallet].btc}{'\n'}
                             QR 코드{'\n'}
-                            {this.state.walletList[this.state.currentWallet]
-                                .qrCode==(null||""||"none") &&
                             <Image source={require('../common/img/no.png')}
                                    style={styles.qrCode}/>
-                            }
-                            {this.state.walletList[this.state.currentWallet]
-                                .qrCode!=(null||""||"none") &&
-                            <Image source={require('../common/img/dollar.png')}
-                                   style={styles.qrCode}/>
-                            }
                         </Text>
                         }
 
