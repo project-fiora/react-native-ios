@@ -6,7 +6,7 @@ import {
     ScrollView,
     StyleSheet,
     Text, TouchableOpacity,
-    View, Image
+    View, Image, AsyncStorage
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import realm from '../common/realm';
@@ -21,6 +21,7 @@ export default class MyWallet extends Component {
             load: false,
             onClickBox: false,
             currentWallet: 0,
+            code:'1',
         };
     }
 
@@ -30,6 +31,7 @@ export default class MyWallet extends Component {
 
     componentDidMount() {
         this.getMyWallet();
+
     }
 
     getMyWallet() {
@@ -46,6 +48,9 @@ export default class MyWallet extends Component {
         return (
             <ScrollView contentContainerStyle={styles.frame}>
                 <View style={styles.content}>
+                    <Text onPress={
+                        ()=>this.setState({code:AsyncStorage.getItem('qrcode')})
+                    }>{this.state.code}</Text>
                     {this.state.load == false &&
                     <View>
                         <Image
