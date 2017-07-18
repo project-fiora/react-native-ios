@@ -8,20 +8,20 @@ import {Actions} from 'react-native-router-flux';
 import QRCodeScanner from "react-native-qrcode-scanner";
 
 export default class Scanner extends Component {
+    async onRead(){
+        alert('스캔 완료!\n' + obj.data + '\n지갑 주소를 확인하세요');
+        try {
+            await AsyncStorage.setItem('walletAddQrcodeTmp', obj.data.toString());
+        } catch (error) {
+            alert("스캔 후 저장 오류 : " + error);
+        }
+        Actions.main({goTo: 'myWalletAdd'});
+    }
+
     render() {
         return (
             <QRCodeScanner
-                onRead={(obj) => {
-                    alert('스캔 완료!\n' + obj.data + '\n지갑 주소를 확인하세요');
-
-                    try {
-                        AsyncStorage.setItem('walletAddQrcodeTmp', obj.data.toString());
-                    } catch (error) {
-                        // Error saving data
-                        alert("스캔 후 저장 오류 : " + error);
-                    }
-                    Actions.main({goTo: 'myWalletAdd'});
-                }}
+                onRead={(obj) => this.onRead()}
                 bottomContent={
                     <TouchableOpacity
                         style={styles.backBtn}
