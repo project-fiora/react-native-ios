@@ -6,7 +6,7 @@ import {
     Image,
     StyleSheet,
     Text, TouchableOpacity,
-    View,
+    View, AsyncStorage
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 
@@ -15,7 +15,7 @@ export default class More extends Component {
         return (
             <View>
                 <View style={styles.box}>
-                    <MoreBtn text="로그아웃" img={images.logout} goTo="title"/>
+                    <MoreBtn text="로그아웃" img={images.logout} goTo="logout"/>
                     <MoreBtn text="설정" img={images.option} goTo="option"/>
                     <MoreBtn text="공지사항" img={images.notice} goTo="notice"/>
                     <MoreBtn text="버전정보" img={images.version} goTo="version"/>
@@ -27,8 +27,9 @@ export default class More extends Component {
 }
 
 class MoreBtn extends Component {
-    goTo(part) {
-        if (part == 'title') {
+    async goTo(part) {
+        if (part == 'logout') {
+            await AsyncStorage.removeItem('Token');
             Actions.title();
         } else {
             Actions.main({goTo: part});

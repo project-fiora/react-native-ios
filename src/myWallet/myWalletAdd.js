@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 
 import {Actions} from 'react-native-router-flux';
+import PrivateAddr from "../common/private/address";
 
 export default class MyWalletAdd extends Component {
     constructor(props) {
@@ -21,7 +22,19 @@ export default class MyWalletAdd extends Component {
             name: '',
             addr: '',
         };
+        this.setToken();
         this.getWalletInfo();
+    }
+
+    async setToken(){
+        try {
+            const token = await AsyncStorage.getItem('Token');
+            if (token !== null){
+                this.setState({token:token});
+            }
+        } catch (err){
+            alert('토큰 정보 가져오기 실패! : '+error);
+        }
     }
 
     async getWalletInfo(){
@@ -50,6 +63,9 @@ export default class MyWalletAdd extends Component {
     }
 
     async addWallet() {
+        const token = JSON.parse(this.state.token).token;
+        console.log(token);
+
         if (this.state.name == "") {
             alert("지갑 이름을 입력하세요!");
             return false;
@@ -59,8 +75,34 @@ export default class MyWalletAdd extends Component {
         } else {
             try {
                 //post api call
-                await AsyncStorage.removeItem('walletAddNameTmp');
-                alert('지갑을 추가했습니다!');
+                fetch(PrivateAddr.getAddr()+'wallet/add', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    },
+                    body: JSON.stringify({
+                        walletName: this.state.name,
+                        walletAddr: this.state.addr,
+                    })
+                }).then((response) => {
+                    return response.json()
+                }).then((responseJson) => {
+                    console.log("responseJson");
+                    console.log(responseJson);
+                        if(responseJson.message=="SUCCESS"){
+                            alert('지갑을 추가했습니다!');
+                            Actions.main({goTo:'myWallet'});
+                        } else {
+                            alert('오류가 발생했습니다.\n다시 시도해주세요!');
+                        }
+                    })
+                    .catch((error) => {
+                        alert('Network Connection Failed');
+                        console.error(error);
+                    }).done();
+                await AsyncStorage.multiRemove(['walletAddNameTmp','walletAddQrcodeTmp']);
                 Actions.main({goTo: 'myWallet'});
             } catch (err) {
                 alert('지갑추가실패 : ' + err);

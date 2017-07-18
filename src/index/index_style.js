@@ -22,6 +22,13 @@ const styles = StyleSheet.create({
     loginContainer: { //wrapper
         alignItems: 'center',
     },
+    loadingIcon:{
+        position:'absolute',
+        top:'45%',
+        left:'45%',
+        width:50,
+        height:50,
+    },
     mainIcon: { //MEMBER LOG-IN Image
         width: 130,
         height: 130,

@@ -33,9 +33,7 @@ export default class MyWallet extends Component {
     }
 
     getMyWallet() {
-        let wallets = realm.objects('Wallet');
-        let myWallets = wallets.filtered('owner="' + this.state.email + '"');
-        this.setState({walletList: myWallets, load: true});
+        // this.setState({walletList: myWallets, load: true});
     }
 
     showWallet(i) {

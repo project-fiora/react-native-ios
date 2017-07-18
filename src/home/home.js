@@ -4,10 +4,9 @@
 import React, {Component} from 'react';
 import {
     Image, ScrollView, StyleSheet,
-    Text,
+    Text, AsyncStorage
 } from 'react-native';
 import realm from '../common/realm';
-import Common from "../common/common";
 
 export default class Home extends Component {
     constructor(props) {
@@ -17,16 +16,19 @@ export default class Home extends Component {
             refreshing:false,
             dollar: 2000,
             email:'boseokjung@gmail.com',
+            token:{},
         };
+    }
+
+    async componentDidMount(){
+        let token = await AsyncStorage.getItem('Token');
+        this.setState({token:token});
     }
 
     clearStorage(){
         try{
-            realm.write(() => {
-                // let allWallets = realm.objects('Wallet');
-                // realm.delete(allWallets);
-                realm.deleteAll();
-            });
+            AsyncStorage.clear();
+            realm.write(() => realm.deleteAll());
         }catch(err){
             alert("clear : "+err);
         }
@@ -46,7 +48,10 @@ export default class Home extends Component {
                 <Text style={styles.warningText2}>
                     모든 책임은 사용자 본인에게 있습니다 **
                 </Text>
-                <Text style={styles.btn} onPress={this.clearStorage}>앱 Realm Storage 초기화</Text>
+                <Text style={styles.btn} onPress={this.clearStorage}>앱 모든 Storage 삭제</Text>
+                <Text>{this.state.token.email}</Text>
+                <Text>{this.state.token.password}</Text>
+                <Text>{this.state.token.token}</Text>
             </ScrollView>
         );
     }

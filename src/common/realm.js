@@ -30,5 +30,15 @@ FriendWallet.schema = {
     }
 };
 
+class Token extends Realm.Object {}
+Token.schema = {
+    name: 'Token',
+    properties: {
+        email:'string',
+        password:'string',
+        token:'string'
+    }
+}
+
 var key = new Int8Array(64);
-export default new Realm({schema: [Wallet, FriendWallet], encryptionKey: key});
+export default new Realm({schema: [Wallet, FriendWallet, Token], encryptionKey: key});

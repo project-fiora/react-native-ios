@@ -5,11 +5,13 @@ import React, {Component} from 'react';
 import {
     Image,
     Text, TextInput, TouchableHighlight,
-    View
+    View, AsyncStorage
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import CheckBox from 'react-native-checkbox';
 import styles from './index_style';
+
+import PrivateAddr from "../common/private/address";
 
 
 export default class Login extends Component {
@@ -19,17 +21,65 @@ export default class Login extends Component {
         this.state = {
             currentPage: 'title',
             email: '',
-            passwd: ''
+            password: '',
+            autoLogin: false,
+            logining: false,
         };
     }
 
-    login() {
-        Actions.main({goTo: 'home'});
+    async componentWillMount(){
+        let token = await AsyncStorage.getItem('Token');
+        if(token!==null){
+            let tokens = JSON.parse(token);
+            if(tokens.autoLogin){
+                this.login(tokens.email, tokens.password);
+            }
+        }
     }
 
-    render(){
-        return(
+    login(email, password) {
+        this.setState({logining:true});
+        fetch(PrivateAddr.getAddr() + 'member/login', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
+        }).then((response) =>{
+            return response.json();
+        }).then((responseJson) => {
+            console.log(responseJson);  ////////
+            if (responseJson.message == "SUCCESS") {
+                try {
+                    AsyncStorage.setItem('Token', JSON.stringify({
+                        email: email,
+                        password: password,
+                        token:responseJson.jwtToken,
+                        autoLogin:this.state.autoLogin
+                    }));
+                    Actions.main({goTo: 'home'})
+                } catch (e) {
+                    alert("storage save fail : " + e);
+                }
+            } else {
+                alert('로그인에 실패했습니다!');
+            }
+        }).catch((error) => {
+            alert('Network Connection Failed');
+            console.error(error);
+        }).done(()=>this.setState({logining:false}));
+    }
+
+    render() {
+        return (
             <View style={styles.loginContainer}>
+                {this.state.logining == true &&
+                <Image source={require('../common/img/loading.gif')} style={styles.loadingIcon}/>
+                }
                 <Image source={require('../common/img/mainIcon.png')} style={styles.mainIcon}/>
                 <View style={styles.inputWrapper}>
                     <Image source={require('../common/img/user.png')} style={styles.inputTextIcon}/>
@@ -41,7 +91,7 @@ export default class Login extends Component {
                         keyboardType='email-address'
                         placeholder={'이메일 주소'}
                         placeholderTextColor="#FFFFFF"
-                        autoCapitalize = 'none'
+                        autoCapitalize='none'
                         maxLength={40}
                         multiline={false}
                         autoFocus={true}
@@ -52,8 +102,8 @@ export default class Login extends Component {
                     <Image source={require('../common/img/passwd.png')} style={styles.inputTextIcon}/>
                     <TextInput
                         style={styles.input}
-                        value={this.state.passwd}
-                        onChangeText={(pw) => this.setState({passwd: pw})}
+                        value={this.state.password}
+                        onChangeText={(pw) => this.setState({password: pw})}
                         placeholder={'비밀번호'}
                         placeholderTextColor="#FFFFFF"
                         secureTextEntry={true}
@@ -70,12 +120,14 @@ export default class Login extends Component {
                     checkedImage={require('../common/img/check.png')}
                     uncheckedImage={require('../common/img/un.png')}
                     underlayColor="transparent"
+                    checked={this.state.autoLogin}
+                    onChange={() => this.setState({autoLogin: !this.state.autoLogin})}
                 />
 
                 <TouchableHighlight
                     style={styles.button}
                     underlayColor={'#FFFFFF'}
-                    onPress={this.login}
+                    onPress={() => this.login(this.state.email, this.state.password)}
                 >
                     <Text style={styles.label}>LOGIN</Text>
                 </TouchableHighlight>
