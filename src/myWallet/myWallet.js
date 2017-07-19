@@ -9,7 +9,8 @@ import {
     View, Image, AsyncStorage
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
-import realm from '../common/realm';
+import QRCode from 'react-native-qrcode';
+import PrivateAddr from "../common/private/address";
 
 export default class MyWallet extends Component {
     constructor(props) {
@@ -18,6 +19,7 @@ export default class MyWallet extends Component {
         this.state = {
             walletList: [],
             email: 'boseokjung@gmail.com',
+            qrcode:'',
             load: false,
             onClickBox: false,
             currentWallet: 0,
@@ -32,8 +34,26 @@ export default class MyWallet extends Component {
         this.getMyWallet();
     }
 
-    getMyWallet() {
-        // this.setState({walletList: myWallets, load: true});
+    async getMyWallet() {
+        const tokens = await AsyncStorage.getItem('Token');
+        const token = JSON.parse(tokens).token;
+        fetch(PrivateAddr.getAddr()+"wallet/list", {method: 'GET', headers: {
+            "Authorization": token,
+            "Accept": "*/*",
+        }})
+            .then((response) => response.json())
+            .then((responseJson) => {
+            if(responseJson.message=="SUCCESS"){
+                    this.setState({walletList: responseJson.list, load:true});
+                    AsyncStorage.setItem('WalletList', JSON.stringify(responseJson.list));
+                } else {
+                    alert("지갑정보를 가져올 수 없습니다");
+                    return false;
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     }
 
     showWallet(i) {
@@ -70,7 +90,7 @@ export default class MyWallet extends Component {
                             <View style={styles.selectBoxWrapper}>
                                 <View style={styles.selectBoxRow}>
                                     <Text style={styles.selectBoxText}>
-                                        {this.state.walletList[this.state.currentWallet].name}
+                                        {this.state.walletList[this.state.currentWallet].wallet_name}
                                     </Text>
                                     <View style={styles.selectBoxIconWrapper}>
                                         <Text style={styles.selectIcon}>
@@ -93,7 +113,7 @@ export default class MyWallet extends Component {
                                                 <View style={styles.selectBoxWrapper}>
                                                     <View style={styles.selectBoxRow}>
                                                         <Text style={styles.selectBoxText}>
-                                                            {wallet.name}
+                                                            {wallet.wallet_name}
                                                         </Text>
                                                     </View>
                                                 </View>
@@ -103,22 +123,26 @@ export default class MyWallet extends Component {
                             }
                         })()}
                         {this.state.walletList.length != 0 &&
-                        <Text style={styles.contentText}>
-                            지갑번호 : {this.state.walletList[this.state.currentWallet].id}{'\n'}
-                            지갑이름 : {this.state.walletList[this.state.currentWallet].name}{'\n'}
-                            사이트 : {this.state.walletList[this.state.currentWallet].site}{'\n'}
-                            지갑주소 : {this.state.walletList[this.state.currentWallet].addr}{'\n'}
-                            보유 BTC : {this.state.walletList[this.state.currentWallet].btc}{'\n'}
-                            QR 코드{'\n'}
-                            <Image source={require('../common/img/no.png')}
-                                   style={styles.qrCode}/>
-                        </Text>
+                        <View>
+                            <Text style={styles.contentText}>
+                                지갑번호 : {this.state.walletList[this.state.currentWallet].wallet_Id}{'\n'}
+                                지갑이름 : {this.state.walletList[this.state.currentWallet].wallet_name}{'\n'}
+                                유형 : {this.state.walletList[this.state.currentWallet].wallet_type}{'\n'}
+                                지갑주소 : {this.state.walletList[this.state.currentWallet].wallet_add}{'\n'}
+                                QR 코드 ▼
+                            </Text>
+                            <QRCode
+                                value={this.state.qrcode}
+                                size={220}
+                                bgColor='black'
+                                fgColor='white'/>
+                        </View>
                         }
 
                     </View>
                     }
                 </View>
-            </ScrollView >
+            </ScrollView>
         );
     }
 }
@@ -140,7 +164,7 @@ const styles = StyleSheet.create({
         fontSize: 17,
         marginTop: 10,
         opacity: 0.8,
-        marginBottom: 20,
+        marginBottom: 5,
     },
     loadingIcon: {
         width: 30,
@@ -186,7 +210,7 @@ const styles = StyleSheet.create({
         opacity: 0.9,
     },
     qrCode: {
-        marginTop: 15,
+        marginTop: 5,
         width: 100,
         height: 100,
     },

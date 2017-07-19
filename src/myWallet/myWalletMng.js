@@ -8,10 +8,9 @@ import {
     ScrollView,
     StyleSheet,
     Text, TouchableHighlight,
-    View,
+    View, AsyncStorage
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
-import realm from '../common/realm';
 
 export default class MyWalletMng extends Component {
     constructor(props) {
@@ -24,17 +23,13 @@ export default class MyWalletMng extends Component {
         };
     }
 
-    componentDidMount() {
-        this.getMyWallet();
+    async componentWillMount(){
+        const wallets = await AsyncStorage.getItem('WalletList');
+        this.setState({walletList:JSON.parse(wallets), load:true});
     }
 
-    getMyWallet(){
-        let wallets = realm.objects('Wallet').filtered('owner="'+this.state.email+'"');
-        this.setState({walletList:wallets, load:true});
-    }
-
-    goTo(part, i, site) {
-        Actions.main({goTo: part, id:i, site:site});
+    goTo(id) {
+        Actions.main({goTo:'myWalletEdit', id:id});
     }
 
     render() {
@@ -48,7 +43,10 @@ export default class MyWalletMng extends Component {
                 }
                 {(this.state.load == true && this.state.walletList.length == 0) &&
                     <View>
-                        <Text style={styles.explain}>관리 할 지갑이 없어요!</Text>
+                        <Text style={styles.explain}>
+                            아직 지갑이 하나도 없어요!{'\n'}
+                            오른쪽 상단 지갑추가 버튼을 누르세요!
+                        </Text>
                     </View>
                 }
                 {(this.state.load == true && this.state.walletList.length != 0) &&
@@ -59,11 +57,11 @@ export default class MyWalletMng extends Component {
                             <TouchableHighlight
                                 style={styles.list}
                                 underlayColor={'#000000'}
-                                onPress={() => this.goTo('myWalletEdit', wallet.id, wallet.site)}
+                                onPress={() => this.goTo(wallet.wallet_Id)}
                                 key={i}
                             >
                                 <Text style={styles.listText}>
-                                    {wallet.name}
+                                    {wallet.wallet_name}
                                 </Text>
                             </TouchableHighlight>
                         );

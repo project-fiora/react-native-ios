@@ -114,7 +114,6 @@ export default class FriendWallet extends Component {
                             지갑주소 : {this.state.friendWalletList[this.state.currentWallet].addr}{'\n'}
                             보유 BTC : {this.state.friendWalletList[this.state.currentWallet].btc}{'\n'}
                             QR 코드{'\n'}
-                            <Image source={require('../common/img/no.png')} style={styles.qrCode}/>
                         </Text>
                         }
 

@@ -4,102 +4,162 @@
 
 import React, {Component} from 'react';
 import {
-    StyleSheet, Alert,
+    StyleSheet, Alert, AsyncStorage,
     Text, TextInput, TouchableHighlight, View, TouchableOpacity,
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
-import realm from '../common/realm';
-import Common from "../common/common";
+import PrivateAddr from "../common/private/address";
 
 export default class MyWalletEdit extends Component {
     constructor(props) {
         super(props);
 
-        console.log("props.id"+this.props.id);
         this.state = {
-            onClickBox:false,
-            id:this.props.id,
             name: '',
-            addr:'',
-            email: 'boseokjung@gmail.com',
-            passwd: '',
-            myWallet:[{id:'', name:'',owner:'',site:'',addr:''}],
-            site:this.props.site,
-            siteList:[
-                { site:'coinone.co.kr'},
-                { site:'bithumb.com‎'},
-                { site:'korbit.co.kr'},
-            ],
+            addr: '',
+            wallet: {},
+            onClickBox: false,
+            TYPE: ['BTC', 'ETH', 'ETC', 'XRP', 'LTC', 'DASH'],
+            currentTYPE: 0,
+            token: '',
         };
-
+        this.getToken();
     }
 
-    componentDidMount(){
+    componentDidMount() {
         this.getMyWallet();
     }
 
-    getMyWallet(){
-        let myWallet = realm.objects('Wallet').filtered('owner=="'+this.state.email+'" AND id=='+this.props.id);
-        this.setState({myWallet:myWallet, load:true});
+    async getToken() {
+        const tokens = await AsyncStorage.getItem('Token');
+        this.setState({token: JSON.parse(tokens).token});
     }
 
-    removeWallet(){
+    async getMyWallet() {
+        fetch(PrivateAddr.getAddr() + "wallet/info?WalletId=" + this.props.id, {
+            method: 'GET', headers: {
+                "Authorization": this.state.token,
+                "Accept": "*/*",
+            }
+        })
+            .then((response) => response.json())
+            .then((responseJson) => {
+                if (responseJson.message == "SUCCESS") {
+                    const type = responseJson.wallet.wallet_type;
+                    for (var i = 0; i < this.state.TYPE.length; i++) {
+                        if (this.state.TYPE[i] == type) {
+                            this.setState({
+                                wallet: responseJson.wallet,
+                                id: responseJson.wallet.wallet_Id,
+                                name: responseJson.wallet.wallet_name,
+                                addr: responseJson.wallet.wallet_add,
+                                currentTYPE: i,
+                                load: true
+                            });
+                        }
+                    }
+
+
+                } else {
+                    alert("지갑정보를 가져올 수 없습니다");
+                    return false;
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    }
+
+    async removeWallet() {
         Alert.alert(
             '경고!',
             '지갑이 삭제됩니다.\n정말 지우실건가요!?',
             [
-                {text: 'Cancel', onPress: () => {return false}, style: 'cancel'},
-                {text: 'OK', onPress: () => {
-                    realm.write(() => {
-                        try{
-                            let myWallet = realm.objects('Wallet').filtered('owner=="'+this.state.email+'" AND id=='+parseInt(this.state.id));
-                            realm.delete(myWallet);
-                            alert('삭제 성공!');
-                            Actions.main({goTo:'myWallet'});
-                        } catch(err){
-                            alert('삭제실패 '+err);
-                            return false;
-                        }
-                    });
-                }},
+                {
+                    text: 'Cancel', onPress: () => {
+                    return false
+                }, style: 'cancel'
+                },
+                {
+                    text: 'OK', onPress: () => {
+                    try {
+                        //지갑 삭제하기
+                        fetch(PrivateAddr.getAddr() + "wallet/delete?WalletId=" + this.props.id, {
+                            method: 'DELETE', headers: {
+                                "Authorization": this.state.token,
+                                "Accept": "*/*",
+                            }
+                        })
+                            .then((response) => response.json())
+                            .then((responseJson) => {
+                                if (responseJson.message == "SUCCESS") {
+                                    alert("지갑을 삭제했습니다");
+                                } else {
+                                    alert("지갑 삭제 실패");
+                                    return false;
+                                }
+                            })
+                            .catch((error) => {
+                                console.error(error);
+                            });
+                        Actions.main({goTo: 'myWallet'});
+                    } catch (err) {
+                        alert('삭제실패 ' + err);
+                        return false;
+                    }
+                }
+                },
             ],
-            { cancelable: false }
+            {cancelable: false}
         )
     }
 
-    editWallet(){
-        if(this.state.myWallet[0].name==""){
+    editWallet() {
+        if (this.state.name == "") {
             alert('지갑 이름을 입력하세요!');
             return false;
-        } else if(this.state.myWallet[0].addr==""){
+        } else if (this.state.addr == "") {
             alert('지갑 주소를 입력하세요!');
             return false;
         } else {
-            console.log("owner:"+this.state.myWallet[0].owner);
-            realm.write(() => {
-                try{
-                    realm.create('Wallet', {
-                        id: Common.generateWalletId(),
-                        owner: this.state.myWallet[0].owner,
-                        name: this.state.myWallet[0].name,
-                        site: this.state.site,
-                        addr: this.state.myWallet[0].addr,
-                    }, true);
-                    let myWallet = realm.objects('Wallet')
-                                        .filtered('owner=="'+this.state.email+'" AND id=='+this.props.id);
-                    realm.delete(myWallet);
-                    alert('수정 성공!');
-                    Actions.main({goTo:'myWallet'});
-                } catch(err){
-                    alert('수정실패 '+err);
-                    return false;
-                }
-            });
+            try {
+                fetch(PrivateAddr.getAddr() + 'wallet/edit', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': this.state.token
+                    },
+                    body: JSON.stringify({
+                        walletId: this.props.id,
+                        walletName: this.state.name,
+                        walletAddr: this.state.addr,
+                        // walletType: this.state.TYPE[this.state.currentTYPE],
+                    })
+                }).then((response) => {
+                    return response.json()
+                })
+                    .then((responseJson) => {
+                        if (responseJson.message == "SUCCESS") {
+                            alert('지갑 수정 성공!');
+                            Actions.main({goTo: 'myWallet'});
+                        } else {
+                            alert('오류가 발생했습니다.\n다시 시도해주세요!');
+                        }
+                    })
+                    .catch((error) => {
+                        alert('Network Connection Failed');
+                        console.error(error);
+                    }).done();
+
+            } catch (err) {
+                alert('수정실패 ' + err);
+                return false;
+            }
         }
     }
 
-    setSite(site) {
-        this.setState({site:site, onClickBox: !this.state.onClickBox});
+    setType(i) {
+        this.setState({currentTYPE: i, onClickBox: !this.state.onClickBox});
     }
 
     render() {
@@ -108,22 +168,16 @@ export default class MyWalletEdit extends Component {
                 <Text style={styles.explain}>여기에서 지갑 정보를 수정해보세요!</Text>
                 <TextInput
                     style={styles.inputWalletName}
-                    value={this.state.myWallet[0].name}
-                    onChangeText={(name) => {
-                        var stateCopy = Object.assign({}, this.state);
-                        stateCopy.myWallet = stateCopy.myWallet.slice();
-                        stateCopy.myWallet[0] = Object.assign({}, stateCopy.myWallet[0]);
-                        stateCopy.myWallet[0].name = name;
-                        this.setState(stateCopy);
-                    }}
+                    value={this.state.name}
+                    onChangeText={(name) => this.setState({name: name})}
                     placeholder={'지갑 이름'}
                     placeholderTextColor="#FFFFFF"
-                    autoCapitalize = 'none'
+                    autoCapitalize='none'
                     maxLength={10}
                     multiline={false}
                 />
-                <Text style={styles.selectSiteText}>사이트를 선택하세요!</Text>
                 {/*-------------SELECT BOX START---------------*/}
+                <Text style={styles.explain2}>아래 버튼을 눌러서 지갑 유형을 선택하세요!</Text>
                 <TouchableOpacity
                     underlayColor={'#AAAAAA'}
                     onPress={() => this.setState({onClickBox: !this.state.onClickBox})}
@@ -131,7 +185,7 @@ export default class MyWalletEdit extends Component {
                     <View style={styles.selectBoxWrapper}>
                         <View style={styles.selectBoxRow}>
                             <Text style={styles.selectBoxText}>
-                                {this.state.site}
+                                {this.state.TYPE[this.state.currentTYPE]}
                             </Text>
                             <View style={styles.selectBoxIconWrapper}>
                                 <Text style={styles.selectIcon}>
@@ -143,18 +197,17 @@ export default class MyWalletEdit extends Component {
                 </TouchableOpacity>
                 {(() => {
                     if (this.state.onClickBox == true) {
-                        return this.state.siteList.map((site, i) => {
-                            // if (this.state.currentSite != i)
+                        return this.state.TYPE.map((type, i) => {
                             return (
                                 <TouchableOpacity
                                     underlayColor={'#AAAAAA'}
-                                    onPress={() => this.setSite(site.site)}
+                                    onPress={() => this.setType(i)}
                                     key={i}
                                 >
                                     <View style={styles.selectBoxWrapper}>
                                         <View style={styles.selectBoxRow}>
                                             <Text style={styles.selectBoxText}>
-                                                {site.site}
+                                                {type}
                                             </Text>
                                         </View>
                                     </View>
@@ -166,17 +219,11 @@ export default class MyWalletEdit extends Component {
                 {/*-------------SELECT BOX END---------------*/}
                 <TextInput
                     style={styles.inputWalletAddr}
-                    value={this.state.myWallet[0].addr}
-                    onChangeText={(addr) => {
-                        var stateCopy = Object.assign({}, this.state);
-                        stateCopy.myWallet = stateCopy.myWallet.slice();
-                        stateCopy.myWallet[0] = Object.assign({}, stateCopy.myWallet[0]);
-                        stateCopy.myWallet[0].addr = addr;
-                        this.setState(stateCopy);
-                    }}
+                    value={this.state.addr}
+                    onChangeText={(addr) => this.setState({addr: addr})}
                     placeholder={'지갑 주소'}
                     placeholderTextColor="#FFFFFF"
-                    autoCapitalize = 'none'
+                    autoCapitalize='none'
                     maxLength={200}
                     multiline={false}
                 />
@@ -218,36 +265,42 @@ export default class MyWalletEdit extends Component {
 // );
 
 const styles = StyleSheet.create({
-    frame:{
+    frame: {
         alignItems: 'center',
-        paddingBottom:85,
+        paddingBottom: 85,
     },
-    explain:{
-        color:'#FFFFFF',
-        opacity:0.8,
-        fontSize:15,
-        margin:15,
+    explain: {
+        color: '#FFFFFF',
+        opacity: 0.8,
+        fontSize: 15,
+        margin: 15,
     },
-    inputWalletName:{
-        width:220,
+    inputWalletName: {
+        width: 220,
         height: 50,
         fontSize: 15,
-        color:'#FFFFFF',
+        color: '#FFFFFF',
         borderColor: '#FFFFFF',
         borderWidth: 1,
         borderRadius: 15,
         alignSelf: 'center',
         backgroundColor: '#000000',
-        opacity:0.3,
-        marginBottom:5,
-        paddingLeft:20,
+        opacity: 0.3,
+        marginBottom: 5,
+        paddingLeft: 20,
+    },
+    explain2: {
+        color: '#FFFFFF',
+        opacity: 0.8,
+        fontSize: 15,
+        margin: 15,
     },
     selectBoxWrapper: {
         alignSelf: 'center',
         justifyContent: 'center',
         backgroundColor: '#000000',
         width: 220,
-        height: 40,
+        height: 35,
         opacity: 0.4,
         borderColor: '#FFFFFF',
         borderWidth: 1,
@@ -262,32 +315,32 @@ const styles = StyleSheet.create({
     selectBoxText: {
         alignSelf: 'flex-start',
         color: '#FFFFFF',
-        fontSize: 15,
+        fontSize: 17,
     },
     selectBoxIconWrapper: {
         alignItems: 'flex-end',
     },
     selectIcon: {
         color: '#FFFFFF',
-        fontSize: 15,
+        fontSize: 17,
         opacity: 0.9,
     },
-    inputWalletAddr:{
-        width:320,
+    inputWalletAddr: {
+        width: 320,
         height: 45,
         fontSize: 13,
-        color:'#FFFFFF',
+        color: '#FFFFFF',
         borderColor: '#FFFFFF',
         borderWidth: 1,
         borderRadius: 15,
         alignSelf: 'center',
         backgroundColor: '#000000',
-        opacity:0.3,
-        marginTop:10,
-        marginBottom:5,
-        paddingLeft:12,
+        opacity: 0.3,
+        marginTop: 10,
+        marginBottom: 5,
+        paddingLeft: 12,
     },
-    removeBtn:{
+    removeBtn: {
         width: 80,
         height: 30,
         borderWidth: 1,
@@ -295,13 +348,13 @@ const styles = StyleSheet.create({
         borderColor: '#FFFFFF',
         padding: 5,
         alignItems: 'center',
-        justifyContent:'center',
-        opacity:0.6
+        justifyContent: 'center',
+        opacity: 0.6
     },
     rightBtn: {
-        position:'absolute',
-        top:-45,
-        right:15,
+        position: 'absolute',
+        top: -45,
+        right: 15,
         width: 80,
         height: 30,
         borderWidth: 1,
@@ -309,8 +362,8 @@ const styles = StyleSheet.create({
         borderColor: '#FFFFFF',
         padding: 5,
         alignItems: 'center',
-        justifyContent:'center',
-        opacity:0.6
+        justifyContent: 'center',
+        opacity: 0.6
     },
     rightBtnText: {
         color: '#FFFFFF',

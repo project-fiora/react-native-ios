@@ -18,37 +18,39 @@ export default class MyWalletAdd extends Component {
         super(props);
 
         this.state = {
-            email: 'boseokjung@gmail.com',
             name: '',
             addr: '',
+            onClickBox: false,
+            TYPE: ['BTC', 'ETH', 'ETC', 'XRP', 'LTC', 'DASH'],
+            currentTYPE: 0,
         };
         this.setToken();
         this.getWalletInfo();
     }
 
-    async setToken(){
+    async setToken() {
         try {
             const token = await AsyncStorage.getItem('Token');
-            if (token !== null){
-                this.setState({token:token});
+            if (token !== null) {
+                this.setState({token: token});
             }
-        } catch (err){
-            alert('토큰 정보 가져오기 실패! : '+error);
+        } catch (err) {
+            alert('토큰 정보 가져오기 실패! : ' + err);
         }
     }
 
-    async getWalletInfo(){
+    async getWalletInfo() {
         try {
             const code = await AsyncStorage.getItem('walletAddQrcodeTmp');
-            if (code !== null){
-                this.setState({addr:code});
+            if (code !== null) {
+                this.setState({addr: code});
             }
             const name = await AsyncStorage.getItem('walletAddNameTmp');
-            if (name !== null){
-                this.setState({name:name});
+            if (name !== null) {
+                this.setState({name: name});
             }
         } catch (error) {
-            alert('지갑 정보 가져오기 실패! : '+error);
+            alert('지갑 정보 가져오기 실패! : ' + error);
         }
     }
 
@@ -57,15 +59,13 @@ export default class MyWalletAdd extends Component {
             await AsyncStorage.setItem('walletAddNameTmp', this.state.name);
             Actions.scanner();
         } catch (error) {
-            alert("지갑 이름 저장 오류 : "+error);
+            alert("지갑 이름 저장 오류 : " + error);
         }
 
     }
 
     async addWallet() {
         const token = JSON.parse(this.state.token).token;
-        console.log(token);
-
         if (this.state.name == "") {
             alert("지갑 이름을 입력하세요!");
             return false;
@@ -75,7 +75,7 @@ export default class MyWalletAdd extends Component {
         } else {
             try {
                 //post api call
-                fetch(PrivateAddr.getAddr()+'wallet/add', {
+                fetch(PrivateAddr.getAddr() + 'wallet/add', {
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json',
@@ -85,29 +85,32 @@ export default class MyWalletAdd extends Component {
                     body: JSON.stringify({
                         walletName: this.state.name,
                         walletAddr: this.state.addr,
+                        walletType: this.state.TYPE[this.state.currentTYPE],
                     })
                 }).then((response) => {
                     return response.json()
                 }).then((responseJson) => {
-                    console.log("responseJson");
-                    console.log(responseJson);
-                        if(responseJson.message=="SUCCESS"){
-                            alert('지갑을 추가했습니다!');
-                            Actions.main({goTo:'myWallet'});
-                        } else {
-                            alert('오류가 발생했습니다.\n다시 시도해주세요!');
-                        }
-                    })
+                    if (responseJson.message == "SUCCESS") {
+                        alert('지갑을 추가했습니다!');
+                        Actions.main({goTo: 'myWallet'});
+                    } else {
+                        alert('오류가 발생했습니다.\n다시 시도해주세요!');
+                    }
+                })
                     .catch((error) => {
                         alert('Network Connection Failed');
                         console.error(error);
                     }).done();
-                await AsyncStorage.multiRemove(['walletAddNameTmp','walletAddQrcodeTmp']);
+                await AsyncStorage.multiRemove(['walletAddNameTmp', 'walletAddQrcodeTmp']);
                 Actions.main({goTo: 'myWallet'});
             } catch (err) {
                 alert('지갑추가실패 : ' + err);
             }
         }
+    }
+
+    setType(i) {
+        this.setState({currentTYPE: i, onClickBox: !this.state.onClickBox});
     }
 
     render() {
@@ -125,6 +128,47 @@ export default class MyWalletAdd extends Component {
                         maxLength={20}
                         multiline={false}
                     />
+                    {/*////////////////////////////////////////////////////////////////////////////////*/}
+                    <Text style={styles.explain2}>아래 버튼을 눌러서 지갑 유형을 선택하세요!</Text>
+                    <TouchableOpacity
+                        underlayColor={'#AAAAAA'}
+                        onPress={() => this.setState({onClickBox: !this.state.onClickBox})}
+                    >
+                        <View style={styles.selectBoxWrapper}>
+                            <View style={styles.selectBoxRow}>
+                                <Text style={styles.selectBoxText}>
+                                    {this.state.TYPE[this.state.currentTYPE]}
+                                </Text>
+                                <View style={styles.selectBoxIconWrapper}>
+                                    <Text style={styles.selectIcon}>
+                                        ▼
+                                    </Text>
+                                </View>
+                            </View>
+                        </View>
+                    </TouchableOpacity>
+                    {(() => {
+                        if (this.state.onClickBox == true) {
+                            return this.state.TYPE.map((type, i) => {
+                                return (
+                                    <TouchableOpacity
+                                        underlayColor={'#AAAAAA'}
+                                        onPress={() => this.setType(i)}
+                                        key={i}
+                                    >
+                                        <View style={styles.selectBoxWrapper}>
+                                            <View style={styles.selectBoxRow}>
+                                                <Text style={styles.selectBoxText}>
+                                                    {type}
+                                                </Text>
+                                            </View>
+                                        </View>
+                                    </TouchableOpacity>
+                                );
+                            })
+                        }
+                    })()}
+                    {/*////////////////////////////////////////////////////////////////////////////////*/}
                     <TextInput
                         style={styles.inputWalletAddr}
                         value={this.state.addr}
@@ -184,6 +228,42 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         paddingLeft: 15,
     },
+    explain2: {
+        color: '#FFFFFF',
+        opacity: 0.8,
+        fontSize: 15,
+        margin: 15,
+    },
+    selectBoxWrapper: {
+        alignSelf: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#000000',
+        width: 230,
+        height: 35,
+        opacity: 0.4,
+        borderColor: '#FFFFFF',
+        borderWidth: 1,
+        borderRadius: 10,
+        paddingLeft: 17,
+        paddingRight: 15,
+    },
+    selectBoxRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    selectBoxText: {
+        alignSelf: 'flex-start',
+        color: '#FFFFFF',
+        fontSize: 17,
+    },
+    selectBoxIconWrapper: {
+        alignItems: 'flex-end',
+    },
+    selectIcon: {
+        color: '#FFFFFF',
+        fontSize: 17,
+        opacity: 0.9,
+    },
     inputWalletAddr: {
         width: 230,
         height: 45,
@@ -195,6 +275,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         backgroundColor: '#000000',
         opacity: 0.3,
+        marginTop: 10,
         marginBottom: 10,
         paddingLeft: 15,
     },
