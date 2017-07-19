@@ -169,6 +169,10 @@ export default class MyWalletAdd extends Component {
                         }
                     })()}
                     {/*////////////////////////////////////////////////////////////////////////////////*/}
+                    <Text style={styles.explain2}>
+                        순수한 지갑 주소만 입력해주세요{'\n'}
+                        예)0x6b83f808fce08f51adb2e9e
+                    </Text>
                     <TextInput
                         style={styles.inputWalletAddr}
                         value={this.state.addr}

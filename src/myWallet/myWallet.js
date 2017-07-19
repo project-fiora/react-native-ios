@@ -19,32 +19,35 @@ export default class MyWallet extends Component {
         this.state = {
             walletList: [],
             email: 'boseokjung@gmail.com',
-            qrcode:'',
+            qrcode: '',
             load: false,
             onClickBox: false,
             currentWallet: 0,
+            balance: '',
         };
-    }
-
-    goTo(part) {
-        Actions.main({goTo: part});
     }
 
     componentDidMount() {
         this.getMyWallet();
     }
 
+    goTo(part) {
+        Actions.main({goTo: part});
+    }
+
     async getMyWallet() {
         const tokens = await AsyncStorage.getItem('Token');
         const token = JSON.parse(tokens).token;
-        fetch(PrivateAddr.getAddr()+"wallet/list", {method: 'GET', headers: {
-            "Authorization": token,
-            "Accept": "*/*",
-        }})
+        fetch(PrivateAddr.getAddr() + "wallet/list", {
+            method: 'GET', headers: {
+                "Authorization": token,
+                "Accept": "*/*",
+            }
+        })
             .then((response) => response.json())
             .then((responseJson) => {
-            if(responseJson.message=="SUCCESS"){
-                    this.setState({walletList: responseJson.list, load:true});
+                if (responseJson.message == "SUCCESS") {
+                    this.setState({walletList: responseJson.list});
                     AsyncStorage.setItem('WalletList', JSON.stringify(responseJson.list));
                 } else {
                     alert("지갑정보를 가져올 수 없습니다");
@@ -53,11 +56,94 @@ export default class MyWallet extends Component {
             })
             .catch((error) => {
                 console.error(error);
+            })
+            .done(() => {
+                this.callGetBalance();
             });
     }
 
+    async callGetBalance() {
+        var type = this.state.walletList[this.state.currentWallet].wallet_type;
+        var current = this.state.walletList[this.state.currentWallet].wallet_add;
+        if (type == 'BTC') {
+            fetch("https://chain.api.btc.com/v3/address/" + current)
+                .then((response) => response.json())
+                .then((responseJson) => {
+                    if (responseJson.data != null) {
+                        this.setState({balance: responseJson.data.balance, load: true});
+                    } else {
+                        this.setState({balance: '지갑주소 or 잔액조회 api 오류', load: true});
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        } else if (type == 'ETH') {
+            fetch("https://api.etherscan.io/api?module=account&action=balance&address=" + current)
+                .then((response) => response.json())
+                .then((responseJson) => {
+                    this.setState({balance: responseJson.result, load: true});
+                    alert('잔액이 이상하면 지갑 주소를 확인해보세요!');
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        } else if (type == 'ETC') {
+            fetch("https://etcchain.com/api/v1/getAddressBalance?address=" + current)
+                .then((response) => response.json())
+                .then((responseJson) => {
+                    if (responseJson.balance != null || responseJson.balance != undefined) {
+                        this.setState({balance: responseJson.balance, load: true});
+                    } else {
+                        this.setState({balance: '지갑주소 or 잔액조회 api 오류', load: true});
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        } else if (type == 'XRP') {
+            fetch("https://data.ripple.com/v2/accounts/" + current + "/balances")
+                .then((response) => response.json())
+                .then((responseJson) => {
+                    if (responseJson != null) {
+                        if (responseJson.result == 'success')
+                            this.setState({balance: responseJson.balances[0].value, load: true});
+                        else
+                            this.setState({balance: '지갑주소 오류', load: true});
+                    } else {
+                        this.setState({balance: '잔액조회 api 오류', load: true});
+                    }
+
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+
+        } else if (type == 'LTC') {
+
+            /////////////수정해야함////////////////////////////
+            // this.getBalance("http://ltc.blockr.io/api/v1/address/balance/" + current);
+            /////////////수정해야함////////////////////////////
+
+
+        } else if (type == 'DASH') {
+            fetch("https://api.blockcypher.com/v1/dash/main/addrs/" + current + "/balance")
+                .then((response) => response.json())
+                .then((responseJson) => {
+                    if (responseJson.balance!=null) {
+                        this.setState({balance: responseJson.balance, load: true});
+                    } else {
+                        this.setState({balance: '지갑주소 or 잔액조회 api 오류', load: true});
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        }
+    }
+
     showWallet(i) {
-        this.setState({currentWallet: i, onClickBox: !this.state.onClickBox});
+        this.setState({currentWallet: i, onClickBox: !this.state.onClickBox},()=>{this.callGetBalance()});
     }
 
     render() {
@@ -129,6 +215,7 @@ export default class MyWallet extends Component {
                                 지갑이름 : {this.state.walletList[this.state.currentWallet].wallet_name}{'\n'}
                                 유형 : {this.state.walletList[this.state.currentWallet].wallet_type}{'\n'}
                                 지갑주소 : {this.state.walletList[this.state.currentWallet].wallet_add}{'\n'}
+                                잔액 : {this.state.balance}{'\n'}
                                 QR 코드 ▼
                             </Text>
                             <QRCode

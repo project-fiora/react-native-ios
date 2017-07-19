@@ -32,7 +32,7 @@ export default class Login extends Component {
         if(token!==null){
             let tokens = JSON.parse(token);
             if(tokens.autoLogin){
-                this.login(tokens.email, tokens.password);
+                this.setState({autoLogin:true},()=>this.login(tokens.email, tokens.password));
             }
         }
     }

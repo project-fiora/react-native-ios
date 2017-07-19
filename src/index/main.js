@@ -27,6 +27,8 @@ import Coinmarketcap from "../price/coinmarketcap";
 import Cryptocompare from '../price/cryptocompare';
 
 import More from '../more/more';
+import ExchangeLink from '../more/exchangeLink';
+import ExchangeSite from '../more/exchangeSite';
 import Option from '../more/option/option';
 import OptionDetail from "../more/option/optionDetail";
 
@@ -108,6 +110,14 @@ export default class Main extends Component {
             this.setState({
                 title:'더보기'
             });
+        } else if(p=='exchangeLink'){
+            this.setState({
+                title:'거래소 바로가기',
+                enableBackBtn:true, backBtnGoTo:'more'});
+        } else if(p=='exchangeSite'){
+            this.setState({
+                title:this.props.siteName,
+                enableBackBtn:true, backBtnGoTo:'exchangeLink'});
         } else if(p=='option'){
             this.setState({
                 title:'옵션',
@@ -173,6 +183,8 @@ export default class Main extends Component {
                     {this.props.goTo === 'exchange' && <Exchange/>}
 
                     {this.props.goTo === 'more' && <More/>}
+                        {this.props.goTo === 'exchangeLink' && <ExchangeLink/>}
+                            {this.props.goTo === 'exchangeSite' && <ExchangeSite link={this.props.link}/>}
                         {this.props.goTo === 'option' && <Option/>}
                             {this.props.goTo === 'optionDetail' && <OptionDetail/>}
                         {this.props.goTo === 'notice' && <Notice/>}

@@ -16,6 +16,7 @@ export default class More extends Component {
             <View>
                 <View style={styles.box}>
                     <MoreBtn text="로그아웃" img={images.logout} goTo="logout"/>
+                    <MoreBtn text="거래소 바로가기" img={images.exchange} goTo="exchangeLink"/>
                     <MoreBtn text="설정" img={images.option} goTo="option"/>
                     <MoreBtn text="공지사항" img={images.notice} goTo="notice"/>
                     <MoreBtn text="버전정보" img={images.version} goTo="version"/>
@@ -56,6 +57,7 @@ class MoreBtn extends Component {
 
 const images = {
     logout: require('../common/img/logout.png'),
+    exchange: require('../common/img/exchange2.png'),
     option: require('../common/img/option.png'),
     notice: require('../common/img/notice.png'),
     version: require('../common/img/version.png'),

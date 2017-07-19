@@ -133,7 +133,7 @@ export default class MyWalletEdit extends Component {
                         walletId: this.props.id,
                         walletName: this.state.name,
                         walletAddr: this.state.addr,
-                        // walletType: this.state.TYPE[this.state.currentTYPE],
+                        walletType: this.state.TYPE[this.state.currentTYPE],
                     })
                 }).then((response) => {
                     return response.json()

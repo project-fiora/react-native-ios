@@ -88,11 +88,8 @@ export default class Cryptocompare extends Component {
                             <View style={styles.th2}>
                                 <Text style={styles.htxt}>{tableHead[1]}</Text>
                             </View>
-                            <View style={styles.th3}>
-                                <Text style={styles.htxt}>{tableHead[2]}</Text>
-                            </View>
-                            <View style={styles.th4}>
-                                <Text style={styles.htxt}>{tableHead[3]}</Text>
+                            <View style={styles.th6}>
+                                <Text style={styles.htxt}>{tableHead[5]}</Text>
                             </View>
                         </View>
                         <View style={styles.tr}>
@@ -102,11 +99,10 @@ export default class Cryptocompare extends Component {
                             <View style={styles.td2}>
                                 <Text style={styles.txt}>{this.state.cryptoList.BTC.KRW.PRICE}</Text>
                             </View>
-                            <View style={styles.td3}>
-                                <Text style={styles.txt}>{(parseFloat(this.state.cryptoList.BTC.USD.PRICE)*parseFloat(this.state.rate)).toFixed(2)}</Text>
-                            </View>
-                            <View style={styles.td4}>
-                                <Text style={styles.txt}>{(this.state.cryptoList.BTC.USD.PRICE).toFixed(1)}</Text>
+                            <View style={styles.td6}>
+                                <Text style={styles.txt}>
+                                    {this.state.cryptoList.BTC.BTC.PRICE}
+                                </Text>
                             </View>
                         </View>
                         <View style={styles.tr}>
@@ -116,11 +112,10 @@ export default class Cryptocompare extends Component {
                             <View style={styles.td2}>
                                 <Text style={styles.txt}>{this.state.cryptoList.ETH.KRW.PRICE}</Text>
                             </View>
-                            <View style={styles.td3}>
-                                <Text style={styles.txt}>{(parseFloat(this.state.cryptoList.ETH.USD.PRICE)*parseFloat(this.state.rate)).toFixed(2)}</Text>
-                            </View>
-                            <View style={styles.td4}>
-                                <Text style={styles.txt}>{(this.state.cryptoList.ETH.USD.PRICE).toFixed(1)}</Text>
+                            <View style={styles.td6}>
+                                <Text style={styles.txt}>
+                                    {this.state.cryptoList.ETH.BTC.PRICE}
+                                </Text>
                             </View>
                         </View>
                         <View style={styles.tr}>
@@ -130,11 +125,10 @@ export default class Cryptocompare extends Component {
                             <View style={styles.td2}>
                                 <Text style={styles.txt}>{this.state.cryptoList.ETC.KRW.PRICE}</Text>
                             </View>
-                            <View style={styles.td3}>
-                                <Text style={styles.txt}>{(parseFloat(this.state.cryptoList.ETC.USD.PRICE)*parseFloat(this.state.rate)).toFixed(2)}</Text>
-                            </View>
-                            <View style={styles.td4}>
-                                <Text style={styles.txt}>{(this.state.cryptoList.ETC.USD.PRICE).toFixed(1)}</Text>
+                            <View style={styles.td6}>
+                                <Text style={styles.txt}>
+                                    {this.state.cryptoList.ETC.BTC.PRICE}
+                                </Text>
                             </View>
                         </View>
                         <View style={styles.tr}>
@@ -144,11 +138,10 @@ export default class Cryptocompare extends Component {
                             <View style={styles.td2}>
                                 <Text style={styles.txt}>{this.state.cryptoList.XRP.KRW.PRICE}</Text>
                             </View>
-                            <View style={styles.td3}>
-                                <Text style={styles.txt}>{(parseFloat(this.state.cryptoList.XRP.USD.PRICE)*parseFloat(this.state.rate)).toFixed(2)}</Text>
-                            </View>
-                            <View style={styles.td4}>
-                                <Text style={styles.txt}>{(this.state.cryptoList.XRP.USD.PRICE).toFixed(1)}</Text>
+                            <View style={styles.td6}>
+                                <Text style={styles.txt}>
+                                    {this.state.cryptoList.XRP.BTC.PRICE}
+                                </Text>
                             </View>
                         </View>
                         <View style={styles.tr}>
@@ -158,11 +151,10 @@ export default class Cryptocompare extends Component {
                             <View style={styles.td2}>
                                 <Text style={styles.txt}>{this.state.cryptoList.LTC.KRW.PRICE}</Text>
                             </View>
-                            <View style={styles.td3}>
-                                <Text style={styles.txt}>{(parseFloat(this.state.cryptoList.LTC.USD.PRICE)*parseFloat(this.state.rate)).toFixed(2)}</Text>
-                            </View>
-                            <View style={styles.td4}>
-                                <Text style={styles.txt}>{(this.state.cryptoList.LTC.USD.PRICE).toFixed(1)}</Text>
+                            <View style={styles.td6}>
+                                <Text style={styles.txt}>
+                                    {this.state.cryptoList.LTC.BTC.PRICE}
+                                </Text>
                             </View>
                         </View>
                         <View style={styles.tr}>
@@ -172,11 +164,10 @@ export default class Cryptocompare extends Component {
                             <View style={styles.td2}>
                                 <Text style={styles.txt}>{this.state.cryptoList.DASH.KRW.PRICE}</Text>
                             </View>
-                            <View style={styles.td3}>
-                                <Text style={styles.txt}>{(parseFloat(this.state.cryptoList.DASH.USD.PRICE)*parseFloat(this.state.rate)).toFixed(2)}</Text>
-                            </View>
-                            <View style={styles.td4}>
-                                <Text style={styles.txt}>{(this.state.cryptoList.DASH.USD.PRICE).toFixed(1)}</Text>
+                            <View style={styles.td6}>
+                                <Text style={styles.txt}>
+                                    {parseFloat(this.state.cryptoList.DASH.BTC.PRICE).toFixed(8)}
+                                </Text>
                             </View>
                         </View>
                         <View style={styles.betweenTable}/>
@@ -188,8 +179,8 @@ export default class Cryptocompare extends Component {
                             <View style={styles.th5}>
                                 <Text style={styles.htxt}>{tableHead[4]}</Text>
                             </View>
-                            <View style={styles.th6}>
-                                <Text style={styles.htxt}>{tableHead[5]}</Text>
+                            <View style={styles.th3}>
+                                <Text style={styles.htxt}>{tableHead[2]}</Text>
                             </View>
                         </View>
                         <View style={styles.tr}>
@@ -210,10 +201,8 @@ export default class Cryptocompare extends Component {
                                     )()}
                                 </Text>
                             </View>
-                            <View style={styles.td6}>
-                                <Text style={styles.txt}>
-                                    {this.state.cryptoList.BTC.BTC.PRICE}
-                                </Text>
+                            <View style={styles.td3}>
+                                <Text style={styles.txt}>{(parseFloat(this.state.cryptoList.BTC.USD.PRICE)*parseFloat(this.state.rate)).toFixed(2)}</Text>
                             </View>
                         </View>
                         <View style={styles.tr}>
@@ -234,10 +223,8 @@ export default class Cryptocompare extends Component {
                                     )()}
                                 </Text>
                             </View>
-                            <View style={styles.td6}>
-                                <Text style={styles.txt}>
-                                    {this.state.cryptoList.ETH.BTC.PRICE}
-                                </Text>
+                            <View style={styles.td3}>
+                                <Text style={styles.txt}>{(parseFloat(this.state.cryptoList.ETH.USD.PRICE)*parseFloat(this.state.rate)).toFixed(2)}</Text>
                             </View>
                         </View>
                         <View style={styles.tr}>
@@ -258,10 +245,8 @@ export default class Cryptocompare extends Component {
                                     )()}
                                 </Text>
                             </View>
-                            <View style={styles.td6}>
-                                <Text style={styles.txt}>
-                                    {this.state.cryptoList.ETC.BTC.PRICE}
-                                </Text>
+                            <View style={styles.td3}>
+                                <Text style={styles.txt}>{(parseFloat(this.state.cryptoList.ETC.USD.PRICE)*parseFloat(this.state.rate)).toFixed(2)}</Text>
                             </View>
                         </View>
                         <View style={styles.tr}>
@@ -282,10 +267,8 @@ export default class Cryptocompare extends Component {
                                     )()}
                                 </Text>
                             </View>
-                            <View style={styles.td6}>
-                                <Text style={styles.txt}>
-                                    {this.state.cryptoList.XRP.BTC.PRICE}
-                                </Text>
+                            <View style={styles.td3}>
+                                <Text style={styles.txt}>{(parseFloat(this.state.cryptoList.XRP.USD.PRICE)*parseFloat(this.state.rate)).toFixed(2)}</Text>
                             </View>
                         </View>
                         <View style={styles.tr}>
@@ -306,10 +289,8 @@ export default class Cryptocompare extends Component {
                                     )()}
                                 </Text>
                             </View>
-                            <View style={styles.td6}>
-                                <Text style={styles.txt}>
-                                    {this.state.cryptoList.LTC.BTC.PRICE}
-                                </Text>
+                            <View style={styles.td3}>
+                                <Text style={styles.txt}>{(parseFloat(this.state.cryptoList.LTC.USD.PRICE)*parseFloat(this.state.rate)).toFixed(2)}</Text>
                             </View>
                         </View>
                         <View style={styles.tr}>
@@ -330,10 +311,8 @@ export default class Cryptocompare extends Component {
                                     )()}
                                 </Text>
                             </View>
-                            <View style={styles.td6}>
-                                <Text style={styles.txt}>
-                                    {parseFloat(this.state.cryptoList.DASH.BTC.PRICE).toFixed(8)}
-                                </Text>
+                            <View style={styles.td3}>
+                                <Text style={styles.txt}>{(parseFloat(this.state.cryptoList.DASH.USD.PRICE)*parseFloat(this.state.rate)).toFixed(2)}</Text>
                             </View>
                         </View>
 
@@ -379,7 +358,7 @@ const styles = StyleSheet.create({
         opacity: 0.5,
     },
     th2: {
-        width: 100,
+        width: 130,
         borderWidth: 1,
         borderRadius: 7,
         borderColor: '#FFFFFF',
@@ -471,7 +450,7 @@ const styles = StyleSheet.create({
         margin: 1,
     },
     td2: { //KRW
-        width: 100,
+        width: 130,
         borderWidth: 1,
         borderRadius: 7,
         borderColor: '#FFFFFF',
