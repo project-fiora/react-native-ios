@@ -125,6 +125,7 @@ export default class MyWalletAdd extends Component {
                         placeholder={'지갑 이름'}
                         placeholderTextColor="#FFFFFF"
                         autoCapitalize='none'
+                        autoCorrect={false}
                         maxLength={20}
                         multiline={false}
                     />
@@ -180,6 +181,7 @@ export default class MyWalletAdd extends Component {
                         placeholder={'지갑 주소'}
                         placeholderTextColor="#FFFFFF"
                         autoCapitalize='none'
+                        autoCorrect={false}
                         maxLength={200}
                         multiline={false}
                     />

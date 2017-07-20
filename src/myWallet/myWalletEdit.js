@@ -4,8 +4,8 @@
 
 import React, {Component} from 'react';
 import {
-    StyleSheet, Alert, AsyncStorage,
-    Text, TextInput, TouchableHighlight, View, TouchableOpacity,
+    StyleSheet, Alert, AsyncStorage, ScrollView,
+    Text, TextInput, TouchableHighlight, View, TouchableOpacity, Image,
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import PrivateAddr from "../common/private/address";
@@ -15,6 +15,7 @@ export default class MyWalletEdit extends Component {
         super(props);
 
         this.state = {
+            load: false,
             name: '',
             addr: '',
             wallet: {},
@@ -164,86 +165,94 @@ export default class MyWalletEdit extends Component {
 
     render() {
         return (
-            <View style={styles.frame}>
-                <Text style={styles.explain}>여기에서 지갑 정보를 수정해보세요!</Text>
-                <TextInput
-                    style={styles.inputWalletName}
-                    value={this.state.name}
-                    onChangeText={(name) => this.setState({name: name})}
-                    placeholder={'지갑 이름'}
-                    placeholderTextColor="#FFFFFF"
-                    autoCapitalize='none'
-                    maxLength={10}
-                    multiline={false}
-                />
-                {/*-------------SELECT BOX START---------------*/}
-                <Text style={styles.explain2}>아래 버튼을 눌러서 지갑 유형을 선택하세요!</Text>
-                <TouchableOpacity
-                    underlayColor={'#AAAAAA'}
-                    onPress={() => this.setState({onClickBox: !this.state.onClickBox})}
-                >
-                    <View style={styles.selectBoxWrapper}>
-                        <View style={styles.selectBoxRow}>
-                            <Text style={styles.selectBoxText}>
-                                {this.state.TYPE[this.state.currentTYPE]}
-                            </Text>
-                            <View style={styles.selectBoxIconWrapper}>
-                                <Text style={styles.selectIcon}>
-                                    ▼
-                                </Text>
-                            </View>
-                        </View>
-                    </View>
-                </TouchableOpacity>
-                {(() => {
-                    if (this.state.onClickBox == true) {
-                        return this.state.TYPE.map((type, i) => {
-                            return (
-                                <TouchableOpacity
-                                    underlayColor={'#AAAAAA'}
-                                    onPress={() => this.setType(i)}
-                                    key={i}
-                                >
-                                    <View style={styles.selectBoxWrapper}>
-                                        <View style={styles.selectBoxRow}>
-                                            <Text style={styles.selectBoxText}>
-                                                {type}
-                                            </Text>
-                                        </View>
+            <ScrollView>
+                {this.state.load == false &&
+                <Image
+                    source={require('../common/img/loading.gif')}
+                    style={styles.loadingIcon}/>
+                }
+                {this.state.load == true &&
+                    <View style={styles.frame}>
+                        <TouchableHighlight
+                            style={styles.rightBtn}
+                            underlayColor={'#000000'}
+                            onPress={() => this.editWallet()}
+                        >
+                            <Text style={styles.rightBtnText}>저장</Text>
+                        </TouchableHighlight>
+                        <Text style={styles.explain}>여기에서 지갑 정보를 수정해보세요!</Text>
+                        <TextInput
+                            style={styles.inputWalletName}
+                            value={this.state.name}
+                            onChangeText={(name) => this.setState({name: name})}
+                            placeholder={'지갑 이름'}
+                            placeholderTextColor="#FFFFFF"
+                            autoCapitalize='none'
+                            maxLength={10}
+                            multiline={false}
+                        />
+                        {/*-------------SELECT BOX START---------------*/}
+                        <Text style={styles.explain2}>아래 버튼을 눌러서 지갑 유형을 선택하세요!</Text>
+                        <TouchableOpacity
+                            underlayColor={'#AAAAAA'}
+                            onPress={() => this.setState({onClickBox: !this.state.onClickBox})}
+                        >
+                            <View style={styles.selectBoxWrapper}>
+                                <View style={styles.selectBoxRow}>
+                                    <Text style={styles.selectBoxText}>
+                                        {this.state.TYPE[this.state.currentTYPE]}
+                                    </Text>
+                                    <View style={styles.selectBoxIconWrapper}>
+                                        <Text style={styles.selectIcon}>
+                                            ▼
+                                        </Text>
                                     </View>
-                                </TouchableOpacity>
-                            );
-                        })
-                    }
-                })()}
-                {/*-------------SELECT BOX END---------------*/}
-                <TextInput
-                    style={styles.inputWalletAddr}
-                    value={this.state.addr}
-                    onChangeText={(addr) => this.setState({addr: addr})}
-                    placeholder={'지갑 주소'}
-                    placeholderTextColor="#FFFFFF"
-                    autoCapitalize='none'
-                    maxLength={200}
-                    multiline={false}
-                />
+                                </View>
+                            </View>
+                        </TouchableOpacity>
+                        {(() => {
+                            if (this.state.onClickBox == true) {
+                                return this.state.TYPE.map((type, i) => {
+                                    return (
+                                        <TouchableOpacity
+                                            underlayColor={'#AAAAAA'}
+                                            onPress={() => this.setType(i)}
+                                            key={i}
+                                        >
+                                            <View style={styles.selectBoxWrapper}>
+                                                <View style={styles.selectBoxRow}>
+                                                    <Text style={styles.selectBoxText}>
+                                                        {type}
+                                                    </Text>
+                                                </View>
+                                            </View>
+                                        </TouchableOpacity>
+                                    );
+                                })
+                            }
+                        })()}
+                        {/*-------------SELECT BOX END---------------*/}
+                        <TextInput
+                            style={styles.inputWalletAddr}
+                            value={this.state.addr}
+                            onChangeText={(addr) => this.setState({addr: addr})}
+                            placeholder={'지갑 주소'}
+                            placeholderTextColor="#FFFFFF"
+                            autoCapitalize='none'
+                            maxLength={200}
+                            multiline={false}
+                        />
 
-                <TouchableHighlight
-                    style={styles.removeBtn}
-                    underlayColor={'#000000'}
-                    onPress={() => this.removeWallet()}
-                >
-                    <Text style={styles.rightBtnText}>지갑 삭제</Text>
-                </TouchableHighlight>
-
-                <TouchableHighlight
-                    style={styles.rightBtn}
-                    underlayColor={'#000000'}
-                    onPress={() => this.editWallet()}
-                >
-                    <Text style={styles.rightBtnText}>저장</Text>
-                </TouchableHighlight>
-            </View>
+                        <TouchableHighlight
+                            style={styles.removeBtn}
+                            underlayColor={'#000000'}
+                            onPress={() => this.removeWallet()}
+                        >
+                            <Text style={styles.rightBtnText}>지갑 삭제</Text>
+                        </TouchableHighlight>
+                    </View>
+                }
+            </ScrollView>
         );
     }
 }
@@ -265,6 +274,12 @@ export default class MyWalletEdit extends Component {
 // );
 
 const styles = StyleSheet.create({
+    loadingIcon: {
+        width: 40,
+        height: 40,
+        alignSelf:'center',
+        marginTop: 40,
+    },
     frame: {
         alignItems: 'center',
         paddingBottom: 85,

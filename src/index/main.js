@@ -29,6 +29,7 @@ import Cryptocompare from '../price/cryptocompare';
 import More from '../more/more';
 import ExchangeLink from '../more/exchangeLink';
 import ExchangeSite from '../more/exchangeSite';
+import Convert from '../more/convert';
 import Option from '../more/option/option';
 import OptionDetail from "../more/option/optionDetail";
 
@@ -118,9 +119,9 @@ export default class Main extends Component {
             this.setState({
                 title:this.props.siteName,
                 enableBackBtn:true, backBtnGoTo:'exchangeLink'});
-        } else if(p=='option'){
+        } else if(p=='convert'){
             this.setState({
-                title:'옵션',
+                title:'coin -> KRW',
                 enableBackBtn:true, backBtnGoTo:'more'});
         } else if(p=='optionDetail'){
             this.setState({
@@ -185,8 +186,9 @@ export default class Main extends Component {
                     {this.props.goTo === 'more' && <More/>}
                         {this.props.goTo === 'exchangeLink' && <ExchangeLink/>}
                             {this.props.goTo === 'exchangeSite' && <ExchangeSite link={this.props.link}/>}
-                        {this.props.goTo === 'option' && <Option/>}
-                            {this.props.goTo === 'optionDetail' && <OptionDetail/>}
+                        {this.props.goTo === 'convert' && <Convert/>}
+                        {/*{this.props.goTo === 'option' && <Option/>}*/}
+                            {/*{this.props.goTo === 'optionDetail' && <OptionDetail/>}*/}
                         {this.props.goTo === 'notice' && <Notice/>}
                             {this.props.goTo === 'noticeDetail' &&
                                 <NoticeDetail id={this.props.id}

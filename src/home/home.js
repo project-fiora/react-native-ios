@@ -4,7 +4,7 @@
 import React, {Component} from 'react';
 import {
     Image, ScrollView, StyleSheet,
-    Text, AsyncStorage
+    Text, AsyncStorage,
 } from 'react-native';
 import realm from '../common/realm';
 
@@ -21,8 +21,8 @@ export default class Home extends Component {
     }
 
     async componentDidMount(){
-        let token = await AsyncStorage.getItem('Token');
-        this.setState({token:token});
+        const tokens = await AsyncStorage.getItem('Token');
+        this.setState({token: JSON.parse(tokens)});
     }
 
     clearStorage(){

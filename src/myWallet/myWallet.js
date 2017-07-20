@@ -119,13 +119,19 @@ export default class MyWallet extends Component {
                     console.error(error);
                 });
 
-        } else if (type == 'LTC') {
-
-            /////////////수정해야함////////////////////////////
-            // this.getBalance("http://ltc.blockr.io/api/v1/address/balance/" + current);
-            /////////////수정해야함////////////////////////////
-
-
+        } else if (type == 'LTC') { //// 아직 테스트 안된 api ////////////////////////////////////
+            fetch("https://ltc.blockr.io/api/v1/address/balance/" + current)
+                .then((response) => response.json())
+                .then((responseJson) => {
+                    if (responseJson.status=='success') {
+                        this.setState({balance: responseJson.data.balance, load: true});
+                    } else {
+                        this.setState({balance: '지갑주소 or 잔액조회 api 오류', load: true});
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
         } else if (type == 'DASH') {
             fetch("https://api.blockcypher.com/v1/dash/main/addrs/" + current + "/balance")
                 .then((response) => response.json())
@@ -143,7 +149,7 @@ export default class MyWallet extends Component {
     }
 
     showWallet(i) {
-        this.setState({currentWallet: i, onClickBox: !this.state.onClickBox},()=>{this.callGetBalance()});
+        this.setState({currentWallet: i, balance:'조회 중..', onClickBox: !this.state.onClickBox},()=>{this.callGetBalance()});
     }
 
     render() {
@@ -214,8 +220,9 @@ export default class MyWallet extends Component {
                                 지갑번호 : {this.state.walletList[this.state.currentWallet].wallet_Id}{'\n'}
                                 지갑이름 : {this.state.walletList[this.state.currentWallet].wallet_name}{'\n'}
                                 유형 : {this.state.walletList[this.state.currentWallet].wallet_type}{'\n'}
-                                지갑주소 : {this.state.walletList[this.state.currentWallet].wallet_add}{'\n'}
                                 잔액 : {this.state.balance}{'\n'}
+                                지갑주소 ▼ {'\n'}{this.state.walletList[this.state.currentWallet].wallet_add}{'\n'}
+
                                 QR 코드 ▼
                             </Text>
                             <QRCode
@@ -238,12 +245,11 @@ const styles = StyleSheet.create({
     frame: {
         paddingBottom: 85,
         paddingTop: 15,
-        paddingLeft: 10,
-        paddingRight: 10,
+        paddingLeft: 20,
+        paddingRight: 20,
     },
     content: {
         marginTop: 5,
-        alignItems: 'center',
         opacity: 0.8,
     },
     contentText: {
@@ -252,15 +258,16 @@ const styles = StyleSheet.create({
         marginTop: 10,
         opacity: 0.8,
         marginBottom: 5,
+        alignSelf:'flex-start',
     },
     loadingIcon: {
         width: 30,
         height: 30,
         marginTop: 30,
+        alignSelf:'center',
     },
-
     titleText: {
-        textAlign: 'center',
+        alignSelf:'center',
         color: '#FFFFFF',
         fontSize: 17,
         marginBottom: 10,

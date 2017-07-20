@@ -16,6 +16,7 @@ export default class Notice extends Component {
         super(props);
 
         this.state = {
+            load: false,
             noticeList: [],
         };
     }
@@ -25,12 +26,17 @@ export default class Notice extends Component {
     }
 
     getList() {
-        fetch(PrivateAddr.getAddr() + "notice")
+        fetch(PrivateAddr.getAddr() + "notice/noticelist")
             .then((response) => response.json())
             .then((responseJson) => {
-                this.setState({noticeList: responseJson});
+                if (responseJson.message == "SUCCESS") {
+                    this.setState({noticeList: responseJson.list, load: true});
+                } else {
+                    alert('공지사항을 불러오지 못했습니다.');
+                }
             })
             .catch((error) => {
+                alert('Network Connection Fail : '+error);
                 console.error(error);
             });
     }
@@ -38,10 +44,16 @@ export default class Notice extends Component {
     render() {
         return (
             <View style={styles.box}>
-                {this.state.noticeList.map((notice, i) => {
+                {this.state.load==false &&
+                <Image
+                    source={require('../../common/img/loading.gif')}
+                    style={styles.loadingIcon}/>
+                }
+                {this.state.load==true &&
+                    this.state.noticeList.map((notice, i) => {
                     return (<NoticeBtn title={notice.title}
-                                       content={notice.content}
-                                       date={notice.date}
+                                       content={notice.contents}
+                                       date={notice.create_date}
                                        key={i}/>);
                 })
                 }
@@ -75,6 +87,13 @@ class NoticeBtn extends Component {
 }
 
 var styles = StyleSheet.create({
+    loadingIcon: {
+        width: 40,
+        height: 40,
+        marginTop: 40,
+        alignSelf:'center',
+        opacity:0.9,
+    },
     box: {
         // borderBottomWidth: 0.5,
         // borderColor: '#A0A0A0',

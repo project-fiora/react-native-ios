@@ -24,6 +24,7 @@ export default class Login extends Component {
             password: '',
             autoLogin: false,
             logining: false,
+            enableTouch:null,
         };
     }
 
@@ -38,7 +39,7 @@ export default class Login extends Component {
     }
 
     login(email, password) {
-        this.setState({logining:true});
+        this.setState({logining:true, enableTouch:'none'});
         fetch(PrivateAddr.getAddr() + 'member/login', {
             method: 'POST',
             headers: {
@@ -52,7 +53,6 @@ export default class Login extends Component {
         }).then((response) =>{
             return response.json();
         }).then((responseJson) => {
-            console.log(responseJson);  ////////
             if (responseJson.message == "SUCCESS") {
                 try {
                     AsyncStorage.setItem('Token', JSON.stringify({
@@ -71,12 +71,12 @@ export default class Login extends Component {
         }).catch((error) => {
             alert('Network Connection Failed');
             console.error(error);
-        }).done(()=>this.setState({logining:false}));
+        }).done(()=>this.setState({logining:false, enableTouch:null}));
     }
 
     render() {
         return (
-            <View style={styles.loginContainer}>
+            <View style={styles.loginContainer} pointerEvents={this.state.enableTouch}>
                 {this.state.logining == true &&
                 <Image source={require('../common/img/loading.gif')} style={styles.loadingIcon}/>
                 }
@@ -94,6 +94,7 @@ export default class Login extends Component {
                         autoCapitalize='none'
                         maxLength={40}
                         multiline={false}
+                        autoCorrect={false}
                         autoFocus={true}
                     />
                 </View>
