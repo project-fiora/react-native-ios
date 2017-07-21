@@ -48,7 +48,7 @@ export default class Convert extends Component {
 
     convert() {
         var result = parseFloat(this.state.cryptoList[this.state.currentTYPE])*parseFloat(this.state.coinValue);
-        this.setState({result:result.toFixed(2).toString()});
+        this.setState({result:result.toFixed(0).toString()});
     }
 
     setType(i) {
@@ -123,7 +123,7 @@ export default class Convert extends Component {
                     </Text>
                 </TouchableOpacity>
                 <Text style={styles.result}>
-                    결과 : {this.state.result}
+                    결과 : {this.state.result}원
                 </Text>
             </View>
         );

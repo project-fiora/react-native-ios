@@ -78,7 +78,10 @@ export default class Login extends Component {
         return (
             <View style={styles.loginContainer} pointerEvents={this.state.enableTouch}>
                 {this.state.logining == true &&
-                <Image source={require('../common/img/loading.gif')} style={styles.loadingIcon}/>
+                <View style={styles.loadingIconWrapper}>
+                    <Image source={require('../common/img/loading.gif')} style={styles.loadingIcon}/>
+                </View>
+
                 }
                 <Image source={require('../common/img/mainIcon.png')} style={styles.mainIcon}/>
                 <View style={styles.inputWrapper}>
@@ -95,7 +98,6 @@ export default class Login extends Component {
                         maxLength={40}
                         multiline={false}
                         autoCorrect={false}
-                        autoFocus={true}
                     />
                 </View>
 

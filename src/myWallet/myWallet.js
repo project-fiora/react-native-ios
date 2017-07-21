@@ -153,6 +153,10 @@ export default class MyWallet extends Component {
     }
 
     render() {
+        var balance;
+        if(Number.isInteger(parseInt(this.state.balance))){
+            balance= (this.state.balance/100000000)+" "+this.state.walletList[this.state.currentWallet].wallet_type;
+        }
         return (
             <ScrollView contentContainerStyle={styles.frame}>
                 <View style={styles.content}>
@@ -217,12 +221,12 @@ export default class MyWallet extends Component {
                         {this.state.walletList.length != 0 &&
                         <View>
                             <Text style={styles.contentText}>
-                                지갑번호 : {this.state.walletList[this.state.currentWallet].wallet_Id}{'\n'}
+                                {/*지갑번호 : {this.state.walletList[this.state.currentWallet].wallet_Id}{'\n'}*/}
                                 지갑이름 : {this.state.walletList[this.state.currentWallet].wallet_name}{'\n'}
-                                유형 : {this.state.walletList[this.state.currentWallet].wallet_type}{'\n'}
-                                잔액 : {this.state.balance}{'\n'}
+                                지갑유형 : {this.state.walletList[this.state.currentWallet].wallet_type}{'\n'}
+                                잔액 : {balance}
+                                {Number.isInteger(parseInt(this.state.balance))==false && this.state.balance}{'\n'}
                                 지갑주소 ▼ {'\n'}{this.state.walletList[this.state.currentWallet].wallet_add}{'\n'}
-
                                 QR 코드 ▼
                             </Text>
                             <QRCode
@@ -308,5 +312,4 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
     },
-
 });

@@ -6,14 +6,14 @@ import {
     Image,
     StyleSheet,
     Text, TouchableOpacity,
-    View, AsyncStorage
+    View, AsyncStorage, ScrollView
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 
 export default class More extends Component {
     render() {
         return (
-            <View>
+            <ScrollView>
                 <View style={styles.box}>
                     <MoreBtn text="거래소 바로가기" img={images.exchange} goTo="exchangeLink"/>
                     <MoreBtn text="coin -> KRW" img={images.convert} goTo="convert"/>
@@ -22,7 +22,7 @@ export default class More extends Component {
                     <MoreBtn text="문의하기" img={images.ask} goTo="inquire"/>
                     <MoreBtn text="로그아웃" img={images.logout} goTo="logout"/>
                 </View>
-            </View>
+            </ScrollView>
         );
     }
 }

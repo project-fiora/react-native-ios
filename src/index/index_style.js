@@ -14,20 +14,26 @@ const styles = StyleSheet.create({
         // height: 1000,
         // resizeMode: 'cover',
     },
-    backgroundImg:{
-        width:'100%',
-        height:'100%',
-        resizeMode:'cover',
+    backgroundImg: {
+        width: '100%',
+        height: '100%',
+        resizeMode: 'cover',
     },
     loginContainer: { //wrapper
         alignItems: 'center',
     },
-    loadingIcon:{
-        position:'absolute',
-        top:'45%',
-        left:'45%',
-        width:50,
-        height:50,
+    loadingIconWrapper: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    loadingIcon: {
+        width: 50,
+        height: 50,
     },
     mainIcon: { //MEMBER LOG-IN Image
         width: 130,
@@ -62,7 +68,7 @@ const styles = StyleSheet.create({
         marginBottom: 5,
         opacity: 0.2
     },
-    noIconInput:{
+    noIconInput: {
         width: 240,
         fontSize: 15,
         color: '#FFFFFF',
@@ -90,8 +96,8 @@ const styles = StyleSheet.create({
         margin: 4,
         opacity: 0.6
     },
-    authBtn:{
-        maxWidth:118,
+    authBtn: {
+        maxWidth: 118,
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 1,
@@ -99,7 +105,7 @@ const styles = StyleSheet.create({
         borderColor: '#FFFFFF',
         padding: 8,
         marginTop: 4,
-        marginBottom:8,
+        marginBottom: 8,
         opacity: 0.8
     },
     label: { //버튼텍스트
@@ -119,7 +125,21 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: '#FFFFFF',
         opacity: 0.9
-    }
+    },
+    agreeText: {
+        backgroundColor: 'transparent',
+        color: '#FFFFFF',
+        fontSize: 17,
+        marginTop: 10,
+        fontWeight: "900",
+    },
+    loadingIcon: {
+        position: 'absolute',
+        width: 40,
+        height: 40,
+        alignSelf: 'center',
+        marginTop: 40,
+    },
 });
 
 export default styles;

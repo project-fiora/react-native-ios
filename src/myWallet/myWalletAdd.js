@@ -196,14 +196,14 @@ export default class MyWalletAdd extends Component {
                             QR코드 스캐너
                         </Text>
                     </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.rightBtn}
+                        underlayColor={'#000000'}
+                        onPress={() => this.addWallet()}
+                    >
+                        <Text style={styles.rightBtnText}>저장</Text>
+                    </TouchableOpacity>
                 </ScrollView>
-                <TouchableOpacity
-                    style={styles.rightBtn}
-                    underlayColor={'#000000'}
-                    onPress={() => this.addWallet()}
-                >
-                    <Text style={styles.rightBtnText}>저장</Text>
-                </TouchableOpacity>
             </View>
         );
     }

@@ -165,21 +165,15 @@ export default class MyWalletEdit extends Component {
 
     render() {
         return (
-            <ScrollView>
-                {this.state.load == false &&
-                <Image
-                    source={require('../common/img/loading.gif')}
-                    style={styles.loadingIcon}/>
-                }
-                {this.state.load == true &&
-                    <View style={styles.frame}>
-                        <TouchableHighlight
-                            style={styles.rightBtn}
-                            underlayColor={'#000000'}
-                            onPress={() => this.editWallet()}
-                        >
-                            <Text style={styles.rightBtnText}>저장</Text>
-                        </TouchableHighlight>
+            <View>
+                <ScrollView contentContainerStyle={styles.frame}>
+                    {this.state.load == false &&
+                    <Image
+                        source={require('../common/img/loading.gif')}
+                        style={styles.loadingIcon}/>
+                    }
+                    {this.state.load == true &&
+                    <View>
                         <Text style={styles.explain}>여기에서 지갑 정보를 수정해보세요!</Text>
                         <TextInput
                             style={styles.inputWalletName}
@@ -251,8 +245,16 @@ export default class MyWalletEdit extends Component {
                             <Text style={styles.rightBtnText}>지갑 삭제</Text>
                         </TouchableHighlight>
                     </View>
-                }
-            </ScrollView>
+                    }
+                    <TouchableHighlight
+                        style={styles.rightBtn}
+                        underlayColor={'#000000'}
+                        onPress={() => this.editWallet()}
+                    >
+                        <Text style={styles.rightBtnText}>저장</Text>
+                    </TouchableHighlight>
+                </ScrollView>
+            </View>
         );
     }
 }
@@ -277,7 +279,7 @@ const styles = StyleSheet.create({
     loadingIcon: {
         width: 40,
         height: 40,
-        alignSelf:'center',
+        alignSelf: 'center',
         marginTop: 40,
     },
     frame: {
