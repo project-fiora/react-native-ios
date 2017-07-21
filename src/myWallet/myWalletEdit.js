@@ -246,14 +246,14 @@ export default class MyWalletEdit extends Component {
                         </TouchableHighlight>
                     </View>
                     }
-                    <TouchableHighlight
-                        style={styles.rightBtn}
-                        underlayColor={'#000000'}
-                        onPress={() => this.editWallet()}
-                    >
-                        <Text style={styles.rightBtnText}>저장</Text>
-                    </TouchableHighlight>
                 </ScrollView>
+                <TouchableHighlight
+                    style={styles.rightBtn}
+                    underlayColor={'#000000'}
+                    onPress={() => this.editWallet()}
+                >
+                    <Text style={styles.rightBtnText}>저장</Text>
+                </TouchableHighlight>
             </View>
         );
     }
