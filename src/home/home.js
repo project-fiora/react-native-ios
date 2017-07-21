@@ -86,32 +86,35 @@ export default class Home extends Component {
 
     confirmRequest(id) { //오류가발생했습니다 다시시도해주세요! 뜸
         console.log(id);
+        var intId = parseInt(id);
         console.log(this.state.token.token);
-        fetch(PrivateAddr.getAddr() + 'friend/agree', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': this.state.token.token
-            },
-            body: JSON.stringify({
-                Friendid:parseInt(id),
+        try {
+            fetch(PrivateAddr.getAddr() + 'friend/agree?Friendid='+intId, {
+                method: 'PUT',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': this.state.token.token
+                },
+            }).then((response) => {
+                return response.json()
             })
-        }).then((response) => {
-            return response.json()
-        })
-            .then((responseJson) => {
+                .then((responseJson) => {
                 console.log(responseJson);
-                if (responseJson.message == "SUCCESS") {
-                    alert('친구 요청을 수락했습니다');
-                    Actions.main({goTo: 'myWallet'});
-                } else {
-                    alert('오류가 발생했습니다.\n다시 시도해주세요!');
-                }
-            })
-            .catch((error) => {
-                alert('Network Connection Failed');
-                console.error(error);
-            }).done(()=>this.getConfirm(this.state.token.token));
+                    if (responseJson.message == "SUCCESS") {
+                        alert('친구 요청을 수락했습니다');
+                    } else {
+                        alert('오류가 발생했습니다.\n다시 시도해주세요!');
+                    }
+                })
+                .catch((error) => {
+                    alert('Network Connection Failed');
+                    console.error(error);
+                }).done(()=>this.getConfirm(this.state.token.token)); //refresh를 위해 목록을 다시불러온다
+        } catch (err) {
+            alert('수정실패 ' + err);
+            return false;
+        }
     }
 
     denyRequest(id) {
