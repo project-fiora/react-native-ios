@@ -23,6 +23,7 @@ export default class FriendWallet extends Component {
             load: false,
             onClickFriendBox: false,
             onClickBox: false,
+            enable:'none',
             currentFriend: 0,
             currentWallet: 0,
             token:'',
@@ -71,7 +72,7 @@ export default class FriendWallet extends Component {
             .then((response) => response.json())
             .then((responseJson) => {
                 if (responseJson.message == "SUCCESS") {
-                    this.setState({walletList: responseJson.list, load:true, secondLoad:true});
+                    this.setState({walletList: responseJson.list, load:true, secondLoad:true, enable:null});
                 } else {
                     alert("친구지갑정보를 가져올 수 없습니다");
                     return false;
@@ -88,6 +89,7 @@ export default class FriendWallet extends Component {
             currentFriend: i,
             friendId: friendId,
             secondLoad:false,
+            enable:'none',
             onClickFriendBox: !this.state.onClickFriendBox,
             onClickBox:false,
         });
@@ -127,7 +129,7 @@ export default class FriendWallet extends Component {
                     }
                     {/*////////////////친구 리스트 select Box////////////////////*/}
                     {(this.state.load == true && this.state.friendList.length != 0) &&
-                    <View>
+                    <View pointerEvents={this.state.enable}>
                         <Text style={styles.titleText}>아래 버튼을 눌러서 친구와 친구지갑을 선택하세요!</Text>
                         <TouchableOpacity
                             underlayColor={'#AAAAAA'}
@@ -274,8 +276,8 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     loadingIcon: {
-        width: 50,
-        height: 50,
+        width: 40,
+        height: 40,
     },
     titleText: {
         textAlign: 'center',
@@ -285,7 +287,7 @@ const styles = StyleSheet.create({
         opacity: 0.8,
     },
     blank:{
-        margin:15,
+        margin:5,
     },
     selectBoxWrapper: {
         alignSelf: 'center',

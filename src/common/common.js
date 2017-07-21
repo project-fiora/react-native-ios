@@ -4,7 +4,7 @@
 
 import React, {Component} from 'react';
 
-class Common extends Component{
+class Common extends Component {
     static clone(obj) {
         if (obj === null || typeof(obj) !== 'object')
             return obj;
@@ -17,9 +17,88 @@ class Common extends Component{
         return copy;
     }
 
-    static generateWalletId(){
-        var id = parseInt(new Date().getTime());
-        return id;
+    static getBalance(type, addr) {
+        return new Promise((resolve, reject) => {
+            if (type == 'BTC') {
+                fetch("https://chain.api.btc.com/v3/address/" + addr)
+                    .then((response) => response.json())
+                    .then((responseJson) => {
+                        if (responseJson.data != null) {
+                            resolve(responseJson.data.balance);
+                        } else {
+                            resolve('지갑주소 or 잔액조회 api error');
+                        }
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
+            } else if (type == 'ETH') {
+                fetch("https://api.etherscan.io/api?module=account&action=balance&address=" + addr)
+                    .then((response) => response.json())
+                    .then((responseJson) => {
+                        resolve(responseJson.result);
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
+            } else if (type == 'ETC') {
+                fetch("https://etcchain.com/api/v1/getAddressBalance?address=" + addr)
+                    .then((response) => response.json())
+                    .then((responseJson) => {
+                        if (responseJson.balance != null || responseJson.balance != undefined) {
+                            resolve(responseJson.balance);
+                        } else {
+                            resolve('지갑주소 or 잔액조회 api error');
+                        }
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
+            } else if (type == 'XRP') {
+                fetch("https://data.ripple.com/v2/accounts/" + addr + "/balances")
+                    .then((response) => response.json())
+                    .then((responseJson) => {
+                        if (responseJson != null) {
+                            if (responseJson.result == 'success')
+                                resolve(responseJson.balances[0].value);
+                            else
+                                resolve('지갑 주소 오류');
+
+                        } else {
+                            resolve('잔액조회 api error');
+                        }
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
+            } else if (type == 'LTC') { //// 아직 테스트 안된 api ////////////////////////////////////
+                fetch("https://ltc.blockr.io/api/v1/address/balance/" + addr)
+                    .then((response) => response.json())
+                    .then((responseJson) => {
+                        if (responseJson.status == 'success') {
+                            resolve(responseJson.data.balance);
+                        } else {
+                            resolve('지갑주소 or 잔액조회 api 오류');
+                        }
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
+            } else if (type == 'DASH') {
+                fetch("https://api.blockcypher.com/v1/dash/main/addrs/" + addr + "/balance")
+                    .then((response) => response.json())
+                    .then((responseJson) => {
+                        if (responseJson.balance != null) {
+                            resolve(responseJson.balance);
+                        } else {
+                            resolve('지갑주소 or 잔액조회 api 오류');
+                        }
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
+            }
+        });
     }
 }
 
