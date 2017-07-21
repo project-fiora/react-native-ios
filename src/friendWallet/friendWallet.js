@@ -12,6 +12,7 @@ import {
 import {Actions} from 'react-native-router-flux';
 import QRCode from 'react-native-qrcode';
 import PrivateAddr from "../common/private/address";
+import Common from "../common/common";
 
 export default class FriendWallet extends Component {
     constructor(props) {
@@ -72,7 +73,25 @@ export default class FriendWallet extends Component {
             .then((response) => response.json())
             .then((responseJson) => {
                 if (responseJson.message == "SUCCESS") {
-                    this.setState({walletList: responseJson.list, load:true, secondLoad:true, enable:null});
+                    var list = responseJson.list;
+                    console.log(list);
+                    if(list.length==0){
+                        this.setState({walletList:[], load:true, secondLoad:true, enable:null});
+                    } else {
+                        Promise.resolve()
+                            .then(()=>Common.getBalance(list[this.state.currentWallet].wallet_type, list[this.state.currentWallet].wallet_add))
+                            .then(result => {
+                                console.log('ok');
+                                console.log(result);
+                                var balance;
+                                if(Number.isInteger(result)){
+                                    balance = (parseInt(result)/100000000)+" "+list[this.state.currentWallet].wallet_type;
+                                } else {
+                                    balance = result;
+                                }
+                                this.setState({walletList:list, balance:balance, load:true, secondLoad:true, enable:null});
+                            });
+                    }
                 } else {
                     alert("친구지갑정보를 가져올 수 없습니다");
                     return false;
@@ -96,12 +115,22 @@ export default class FriendWallet extends Component {
         this.getFriendWallet(friendId);
     }
 
-    showWallet(i, walletId) {
-        this.setState({
-            currentWallet: i,
-            walletId: walletId,
-            onClickBox: !this.state.onClickBox
-        });
+    showWallet(i, type, addr) {
+        this.setState({load:false},()=>
+            Promise.resolve()
+                .then(()=>Common.getBalance(type, addr))
+                .then(result => {
+                    console.log('show wallet ok');
+                    console.log(result);
+                    var balance;
+                    if(Number.isInteger(result)){
+                        balance = (parseInt(result)/100000000)+" "+type;
+                    } else {
+                        balance = result;
+                    }
+                    this.setState({balance:balance, currentWallet: i,onClickBox: !this.state.onClickBox, load:true});
+                })
+        );
     }
 
     render() {
@@ -205,7 +234,7 @@ export default class FriendWallet extends Component {
                                             return (
                                                 <TouchableOpacity
                                                     underlayColor={'#AAAAAA'}
-                                                    onPress={() => this.showWallet(i, wallet.wallet_Id)}
+                                                    onPress={() => this.showWallet(i, wallet.wallet_type, wallet.wallet_add)}
                                                     key={i}
                                                 >
                                                     <View style={styles.selectBoxWrapper}>
@@ -218,23 +247,23 @@ export default class FriendWallet extends Component {
                                     })
                                 }
                             })()}
-                            {/*{this.state.walletList.length != 0 &&*/}
-                            {/*<View>*/}
-                                {/*<Text style={styles.contentText}>*/}
-                                    {/*/!*지갑번호 : {this.state.walletList[this.state.currentWallet].wallet_Id}{'\n'}*!/*/}
-                                    {/*지갑이름 : {this.state.walletList[this.state.currentWallet].wallet_name}{'\n'}*/}
-                                    {/*지갑유형 : {this.state.walletList[this.state.currentWallet].wallet_type}{'\n'}*/}
-                                    {/*잔액 : {balance}*/}
-                                    {/*{Number.isInteger(parseInt(this.state.balance)) == false && this.state.balance}{'\n'}*/}
-                                    {/*지갑주소 ▼ {'\n'}{this.state.walletList[this.state.currentWallet].wallet_add}{'\n'}*/}
-                                    {/*QR 코드 ▼*/}
-                                {/*</Text>*/}
-                                {/*<QRCode*/}
-                                    {/*value={this.state.qrcode}*/}
-                                    {/*size={220}*/}
-                                    {/*bgColor='black'*/}
-                                    {/*fgColor='white'/>*/}
-                            {/*</View>}*/}
+                            {this.state.walletList.length != 0 &&
+                            <View>
+                                <Text style={styles.contentText}>
+                                    {/*지갑번호 : {this.state.walletList[this.state.currentWallet].wallet_Id}{'\n'}*/}
+                                    지갑이름 : {this.state.walletList[this.state.currentWallet].wallet_name}{'\n'}
+                                    지갑유형 : {this.state.walletList[this.state.currentWallet].wallet_type}{'\n'}
+                                    잔액 : {this.state.balance}{'\n'}
+                                    지갑주소 ▼ {'\n'}{this.state.walletList[this.state.currentWallet].wallet_add}{'\n'}
+                                    QR 코드 ▼
+                                </Text>
+                                <QRCode
+                                    value={this.state.qrcode}
+                                    size={220}
+                                    bgColor='black'
+                                    fgColor='white'/>
+                            </View>
+                            }
                         </View>
                         }
 

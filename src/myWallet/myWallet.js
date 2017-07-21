@@ -75,20 +75,21 @@ export default class MyWallet extends Component {
     }
 
     showWallet(i, type, addr) {
-        this.setState({load:false});
-        Promise.resolve()
-            .then(()=>Common.getBalance(type, addr))
-            .then(result => {
-                console.log('show wallet ok');
-                console.log(result);
-                var balance;
-                if(Number.isInteger(result)){
-                    balance = (parseInt(result)/100000000)+" "+type;
-                } else {
-                    balance = result;
-                }
-                this.setState({balance:balance, currentWallet: i,onClickBox: !this.state.onClickBox, load:true});
-            });
+        this.setState({load:false},()=>
+            Promise.resolve()
+                .then(()=>Common.getBalance(type, addr))
+                .then(result => {
+                    console.log('show wallet ok');
+                    console.log(result);
+                    var balance;
+                    if(Number.isInteger(result)){
+                        balance = (parseInt(result)/100000000)+" "+type;
+                    } else {
+                        balance = result;
+                    }
+                    this.setState({balance:balance, currentWallet: i,onClickBox: !this.state.onClickBox, load:true});
+                })
+        );
     }
 
     render() {
