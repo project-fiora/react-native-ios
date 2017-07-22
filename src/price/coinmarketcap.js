@@ -21,7 +21,6 @@ export default class Coinmarketcap extends Component {
         };
     }
 
-
     componentDidMount() {
         this.getPriceInfo();
         setInterval(
@@ -29,10 +28,6 @@ export default class Coinmarketcap extends Component {
                 this.getPriceInfo();
             }, 4000
         );
-    }
-
-    componentWillUnmount(){
-        clearInterval();
     }
 
     getPriceInfo() {
