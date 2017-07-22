@@ -24,12 +24,15 @@ export default class Cryptocompare extends Component {
 
     componentDidMount() {
         this.getRate();
-        this.getCryptocompare();
+        setInterval(
+            () => {
+                this.getRate();
+            }, 4000
+        );
     }
 
-    _onRefresh() {
-        this.setState({refreshing: true});
-        this.getCryptocompare();
+    componentWillUnmount(){
+        clearInterval();
     }
 
     getRate() {
@@ -40,7 +43,7 @@ export default class Cryptocompare extends Component {
             })
             .catch((error) => {
                 console.error(error);
-            });
+            }).done(()=>this.getCryptocompare());
     }
 
     getCryptocompare(){
@@ -58,14 +61,6 @@ export default class Cryptocompare extends Component {
         const tableHead = ['분류', 'KRW', 'USDKRW', 'USD', 'KR - US', 'BTC', '' ];
         return (
             <ScrollView
-                refreshControl={
-                    <RefreshControl
-                        refreshing={this.state.refreshing}
-                        onRefresh={this._onRefresh.bind(this)}
-                        progressBackgroundColor='#FFFFFF'
-                        tintColor='#FFFFFF'
-                    />
-                }
                 contentContainerStyle={styles.priceWrapper}
             >
                 {this.state.load == false &&

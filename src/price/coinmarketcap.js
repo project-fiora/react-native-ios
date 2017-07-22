@@ -21,13 +21,18 @@ export default class Coinmarketcap extends Component {
         };
     }
 
+
     componentDidMount() {
         this.getPriceInfo();
+        setInterval(
+            () => {
+                this.getPriceInfo();
+            }, 4000
+        );
     }
 
-    _onRefresh() {
-        this.setState({refreshing: true});
-        this.getPriceInfo();
+    componentWillUnmount(){
+        clearInterval();
     }
 
     getPriceInfo() {
@@ -45,19 +50,10 @@ export default class Coinmarketcap extends Component {
         const tableHead = ['분류', '비율(BTC)', '순환공급량', 'Volume', '변화율', 'Price' ];
         return (
             <ScrollView
-                refreshControl={
-                    <RefreshControl
-                        refreshing={this.state.refreshing}
-                        onRefresh={this._onRefresh.bind(this)}
-                        progressBackgroundColor='#FFFFFF'
-                        tintColor='#FFFFFF'
-                    />
-                }
                 contentContainerStyle={styles.priceWrapper}
             >
                 <Text style={styles.explain}>
-                    실시간 시세 차이에 주의하세요!{'\n'}
-                    아래로 당겨서 데이터를 갱신하세요!
+                    실시간 시세 차이에 주의하세요!
                 </Text>
                 <View style={styles.thead}>
                     <View style={styles.th1}>
