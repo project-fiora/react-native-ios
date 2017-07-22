@@ -9,9 +9,9 @@ import {
     View, Image, AsyncStorage
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
-import QRCode from 'react-native-qrcode';
 import PrivateAddr from "../common/private/address";
 import Common from "../common/common";
+import WalletInfo from "../common/walletInfo";
 
 export default class MyWallet extends Component {
     constructor(props) {
@@ -164,23 +164,14 @@ export default class MyWallet extends Component {
                             }
                         })()}
                         {this.state.walletList.length != 0 &&
-                        <View>
-                            <Text style={styles.contentText}>
-                                {/*지갑번호 : {this.state.walletList[this.state.currentWallet].wallet_Id}{'\n'}*/}
-                                지갑이름 : {this.state.walletList[this.state.currentWallet].wallet_name}{'\n'}
-                                지갑유형 : {this.state.walletList[this.state.currentWallet].wallet_type}{'\n'}
-                                잔액 : {this.state.balance}{'\n'}
-                                지갑주소 ▼ {'\n'}{this.state.walletList[this.state.currentWallet].wallet_add}{'\n'}
-                                QR 코드 ▼
-                            </Text>
-                            <QRCode
-                                value={this.state.qrcode}
-                                size={220}
-                                bgColor='black'
-                                fgColor='white'/>
-                        </View>
+                        <WalletInfo
+                            wallet_name={this.state.walletList[this.state.currentWallet].wallet_name}
+                            wallet_type={this.state.walletList[this.state.currentWallet].wallet_type}
+                            balance={this.state.balance}
+                            wallet_add={this.state.walletList[this.state.currentWallet].wallet_add}
+                            qrcode={this.state.qrcode}
+                        />
                         }
-
                     </View>
                     }
                 </View>
