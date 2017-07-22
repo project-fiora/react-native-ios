@@ -37,45 +37,50 @@ export default class MyWallet extends Component {
     }
 
     async getMyWallet() {
-        const tokens = await AsyncStorage.getItem('Token');
-        const token = JSON.parse(tokens).token;
-        fetch(PrivateAddr.getAddr() + "wallet/list", {
-            method: 'GET', headers: {
-                "Authorization": token,
-                "Accept": "*/*",
+        await AsyncStorage.getItem('Token', (err,result) => {
+            if(err!=null){
+                alert(err);
+                return false;
             }
-        })
-            .then((response) => response.json())
-            .then((responseJson) => {
-                if (responseJson.message == "SUCCESS") {
-                    var list = responseJson.list;
-                    if (list.length == 0) {
-                        this.setState({walletList: [], load: true});
-                    } else {
-                        Promise.resolve()
-                            .then(() => Common.getBalance(list[this.state.currentWallet].wallet_type, list[this.state.currentWallet].wallet_add))
-                            .then(result => {
-                                console.log('ok');
-                                console.log(result);
-                                var balance;
-                                if (Number.isInteger(result)) {
-                                    balance = (parseInt(result) / 100000000) + " " + list[this.state.currentWallet].wallet_type;
-                                } else {
-                                    balance = result;
-                                }
-                                this.setState({walletList: list, balance: balance, load: true},
-                                    () => AsyncStorage.setItem('WalletList', JSON.stringify(this.state.walletList)));
-                            });
-                    }
-                } else {
-                    alert("지갑정보를 가져올 수 없습니다");
-                    return false;
+            const token = JSON.parse(result).token;
+            fetch(PrivateAddr.getAddr() + "wallet/list", {
+                method: 'GET', headers: {
+                    "Authorization": token,
+                    "Accept": "*/*",
                 }
             })
-            .catch((error) => {
-                console.error(error);
-            })
-            .done();
+                .then((response) => response.json())
+                .then((responseJson) => {
+                    if (responseJson.message == "SUCCESS") {
+                        var list = responseJson.list;
+                        if (list.length == 0) {
+                            this.setState({walletList: [], load: true});
+                        } else {
+                            Promise.resolve()
+                                .then(() => Common.getBalance(list[this.state.currentWallet].wallet_type, list[this.state.currentWallet].wallet_add))
+                                .then(result => {
+                                    console.log('ok');
+                                    console.log(result);
+                                    var balance;
+                                    if (Number.isInteger(result)) {
+                                        balance = (parseInt(result) / 100000000) + " " + list[this.state.currentWallet].wallet_type;
+                                    } else {
+                                        balance = result;
+                                    }
+                                    this.setState({walletList: list, balance: balance, load: true},
+                                        () => AsyncStorage.setItem('WalletList', JSON.stringify(this.state.walletList)));
+                                });
+                        }
+                    } else {
+                        alert("지갑정보를 가져올 수 없습니다");
+                        return false;
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                })
+                .done();
+        });
     }
 
     showWallet(i, type, addr) {

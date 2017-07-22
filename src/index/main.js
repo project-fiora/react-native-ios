@@ -19,7 +19,7 @@ import MyWalletEdit from '../myWallet/myWalletEdit';
 import MyWalletAdd from '../myWallet/myWalletAdd';
 
 import FriendWallet from '../friendWallet/friendWallet';
-import FriendWalletAdd from '../friendWallet/friendWalletAdd';
+import FriendWalletMng from '../friendWallet/friendWalletMng';
 
 import Exchange from '../exchange/exchange';
 
@@ -88,12 +88,6 @@ export default class Main extends Component {
         } else if(p=='friendWalletMng'){
             this.setState({
                 title: '친구 관리', enableBackBtn:true, backBtnGoTo:'friendWallet',
-                enableRightBtn: true, rightBtnText: '친구 추가', rightBtnGoTo: 'friendWalletAdd'
-            });
-        } else if(p=='friendWalletAdd'){
-            this.setState({
-                title: '친구 추가', enableBackBtn:true, backBtnGoTo:'friendWalletMng',
-                enableBackBtn: true, backBtnGoTo: 'friendWalletMng',
             });
         } else if(p=='exchange'){
             this.setState({title:'자동 거래'});
@@ -180,7 +174,7 @@ export default class Main extends Component {
                         {this.props.goTo === 'myWalletAdd' && <MyWalletAdd/>}
 
                     {this.props.goTo === 'friendWallet' && <FriendWallet/>}
-                        {this.props.goTo === 'friendWalletAdd' && <FriendWalletAdd/>}
+                        {this.props.goTo === 'friendWalletMng' && <FriendWalletMng/>}
                     {this.props.goTo === 'exchange' && <Exchange/>}
 
                     {this.props.goTo === 'more' && <More/>}

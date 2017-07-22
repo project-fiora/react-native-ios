@@ -60,8 +60,7 @@ export default class Login extends Component {
                         password: password,
                         token:responseJson.jwtToken,
                         autoLogin:this.state.autoLogin
-                    }));
-                    Actions.main({goTo: 'home'})
+                    }),()=>Actions.main({goTo: 'home'}));
                 } catch (e) {
                     alert("storage save fail : " + e);
                 }

@@ -3,7 +3,7 @@
  */
 import React, {Component} from 'react';
 import {
-    Image, ScrollView, StyleSheet,
+    Image, ScrollView, StyleSheet, Alert,
     Text, AsyncStorage, View, TouchableOpacity,
 } from 'react-native';
 import realm from '../common/realm';
@@ -27,16 +27,18 @@ export default class Home extends Component {
 
     async componentDidMount() {
         const tokens = await AsyncStorage.getItem('Token');
-        const token = JSON.parse(tokens);
-        console.log(token.token);
-        this.setState({token: token}, () => this.getConfirm(token.token));
-        this.getConfirmMyside(token.token);
+        const token = JSON.parse(tokens).token;
+        console.log(token);
+        this.setState({token: token}, () => {
+            this.getConfirm();
+            this.getConfirmMyside();
+        });
     }
 
-    getConfirm(token) { //내가 받은 친구 요청 상태 확인
+    getConfirm() { //내가 받은 친구 요청 상태 확인
         fetch(PrivateAddr.getAddr() + "friend/confirmcheck", {
             method: 'GET', headers: {
-                "Authorization": token,
+                "Authorization": this.state.token,
                 "Accept": "*/*",
             }
         })
@@ -54,10 +56,10 @@ export default class Home extends Component {
             }).done();
     }
 
-    getConfirmMyside(token) { //내가 보낸 친구 요청 상태 확인
+    getConfirmMyside() { //내가 보낸 친구 요청 상태 확인
         fetch(PrivateAddr.getAddr() + "friend/confirmmyside", {
             method: 'GET', headers: {
-                "Authorization": token,
+                "Authorization": this.state.token,
                 "Accept": "*/*",
             }
         })
@@ -87,20 +89,20 @@ export default class Home extends Component {
     confirmRequest(id) { //오류가발생했습니다 다시시도해주세요! 뜸
         console.log(id);
         var intId = parseInt(id);
-        console.log(this.state.token.token);
+        console.log(this.state.token);
         try {
-            fetch(PrivateAddr.getAddr() + 'friend/agree?Friendid='+intId, {
+            fetch(PrivateAddr.getAddr() + 'friend/agree?Friendid=' + intId, {
                 method: 'PUT',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
-                    'Authorization': this.state.token.token
+                    'Authorization': this.state.token
                 },
             }).then((response) => {
                 return response.json()
             })
                 .then((responseJson) => {
-                console.log(responseJson);
+                    console.log(responseJson);
                     if (responseJson.message == "SUCCESS") {
                         alert('친구 요청을 수락했습니다');
                     } else {
@@ -110,15 +112,54 @@ export default class Home extends Component {
                 .catch((error) => {
                     alert('Network Connection Failed');
                     console.error(error);
-                }).done(()=>this.getConfirm(this.state.token.token)); //refresh를 위해 목록을 다시불러온다
+                }).done(() => this.getConfirm()); //refresh를 위해 목록을 다시불러온다
         } catch (err) {
             alert('수정실패 ' + err);
             return false;
         }
     }
 
-    denyRequest(id) {
-
+    denyRequest(friendId) {
+        // DELETE /api/friend/rejectfriend
+        Alert.alert(
+            '경고!',
+            '친구요청이 거절됩니다!',
+            [
+                {
+                    text: 'Cancel', onPress: () => {
+                    return false
+                }, style: 'cancel'
+                },
+                {
+                    text: 'OK', onPress: () => {
+                    try {
+                        fetch(PrivateAddr.getAddr() + "friend/rejectfriend?friendId=" + friendId, {
+                            method: 'DELETE', headers: {
+                                "Authorization": this.state.token.token,
+                                "Accept": "*/*",
+                            }
+                        })
+                            .then((response) => response.json())
+                            .then((responseJson) => {
+                                if (responseJson.message == "SUCCESS") {
+                                    alert("친구 요청을 거절했습니다");
+                                } else {
+                                    alert("친구 요청 거절 실패\n서버관리자에게 문의하세요");
+                                    return false;
+                                }
+                            })
+                            .catch((error) => {
+                                console.error(error);
+                            }).done(() => this.getConfirm());
+                    } catch (err) {
+                        alert('삭제실패 ' + err);
+                        return false;
+                    }
+                }
+                },
+            ],
+            {cancelable: false}
+        )
     }
 
     render() {
@@ -136,31 +177,30 @@ export default class Home extends Component {
                     모든 책임은 사용자 본인에게 있습니다 **
                 </Text>
                 <Text style={styles.btn} onPress={this.clearStorage}>앱 모든 Storage 삭제</Text>
-                <Text>{this.state.token.email}</Text>
-                <Text>{this.state.token.password}</Text>
-                <Text>{this.state.token.token}</Text>
                 <View>
                     {(this.state.confirmLoad == true && this.state.confirmList.length != 0) &&
                     <View>
-                        <Text style={styles.btnText}>친구 요청이 왔어요!</Text>
+                        <Text style={styles.listTitle}>친구 요청이 왔어요!</Text>
                         {this.state.confirmList.map((list, i) => {
                             return (
-                                <View style={styles.rowView} key={i}>
-                                    <Text style={styles.btnText}>
+                                <View style={styles.rowViewWrapper} key={i}>
+                                    <Text style={styles.waitListText}>
                                         {list.nickname}
                                     </Text>
-                                    <TouchableOpacity
-                                        style={styles.confirmBtn}
-                                        onPress={() => this.confirmRequest(list.id)}
-                                    >
-                                        <Text style={styles.btnText}>수락</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                        style={styles.confirmBtn}
-                                        onPress={() => this.denyRequest(list.id)}
-                                    >
-                                        <Text style={styles.btnText}>거절</Text>
-                                    </TouchableOpacity>
+                                    <View style={styles.rowView}>
+                                        <TouchableOpacity
+                                            style={styles.confirmBtn}
+                                            onPress={() => this.confirmRequest(list.id)}
+                                        >
+                                            <Text style={styles.btnText}>수락</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={styles.confirmBtn}
+                                            onPress={() => this.denyRequest(list.id)}
+                                        >
+                                            <Text style={styles.btnText}>거절</Text>
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
                             );
                         })}
@@ -168,16 +208,14 @@ export default class Home extends Component {
                     }
                     {(this.state.mysideLoad == true && this.state.mysideConfirmList.length != 0) &&
                     <View>
-                        <Text style={styles.btnText}>요청 대기중인 친구</Text>
-                        <View style={styles.rowView}>
-                            {this.state.mysideConfirmList.map((list, i) => {
-                                return (
-                                    <Text style={styles.btnText} key={i}>
-                                        {list.nickname}
-                                    </Text>
-                                );
-                            })}
-                        </View>
+                        <Text style={styles.listTitle}>친구 요청 목록(대기중)</Text>
+                        {this.state.mysideConfirmList.map((list, i) => {
+                            return (
+                                <Text style={styles.listText} key={i}>
+                                    {list.nickname}
+                                </Text>
+                            );
+                        })}
                     </View>
                     }
                 </View>
@@ -223,6 +261,10 @@ const styles = StyleSheet.create({
         opacity: 0.8,
         fontSize: 25,
     },
+    rowViewWrapper:{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
     rowView: {
         flexDirection: 'row',
     },
@@ -235,10 +277,33 @@ const styles = StyleSheet.create({
         padding: 5,
         alignItems: 'center',
         justifyContent: 'center',
-        opacity: 0.6
+        opacity: 0.6,
+        marginRight:1,
     },
     btnText: {
         color: '#FFFFFF',
-        fontSize: 15
+        fontSize: 15,
+        alignSelf: 'center',
+        justifyContent: 'center',
+    },
+    listTitle: {
+        color: '#FFFFFF',
+        fontSize: 18,
+        opacity: 0.8,
+        marginTop: 10,
+        marginBottom: 10,
+    },
+    waitListText: {
+        color: '#FFFFFF',
+        fontSize: 16,
+        opacity: 0.8,
+        justifyContent: 'center',
+        alignSelf: 'center',
+    },
+    listText: {
+        color: '#FFFFFF',
+        fontSize: 16,
+        opacity: 0.8,
+        justifyContent: 'center',
     },
 });
