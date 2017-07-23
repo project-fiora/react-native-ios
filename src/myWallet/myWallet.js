@@ -57,10 +57,9 @@ export default class MyWallet extends Component {
                             this.setState({walletList: [], load: true});
                         } else {
                             Promise.resolve()
-                                .then(() => Common.getBalance(list[this.state.currentWallet].wallet_type, list[this.state.currentWallet].wallet_add))
+                                .then(() => Common.getBalance(list[this.state.currentWallet].wallet_type,
+                                    list[this.state.currentWallet].wallet_add))
                                 .then(result => {
-                                    console.log('ok');
-                                    console.log(result);
                                     var balance;
                                     if (Number.isInteger(result)) {
                                         balance = (parseInt(result) / 100000000) + " " + list[this.state.currentWallet].wallet_type;

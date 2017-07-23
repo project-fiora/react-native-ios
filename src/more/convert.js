@@ -16,6 +16,7 @@ export default class Convert extends Component {
         this.state = {
             onClickBox:false,
             cryptoList:[],
+            marketcapList:[],
             coinValue: '',
             result: '',
             loading:false,

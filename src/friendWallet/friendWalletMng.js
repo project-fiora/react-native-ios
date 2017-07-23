@@ -98,8 +98,12 @@ export default class FriendWalletMng extends Component {
             if (responseJson.message == "SUCCESS") {
                 alert('친구 신청 완료!');
                 Actions.main({goTo: 'friendWallet'});
+            } else if(responseJson.message == "EXIST"){
+                alert('이미 요청된 친구입니다!');
+                return false;
             } else {
                 alert('친구 요청에 실패했습니다.\n이미 친구 요청을 하신것이 아니라면\n서버관리자에게 문의해주세요.');
+                return false;
             }
         })
             .catch((error) => {

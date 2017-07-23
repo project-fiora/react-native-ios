@@ -23,10 +23,10 @@ export default class FriendWallet extends Component {
             load: false,
             onClickFriendBox: false,
             onClickBox: false,
-            enable:'none',
+            enable: 'none',
             currentFriend: 0,
             currentWallet: 0,
-            token:'',
+            token: '',
         };
     }
 
@@ -35,8 +35,8 @@ export default class FriendWallet extends Component {
     }
 
     async getFriendList() {
-        await AsyncStorage.getItem('Token', (err,result)=>{
-            if(err!=null){
+        await AsyncStorage.getItem('Token', (err, result) => {
+            if (err != null) {
                 alert(err);
                 return false;
             }
@@ -46,32 +46,32 @@ export default class FriendWallet extends Component {
                     "Authorization": token,
                     "Accept": "*/*",
                 }
-            })
-                .then((response) => response.json())
-                .then((responseJson) => {
-                    if (responseJson.message == "SUCCESS") {
-                        this.setState({friendList: responseJson.list, });
-                    } else {
-                        alert("친구정보를 가져올 수 없습니다");
-                        return false;
-                    }
-                })
-                .catch((error) => {
-                    console.error(error);
-                })
-                .done(()=>this.getFriendWallet(this.state.friendList[this.state.currentFriend].id));
+            }).then((response) => response.json()).then((responseJson) => {
+                if (responseJson.message == "SUCCESS") {
+                    this.setState({friendList: responseJson.list, load:true});
+                } else {
+                    alert("친구정보를 가져올 수 없습니다");
+                    return false;
+                }
+            }).catch((error) => {
+                console.error(error);
+            }).done(() => {
+                if (this.state.friendList.length != 0) {
+                    this.getFriendWallet(this.state.friendList[this.state.currentFriend].id);
+                }
+            });
         });
     }
 
     async getFriendWallet(friendId) {
         // GET /api/friend/lookfriedwallet
-        await AsyncStorage.getItem('Token',(err, result)=>{
-            if(err!=null){
+        await AsyncStorage.getItem('Token', (err, result) => {
+            if (err != null) {
                 alert(err);
                 return false;
             }
             const token = JSON.parse(result).token;
-            fetch(PrivateAddr.getAddr() + "friend/lookfriendwallet?friendId="+friendId, {
+            fetch(PrivateAddr.getAddr() + "friend/lookfriendwallet?friendId=" + friendId, {
                 method: 'GET', headers: {
                     "Authorization": token,
                     'Accept': 'application/json',
@@ -81,19 +81,27 @@ export default class FriendWallet extends Component {
                 .then((responseJson) => {
                     if (responseJson.message == "SUCCESS") {
                         var list = responseJson.list;
-                        if(list.length==0){
-                            this.setState({walletList:[], load:true, secondLoad:true, enable:null});
+                        if (list.length == 0) {
+                            this.setState({walletList: [], load: true, secondLoad: true, enable: null});
                         } else {
                             Promise.resolve()
-                                .then(()=>{Common.getBalance(list[this.state.currentWallet].wallet_type, list[this.state.currentWallet].wallet_add)})
+                                .then(() => {
+                                    Common.getBalance(list[this.state.currentWallet].wallet_type, list[this.state.currentWallet].wallet_add)
+                                })
                                 .then(result => {
                                     var balance;
-                                    if(Number.isInteger(result)){
-                                        balance = (parseInt(result)/100000000)+" "+list[this.state.currentWallet].wallet_type;
+                                    if (Number.isInteger(result)) {
+                                        balance = (parseInt(result) / 100000000) + " " + list[this.state.currentWallet].wallet_type;
                                     } else {
                                         balance = result;
                                     }
-                                    this.setState({walletList:list, balance:balance, load:true, secondLoad:true, enable:null});
+                                    this.setState({
+                                        walletList: list,
+                                        balance: balance,
+                                        load: true,
+                                        secondLoad: true,
+                                        enable: null
+                                    });
                                 });
                         }
                     } else {
@@ -112,25 +120,25 @@ export default class FriendWallet extends Component {
         this.setState({
             currentFriend: i,
             friendId: friendId,
-            secondLoad:false,
-            enable:'none',
+            secondLoad: false,
+            enable: 'none',
             onClickFriendBox: !this.state.onClickFriendBox,
-            onClickBox:false,
-        },()=>this.getFriendWallet(friendId));
+            onClickBox: false,
+        }, () => this.getFriendWallet(friendId));
     }
 
     showWallet(i, type, addr) {
-        this.setState({load:false},()=>
+        this.setState({load: false}, () =>
             Promise.resolve()
-                .then(()=>Common.getBalance(type, addr))
+                .then(() => Common.getBalance(type, addr))
                 .then(result => {
                     var balance;
-                    if(Number.isInteger(result)){
-                        balance = (parseInt(result)/100000000)+" "+type;
+                    if (Number.isInteger(result)) {
+                        balance = (parseInt(result) / 100000000) + " " + type;
                     } else {
                         balance = result;
                     }
-                    this.setState({balance:balance, currentWallet: i,onClickBox: !this.state.onClickBox, load:true});
+                    this.setState({balance: balance, currentWallet: i, onClickBox: !this.state.onClickBox, load: true});
                 })
         );
     }
@@ -143,7 +151,7 @@ export default class FriendWallet extends Component {
                     <Image source={require('../common/img/loading.gif')} style={styles.loadingIcon}/>
                 </View>
                 }
-                {(this.state.load == true && this.state.secondLoad==false) &&
+                {(this.state.load == true && this.state.secondLoad == false) &&
                 <View style={styles.loadingIconWrapper}>
                     <Image source={require('../common/img/loading.gif')} style={styles.loadingIcon}/>
                 </View>
@@ -203,12 +211,12 @@ export default class FriendWallet extends Component {
                         })()}
                         <View style={styles.blank}/>
                         {/*////////////////친구 리스트 select Box////////////////////*/}
-                        {(this.state.load == true && this.state.secondLoad==true && this.state.walletList.length == 0) &&
+                        {(this.state.load == true && this.state.secondLoad == true && this.state.walletList.length == 0) &&
                         <View>
                             <Text style={styles.titleText}>친구 지갑이 없어요!</Text>
                         </View>
                         }
-                        {(this.state.load == true && this.state.secondLoad==true && this.state.walletList.length != 0) &&
+                        {(this.state.load == true && this.state.secondLoad == true && this.state.walletList.length != 0) &&
                         <View>
                             <TouchableOpacity
                                 underlayColor={'#AAAAAA'}
@@ -309,8 +317,8 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         opacity: 0.8,
     },
-    blank:{
-        margin:5,
+    blank: {
+        margin: 5,
     },
     selectBoxWrapper: {
         alignSelf: 'center',
