@@ -38,6 +38,7 @@ import NoticeDetail from "../more/notice/noticeDetail";
 
 import Version from '../more/version';
 import Inquire from '../more/inquire';
+import Post from "../more/post/post";
 
 export default class Main extends Component {
     constructor(props) {
@@ -121,6 +122,11 @@ export default class Main extends Component {
             this.setState({
                 title:this.props.title,
                 enableBackBtn:true, backBtnGoTo:'option'});
+        } else if(p=='post'){
+            this.setState({
+                title:'커뮤니티',
+                enableBackBtn:true, backBtnGoTo:'more'
+            });
         } else if(p=='notice'){
             this.setState({
                 title:'공지사항',
@@ -183,6 +189,7 @@ export default class Main extends Component {
                         {this.props.goTo === 'convert' && <Convert/>}
                         {/*{this.props.goTo === 'option' && <Option/>}*/}
                             {/*{this.props.goTo === 'optionDetail' && <OptionDetail/>}*/}
+                        {this.props.goTo === 'post' && <Post/>}
                         {this.props.goTo === 'notice' && <Notice/>}
                             {this.props.goTo === 'noticeDetail' &&
                                 <NoticeDetail id={this.props.id}

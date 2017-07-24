@@ -189,9 +189,9 @@ export default class Home extends Component {
                     <Text>로딩 중 ..{'\n'}</Text>
                     }
                     {this.state.nickname!=undefined && this.state.nickname}님 환영합니다!{'\n'}
-                    보유중인 자산 :
-                    <Image source={require('../common/img/dollar.png')} style={styles.dollarIcon}/>
-                    {this.state.dollar}{'\n'}
+                    {/*보유중인 자산 :*/}
+                    {/*<Image source={require('../common/img/dollar.png')} style={styles.dollarIcon}/>*/}
+                    {/*{this.state.dollar}{'\n'}*/}
                 </Text>
                 <Text style={styles.warningText}>
                     ** 이 앱을 사용하는 도중에 발생하는
@@ -240,8 +240,8 @@ export default class Home extends Component {
                         })}
                     </View>
                     }
-                    <Text>Local Storage를 초기화하면 오류가 발생할수있음</Text>
-                    <Text style={styles.btn} onPress={this.clearStorage}>앱 Local Storage 삭제</Text>
+                    {/*<Text>Local Storage를 초기화하면 오류가 발생할수있음</Text>*/}
+                    {/*<Text style={styles.btn} onPress={this.clearStorage}>앱 Local Storage 삭제</Text>*/}
                 </View>
             </ScrollView>
         );
