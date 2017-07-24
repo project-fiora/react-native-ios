@@ -198,7 +198,6 @@ export default class Join extends Component {
                 alert('Network Connection Failed');
                 console.error(error);
             }).done(() => this.setState({enable: null}));
-
     }
 
     render() {
@@ -311,7 +310,7 @@ export default class Join extends Component {
                         onChangeText={(name) => this.setState({name: name})}
                         placeholder={'이름 혹은 닉네임'}
                         placeholderTextColor="#FFFFFF"
-                        maxLength={20}
+                        maxLength={10}
                         autoCapitalize='none'
                         multiline={false}
                         autoCorrect={false}

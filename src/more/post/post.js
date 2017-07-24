@@ -5,7 +5,7 @@
 import React, {Component} from 'react';
 import {
     StyleSheet,
-    Text, TouchableHighlight,
+    Text,
     View, AsyncStorage, TouchableOpacity, ScrollView, Image
 } from 'react-native';
 import PrivateAddr from "../../common/private/address";
@@ -16,13 +16,14 @@ export default class Post extends Component {
 
         this.state = {
             topList: [],
-            postList: [],
+            postList:[],
             currentPage: 0,
+            load: false,
         };
     }
 
-    async componentDidMount() {
-        await this.getPostList(0);
+    componentDidMount() {
+        this.getPostList(this.state.currentPage);
     }
 
     async getPostList(size) {
@@ -41,12 +42,12 @@ export default class Post extends Component {
             }).then((response) => response.json()).then((responseJson) => {
                 console.log(responseJson);
                 if (responseJson.message == "SUCCESS") {
-                    var list = responseJson.list;
-                    if (list.length == 0) {
-                        this.setState({topList: [], postList: [], load: true});
-                    } else {
-                        this.setState({topsList: responseJson.top, postList: list, load: true});
-                    }
+                    this.setState({
+                        topList: responseJson.top,
+                        postList: responseJson.list,
+                        load: true,
+                        currentPage:this.state.currentPage+1
+                    });
                 } else {
                     alert("게시판 정보를 가져올 수 없습니다");
                     return false;
@@ -62,15 +63,12 @@ export default class Post extends Component {
     }
 
     render() {
-        return (
-            <ScrollView contentContainerStyle={styles.frame}>
-                {!this.state.load &&
-                <View style={styles.loadingIconWrapper}>
-                    <Image source={require('../../common/img/loading.gif')} style={styles.loadingIcon}/>
-                </View>
-                }
-                {this.state.load &&
-                <View>
+        if(this.state.load==true){
+            return (
+                <ScrollView contentContainerStyle={styles.frame}>
+                    {/*<Text style={styles.explain}>*/}
+                        {/*상단의 게시물 3개는 추천이 많은 게시물입니다*/}
+                    {/*</Text>*/}
                     <View style={styles.thead}>
                         <View style={styles.th1}>
                             <Text style={styles.headText}>
@@ -88,8 +86,14 @@ export default class Post extends Component {
                             </Text>
                         </View>
                     </View>
+
                     {this.state.topList.map((top, i) => {
-                        console.log("asdf");
+                        if (top.title.length > 13) {
+                            top.title = top.title.substr(0, 12) + "...";
+                        }
+                        if (top.nickname.length > 6) {
+                            top.nickname = top.nickname.substr(0, 6) + "...";
+                        }
                         return (
                             <View key={i} style={styles.topTr}>
                                 <View style={styles.td1}>
@@ -110,9 +114,16 @@ export default class Post extends Component {
                                     </Text>
                                 </View>
                             </View>
-                        );
+                        )
                     })}
+
                     {this.state.postList.map((post, i) => {
+                        if (post.title.length > 13) {
+                            post.title = post.title.substr(0, 12) + "...";
+                        }
+                        if (post.nickname.length > 6) {
+                            post.nickname = post.nickname.substr(0, 6) + "...";
+                        }
                         return (
                             <View key={i} style={styles.postTr}>
                                 <View style={styles.td1}>
@@ -133,18 +144,29 @@ export default class Post extends Component {
                                     </Text>
                                 </View>
                             </View>
-                        );
+                        )
                     })}
+                    <TouchableOpacity
+                        style={styles.moreBtn}
+                        onPress={() => this.getPostList(this.state.currentPage)}
+                    >
+                        <Text style={styles.moreBtnText}>더보기</Text>
+                    </TouchableOpacity>
+                </ScrollView>
+            );
+        } else {
+            return (
+                <View style={styles.loadingIconWrapper}>
+                    <Image source={require('../../common/img/loading.gif')} style={styles.loadingIcon}/>
                 </View>
-                }
-            </ScrollView>
-        );
+            );
+        }
     }
 }
 
 var styles = StyleSheet.create({
     frame: {
-        padding: 20,
+        padding: 10,
         opacity: 0.8,
     },
     loadingIconWrapper: {
@@ -160,12 +182,19 @@ var styles = StyleSheet.create({
         width: 30,
         height: 30,
     },
+    explain: {
+        fontSize: 15,
+        color: '#FFFFFF',
+        opacity: 0.7,
+        textAlign: 'center',
+        marginBottom: 10,
+    },
     thead: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        borderBottomWidth: 1.5,
+        borderBottomWidth: 1.2,
         borderColor: '#FFFFFF',
-        height: 35,
+        height: 28,
     },
     headText: {
         fontSize: 18,
@@ -177,7 +206,7 @@ var styles = StyleSheet.create({
     },
     th2: {
         alignItems: 'flex-start',
-        width: 170,
+        width: 180,
         paddingLeft: 5,
     },
     th3: {
@@ -190,13 +219,8 @@ var styles = StyleSheet.create({
         borderBottomWidth: 0.6,
         borderColor: '#FFFFFF',
         height: 40,
-    },
-    topThirdTr: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        borderBottomWidth: 1.2,
-        borderColor: '#FFFFFF',
-        height: 40,
+        backgroundColor: '#000000',
+        opacity: 0.3,
     },
     postTr: {
         flexDirection: 'row',
@@ -206,7 +230,7 @@ var styles = StyleSheet.create({
         height: 40,
     },
     bodyText: {
-        fontSize: 17,
+        fontSize: 16,
         color: '#FFFFFF',
     },
     td1: {
@@ -216,12 +240,29 @@ var styles = StyleSheet.create({
     },
     td2: {
         justifyContent: 'center',
-        width: 170,
+        width: 180,
         paddingLeft: 5,
     },
     td3: {
         justifyContent: 'center',
         alignItems: 'center',
         width: 100,
+    },
+    moreBtn: {
+        width: 80,
+        height: 30,
+        borderWidth: 1,
+        borderRadius: 20,
+        borderColor: '#FFFFFF',
+        padding: 5,
+        alignItems: 'center',
+        alignSelf:'center',
+        justifyContent: 'center',
+        opacity: 0.6,
+        marginTop: 3,
+    },
+    moreBtnText: {
+        color: '#FFFFFF',
+        fontSize: 15
     },
 });
