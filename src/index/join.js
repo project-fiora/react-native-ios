@@ -31,6 +31,7 @@ export default class Join extends Component {
             name: '',
             agree: false,
             enable: null,
+            enableNickname:false,
         };
     }
 
@@ -39,6 +40,7 @@ export default class Join extends Component {
     }
 
     join() {//회원가입 POST api call
+        this.setState({enable: 'none'});
         if (this.state.confirmAuth) {
             if (this.state.passwd != "" && this.state.passwd2 != "") {
                 if (this.state.passwd == this.state.passwd2) {
@@ -69,7 +71,7 @@ export default class Join extends Component {
                                 .catch((error) => {
                                     alert('Network Connection Failed');
                                     console.error(error);
-                                }).done();
+                                }).done(()=>this.setState({enable: null}));
                         } else {
                             alert('동의하셔야 가입이 가능합니다!');
                         }
@@ -85,6 +87,7 @@ export default class Join extends Component {
         } else {
             alert('이메일 인증을 해주세요!');
         }
+        this.setState({enable: null});
     }
 
     goTitle() {
@@ -175,6 +178,29 @@ export default class Join extends Component {
         }
     }
 
+    checkNickname(){
+        // GET /api/member/checknickname
+        this.setState({enable: 'none'});
+        fetch(PrivateAddr.getAddr() + "member/checknickname?nickname=" + this.state.nickname)
+            .then((response) => {
+                return response.json()
+            })
+            .then((responseJson) => {
+                if(responseJson.message=="SUCCESS" && (this.state.nickname!="")){
+                    alert("사용 가능한 닉네임 입니다!");
+                    this.setState({enableNickname:true});
+                } else {
+                    alert("사용할 수 없는 닉네임 입니다!");
+                    return false;
+                }
+            })
+            .catch((error) => {
+                alert('Network Connection Failed');
+                console.error(error);
+            }).done(() => this.setState({enable: null}));
+
+    }
+
     render() {
         return (
             <View pointerEvents={this.state.enable} style={styles.loginContainer}>
@@ -235,6 +261,8 @@ export default class Join extends Component {
                             placeholderTextColor="#FFFFFF"
                             maxLength={6}
                             multiline={false}
+                            autoCapitalize='none'
+                            keyboardType='numeric'
                         />
                     </View>
                     <TouchableHighlight
@@ -284,10 +312,18 @@ export default class Join extends Component {
                         placeholder={'이름 혹은 닉네임'}
                         placeholderTextColor="#FFFFFF"
                         maxLength={20}
+                        autoCapitalize='none'
                         multiline={false}
                         autoCorrect={false}
                     />
                 </View>
+                <TouchableHighlight
+                    style={styles.authBtn}
+                    underlayColor={'#000000'}
+                    onPress={() => this.checkNickname()}
+                >
+                    <Text style={styles.authLabel}>닉네임 중복검사</Text>
+                </TouchableHighlight>
                 <Text style={styles.agreeText}>
                     ** 이 앱을 사용하는 도중에 발생하는{'\n'}모든 책임은 사용자 본인에게 있습니다 **
                 </Text>

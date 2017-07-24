@@ -48,6 +48,10 @@ export default class Convert extends Component {
     }
 
     convert() {
+        if(this.state.coinValue==""){
+            alert("값을 입력하세요!");
+            return false;
+        }
         var result = parseFloat(this.state.cryptoList[this.state.currentTYPE])*parseFloat(this.state.coinValue);
         this.setState({result:result.toFixed(0).toString()});
     }
@@ -69,6 +73,7 @@ export default class Convert extends Component {
                     placeholder={'임의의 값을 입력하세요'}
                     placeholderTextColor="#FFFFFF"
                     autoCapitalize='none'
+                    keyboardType='numeric'
                     autoCorrect={false}
                     maxLength={30}
                     multiline={false}

@@ -15,10 +15,10 @@ export default class Home extends Component {
 
         this.state = {
             refreshing: false,
+            nicknameLoad: false,
             confirmLoad: false,
             mysideLoad: false,
             dollar: 2000,
-            email: 'boseokjung@gmail.com',
             token: {},
             confirmList: [],
             mysideConfirmList: [],
@@ -30,9 +30,28 @@ export default class Home extends Component {
         const token = JSON.parse(tokens).token;
         console.log(token);
         this.setState({token: token}, () => {
+            this.getMynickname();
             this.getConfirm();
             this.getConfirmMyside();
         });
+    }
+
+    getMynickname() { //내가 받은 친구 요청 상태 확인
+        // GET /api/member/mynickname
+        fetch(PrivateAddr.getAddr() + "member/mynickname", {
+            method: 'GET', headers: {
+                "Authorization": this.state.token,
+                "Accept": "*/*",
+            }
+        })
+            .then((response) => response.json())
+            .then((responseJson) => {
+                this.setState({nickname:responseJson.nickname, nicknameLoad:true});
+            })
+            .catch((error) => {
+                alert('Network Connection Fail : ' + error);
+                console.error(error);
+            }).done();
     }
 
     getConfirm() { //내가 받은 친구 요청 상태 확인
@@ -166,6 +185,10 @@ export default class Home extends Component {
         return (
             <ScrollView contentContainerStyle={styles.homeWrapper}>
                 <Text style={styles.txt}>
+                    {(this.state.nicknameLoad==false||this.state.confirmLoad==false||this.state.mysideLoad==false) &&
+                    <Text>로딩 중 ..{'\n'}</Text>
+                    }
+                    {this.state.nickname!=undefined && this.state.nickname}님 환영합니다!{'\n'}
                     보유중인 자산 :
                     <Image source={require('../common/img/dollar.png')} style={styles.dollarIcon}/>
                     {this.state.dollar}{'\n'}
@@ -176,7 +199,6 @@ export default class Home extends Component {
                 <Text style={styles.warningText2}>
                     모든 책임은 사용자 본인에게 있습니다 **
                 </Text>
-                <Text style={styles.btn} onPress={this.clearStorage}>앱 모든 Storage 삭제</Text>
                 <View>
                     {(this.state.confirmLoad == true && this.state.confirmList.length != 0) &&
                     <View>
@@ -218,6 +240,8 @@ export default class Home extends Component {
                         })}
                     </View>
                     }
+                    <Text>Local Storage를 초기화하면 오류가 발생할수있음</Text>
+                    <Text style={styles.btn} onPress={this.clearStorage}>앱 Local Storage 삭제</Text>
                 </View>
             </ScrollView>
         );
