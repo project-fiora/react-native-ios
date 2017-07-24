@@ -45,7 +45,7 @@ export default class PostAdd extends Component {
             },
             body: JSON.stringify({
                 title:this.state.title,
-                contents: this.state.content,
+                contents: this.state.content.replace(/\n/g,"\\n"),
             })
         }).then((response) => {return response.json()})
             .then((responseJson) => {
@@ -82,7 +82,7 @@ export default class PostAdd extends Component {
                     multiline={true}
                     numberOfLines={5}
                     value={this.state.content}
-                    onChangeText={(content) => this.setState({content: content})}
+                    onChangeText={(content) => this.setState({content:content})}
                     placeholder={'1000자 이내로 입력해주세요'}
                     placeholderTextColor="#FFFFFF"
                     autoCapitalize = 'none'
