@@ -5,11 +5,12 @@
 import React, {Component} from 'react';
 import {
     StyleSheet,
-    Text,
+    Text, Alert,
     View, AsyncStorage, TouchableOpacity, ScrollView, Image, TextInput, TouchableHighlight
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import PrivateAddr from "../../common/private/address";
+import Common from '../../common/common';
 
 export default class Post extends Component {
     constructor(props) {
@@ -34,7 +35,7 @@ export default class Post extends Component {
                 return false;
             }
             const token = JSON.parse(result).token;
-            this.setState({token:token});
+            this.setState({token: token});
             fetch(PrivateAddr.getAddr() + "post/postinfo?post_id=" + this.props.post_id, {
                 method: 'GET', headers: {
                     "Authorization": token,
@@ -42,13 +43,8 @@ export default class Post extends Component {
                 }
             }).then((response) => response.json()).then((responseJson) => {
                 if (responseJson.message == "SUCCESS") {
-                    // var myCommentList = responseJson.comment_list.filter((item) => {
-                    //     return item.posibleEdditAndDelete === true;
-                    // });
-                    // console.log(myCommentList);
                     this.setState({
                         post: responseJson,
-                        // myCommentList: myCommentList,
                         load: true,
                     });
                 } else {
@@ -79,7 +75,7 @@ export default class Post extends Component {
         this.setState(stateCopy);
     }
 
-    editCommentText(contents, i){ //textInput 의 텍스트가 바뀔때마다 comment_list객체 내부를 수정
+    editCommentText(contents, i) { //textInput 의 텍스트가 바뀔때마다 comment_list객체 내부를 수정
         var stateCopy = Object.assign({}, this.state);
         stateCopy.post.comment_list = stateCopy['post'].comment_list.slice();
         stateCopy.post.comment_list[i].contents = contents;
@@ -89,7 +85,6 @@ export default class Post extends Component {
     editComment(comment_id, contents) {
         // PUT /api/comments/commentedit
         try {
-            console.log(this.state.token);
             fetch(PrivateAddr.getAddr() + 'comments/commentedit', {
                 method: 'PUT',
                 headers: {
@@ -99,7 +94,7 @@ export default class Post extends Component {
                 },
                 body: JSON.stringify({
                     post_id: this.props.post_id,
-                    comment_id:comment_id,
+                    comment_id: comment_id,
                     contents: contents.replace(/\n/g, "\\n"),
                 })
             }).then((response) => {
@@ -123,12 +118,89 @@ export default class Post extends Component {
         }
     }
 
-    deleteComment(post_id, comment_id) {
-
+    deleteComment(comment_id) {
+        // DELETE /api/comments/commentdelete
+        Alert.alert(
+            '경고!',
+            '댓글이 삭제됩니다.\n정말 지우실건가요!?',
+            [
+                {
+                    text: 'Cancel', onPress: () => {
+                    return false
+                }, style: 'cancel'
+                },
+                {
+                    text: 'OK', onPress: () => {
+                    try {
+                        //댓글 삭제하기
+                        fetch(PrivateAddr.getAddr() + "comments/commentdelete", {
+                            method: 'DELETE',
+                            headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json',
+                                "Authorization": this.state.token,
+                            },
+                            body: JSON.stringify({
+                                post_id: this.props.post_id,
+                                comment_id: comment_id,
+                            })
+                        }).then((response) => response.json()).then((responseJson) => {
+                            if (responseJson.message == "SUCCESS") {
+                                var stateCopy = Object.assign({}, this.state);
+                                stateCopy.post.comment_list = stateCopy['post'].comment_list.slice();
+                                stateCopy.post.comment_list.pop();
+                                this.setState(stateCopy);
+                            } else {
+                                alert("댓글 삭제 실패");
+                                return false;
+                            }
+                        }).catch((error) => {
+                            console.error(error);
+                        });
+                    } catch (err) {
+                        alert('댓글 삭제 실패\n' + err);
+                        return false;
+                    }
+                }
+                },
+            ],
+            {cancelable: false}
+        )
     }
 
     addComment() {
-
+        // POST /api/comments/commentcreate
+        fetch(PrivateAddr.getAddr() + 'comments/commentcreate', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': this.state.token,
+            },
+            body: JSON.stringify({
+                post_id: this.props.post_id,
+                contents: this.state.comment.replace(/\n/g, "\\n"),
+            })
+        }).then((response) => {
+            return response.json()
+        }).then((responseJson) => {
+            if (responseJson.message == "SUCCESS") {
+                try {
+                    var recentComment = responseJson.list[responseJson.list.length - 1];
+                    var stateCopy = Object.assign({}, this.state);
+                    stateCopy.post.comment_list = stateCopy['post'].comment_list.slice();
+                    stateCopy.post.comment_list.push(recentComment);
+                    this.setState(stateCopy);
+                } catch (err) {
+                    alert("댓글 생성 에러\n" + err);
+                }
+            } else {
+                alert('오류가 발생했습니다.\n다시 시도해주세요!');
+            }
+        }).catch((error) => {
+            alert('Network Connection Failed');
+            console.error(error);
+        }).done();
     }
 
     render() {
@@ -138,7 +210,7 @@ export default class Post extends Component {
                     <ScrollView>
                         <View>
                             <Text style={styles.title}>{this.state.post.title}</Text>
-                            <Text style={styles.date}>{this.state.post.written_date}</Text>
+                            <Text style={styles.date}>{Common.modifyDate(this.state.post.written_date)}</Text>
                             <Text style={styles.name}>{this.state.post.writter_name}</Text>
                             <View style={styles.contentsWrapper}>
                                 {this.state.post.contents.split("\\n").map((content, i) => {
@@ -155,7 +227,7 @@ export default class Post extends Component {
                                     <View key={i} style={styles.commentView}>
                                         <View style={styles.commentRow}>
                                             <Text style={styles.commentWriter}>{comment.writter_name}</Text>
-                                            <Text style={styles.commentDate}>{comment.written_date}</Text>
+                                            <Text style={styles.commentDate}>{Common.modifyDate(comment.written_date)}</Text>
                                         </View>
                                         <View style={styles.commentContentRow}>
 
@@ -165,7 +237,9 @@ export default class Post extends Component {
                                                 multiline={true}
                                                 numberOfLines={5}
                                                 value={this.state.post.comment_list[i].contents}
-                                                onChangeText={(comment_edit) => {this.editCommentText(comment_edit, i)}}
+                                                onChangeText={(comment_edit) => {
+                                                    this.editCommentText(comment_edit, i)
+                                                }}
                                                 placeholderTextColor="#FFFFFF"
                                                 autoCapitalize='none'
                                                 autoCorrect={false}
@@ -199,7 +273,7 @@ export default class Post extends Component {
 
                                                 <Text style={styles.commentEditBtnTextBetween}> | </Text>
                                                 <TouchableOpacity
-                                                    onPress={() => this.deleteComment(this.props.post_id, comment.comment_id)}
+                                                    onPress={() => this.deleteComment(comment.comment_id)}
                                                 >
                                                     <Text style={styles.commentEditBtnText}>삭제</Text>
                                                 </TouchableOpacity>
@@ -212,7 +286,7 @@ export default class Post extends Component {
                                 <View key={i} style={styles.commentView}>
                                     <View style={styles.commentRow}>
                                         <Text style={styles.commentWriter}>{comment.writter_name}</Text>
-                                        <Text style={styles.commentDate}>{comment.written_date}</Text>
+                                        <Text style={styles.commentDate}>{Common.modifyDate(comment.written_date)}</Text>
                                     </View>
                                     <View style={styles.commentRow}>
                                         <Text style={styles.commentContents}>{comment.contents}</Text>
