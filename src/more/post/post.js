@@ -8,6 +8,7 @@ import {
     Text,
     View, AsyncStorage, TouchableOpacity, ScrollView, Image
 } from 'react-native';
+import {Actions} from 'react-native-router-flux';
 import PrivateAddr from "../../common/private/address";
 
 export default class Post extends Component {
@@ -58,8 +59,8 @@ export default class Post extends Component {
         });
     }
 
-    readPost() {
-
+    readPost(post_id) {
+        Actions.main({goTo:'postRead', post_id:post_id});
     }
 
     render() {

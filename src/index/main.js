@@ -31,6 +31,7 @@ import ExchangeLink from '../more/exchangeLink';
 import ExchangeSite from '../more/exchangeSite';
 import Convert from '../more/convert';
 import Post from "../more/post/post";
+import PostRead from '../more/post/postRead';
 import PostAdd from "../more/post/postAdd";
 import Option from '../more/option/option';
 import OptionDetail from "../more/option/optionDetail";
@@ -117,7 +118,7 @@ export default class Main extends Component {
                 enableBackBtn:true, backBtnGoTo:'exchangeLink'});
         } else if(p=='convert'){
             this.setState({
-                title:'coin -> KRW',
+                title:'모의환전',
                 enableBackBtn:true, backBtnGoTo:'more'});
         } else if(p=='optionDetail'){
             this.setState({
@@ -129,10 +130,20 @@ export default class Main extends Component {
                 enableBackBtn:true, backBtnGoTo:'more',
                 enableRightBtn: true, rightBtnText: '글쓰기', rightBtnGoTo: 'postAdd'
             });
+        } else if(p=='postRead'){
+            this.setState({
+                title:'게시물 읽기',
+                enableBackBtn:true, backBtnGoTo:'post',
+            });
         } else if(p=='postAdd'){
             this.setState({
-                title:'글쓰기',
+                title:'게시물 작성',
                 enableBackBtn:true, backBtnGoTo:'post',
+            });
+        } else if(p=='postEdit'){
+            this.setState({
+                title:'게시물 수정',
+                enableBackBtn:false,
             });
         } else if(p=='notice'){
             this.setState({
@@ -197,7 +208,15 @@ export default class Main extends Component {
                         {/*{this.props.goTo === 'option' && <Option/>}*/}
                             {/*{this.props.goTo === 'optionDetail' && <OptionDetail/>}*/}
                         {this.props.goTo === 'post' && <Post/>}
+                            {this.props.goTo === 'postRead' && <PostRead post_id={this.props.post_id}/>}
                             {this.props.goTo === 'postAdd' && <PostAdd/>}
+                            {this.props.goTo === 'postEdit' && <PostAdd
+                                                                    post_id={this.props.post_id}
+                                                                    title={this.props.title}
+                                                                    contents={this.props.contents}
+                                                                    edit={this.props.edit}
+                                                               />
+                            }
                         {this.props.goTo === 'notice' && <Notice/>}
                             {this.props.goTo === 'noticeDetail' &&
                                 <NoticeDetail id={this.props.id}
