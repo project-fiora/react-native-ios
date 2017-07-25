@@ -27,16 +27,15 @@ class Common extends Component {
         var time = dateTime[1].split(":");
         //time[0] = 22 (시)
         if(time[0]>12){
-            time[0] = "오후"+time[0]-12;
+            time[0] = "오후"+(time[0]-12);
         } else{
             time[0] = "오전"+time[0];
         }
         //time[1] = 23 (분)
-
         if(yearMonthDay[0]!=today.getFullYear()){ //년도가 다른경우 년도 추가
             tmp += yearMonthDay[0]+"년 "; //
         } else if ((today.getFullYear().toString() == yearMonthDay[0]
-            && "0"+today.getMonth()+1==yearMonthDay[1]
+            && "0"+(today.getMonth()+1)==yearMonthDay[1]
             && today.getDate().toString() == yearMonthDay[2])==false) { //오늘이 아니면
             tmp += yearMonthDay[1]+"월 "+yearMonthDay[2]+"일 "; //월 일 추가
         }

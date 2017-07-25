@@ -209,9 +209,15 @@ export default class Post extends Component {
                 <View style={styles.frame}>
                     <ScrollView>
                         <View>
-                            <Text style={styles.title}>{this.state.post.title}</Text>
-                            <Text style={styles.date}>{Common.modifyDate(this.state.post.written_date)}</Text>
-                            <Text style={styles.name}>{this.state.post.writter_name}</Text>
+                            <View style={styles.commentRow}>
+                                <Text style={styles.title}>{this.state.post.title}</Text>
+                                <View>
+                                    <Text style={styles.date}>{Common.modifyDate(this.state.post.written_date)}</Text>
+                                    <Text style={styles.name}>{this.state.post.writter_name}</Text>
+                                </View>
+                            </View>
+
+
                             <View style={styles.contentsWrapper}>
                                 {this.state.post.contents.split("\\n").map((content, i) => {
                                     return (
@@ -364,7 +370,6 @@ var styles = StyleSheet.create({
         fontSize: 18,
         color: '#FFFFFF',
         opacity: 0.8,
-        textAlign: 'center',
         marginBottom: 15,
     },
     date: {
@@ -382,8 +387,11 @@ var styles = StyleSheet.create({
         marginBottom: 15,
     },
     contentsWrapper: {
+        borderTopWidth:0.5,
+        borderColor: '#FFFFFF',
         marginBottom: 20,
-        minHeight: 200,
+        paddingTop:15,
+        minHeight: 100,
     },
     content: {
         fontSize: 15,
