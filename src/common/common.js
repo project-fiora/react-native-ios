@@ -21,7 +21,6 @@ class Common extends Component {
     }
 
     static getRatio(){
-        alert((width*height)/(375*667));
         return (width*height)/(375*667);
     }
 
@@ -33,11 +32,11 @@ class Common extends Component {
         return 667/height;
     }
 
-    static windowWidth(){
+    static winWidth(){
         return width;
     }
 
-    static windowHeight(){
+    static winHeight(){
         return height;
     }
 

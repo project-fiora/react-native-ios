@@ -191,9 +191,6 @@ export default class Home extends Component {
                     <Text>로딩 중 ..{'\n'}</Text>
                     }
                     {this.state.nickname!=undefined && this.state.nickname}님 환영합니다!{'\n'}
-                    {/*보유중인 자산 :*/}
-                    {/*<Image source={require('../common/img/dollar.png')} style={styles.dollarIcon}/>*/}
-                    {/*{this.state.dollar}{'\n'}*/}
                 </Text>
                 <TouchableOpacity
                     style={styles.rightBtn}
@@ -260,7 +257,6 @@ export default class Home extends Component {
 
 // const dpi = Common.getDpi();
 const dpi = Common.getRatio();
-const IconSize = 25;
 const styles = StyleSheet.create({
     homeWrapper: {
         padding: 40*dpi,
@@ -270,15 +266,6 @@ const styles = StyleSheet.create({
         opacity: 0.8,
         padding: 1*dpi,
         fontSize: 17*dpi,
-        // borderWidth:1,
-    },
-    dollarIcon: {
-        width: IconSize*dpi,
-        height: IconSize*dpi,
-        marginTop: 8*dpi,
-        marginLeft: 5*dpi,
-        marginRight: 9*dpi,
-        opacity: 0.7,
     },
     warningText: {
         color: '#FFFFFF',

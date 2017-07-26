@@ -5,6 +5,7 @@
 import React, {Component} from "react";
 import {Image, Text, View, StyleSheet, TouchableOpacity} from "react-native";
 import {Actions} from 'react-native-router-flux';
+import Common from "./common";
 
 export default class TabButton extends Component {
     render() {
@@ -36,7 +37,7 @@ class Tap extends Component {
                     <View style={styles.btn}>
                         <Image
                             source={this.props.img}
-                            style={styles.boxSize}
+                            style={styles.img}
                         />
                         <Text style={styles.boxText}>{this.props.text}</Text>
                     </View>
@@ -55,32 +56,36 @@ const images = {
     more: require('./img/more.png'),
 };
 
+const dpi = Common.getRatio();
 var styles = StyleSheet.create({
     taps: {
-        height: 80,
+        width:'100%',
+        height: '17%',
         backgroundColor: 'transparent',
         flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderTopWidth: 0.5,
+        justifyContent: 'space-between',
+        padding:10*dpi,
+        borderTopWidth: 1*dpi,
         borderColor: '#FFFFFF',
         opacity:0.6
     },
     tab: {
-        flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
     },
     btn: {
-        alignItems: 'center',
+
     },
-    boxSize: {
-        marginTop: -14,
-        height: 60, width: 60,
+    img: {
+        marginTop: -10*dpi,
+        height: '80%',
+        width: '80%',
+        alignSelf:'center',
     },
     boxText: {
-        marginTop: -6,
+        minWidth: 50*dpi,
+        marginTop: dpi,
         color:'#FFFFFF',
-        fontSize:12
+        fontSize:12,
+        textAlign:'center',
     }
 });

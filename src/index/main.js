@@ -41,6 +41,7 @@ import NoticeDetail from "../more/notice/noticeDetail";
 
 import Version from '../more/version';
 import Inquire from '../more/inquire';
+import Common from "../common/common";
 
 export default class Main extends Component {
     constructor(props) {
@@ -252,16 +253,15 @@ export default class Main extends Component {
     }
 }
 
-const navArrowSize = 40;
-const navArrowWrapperSize=navArrowSize+10;
+const dpi = Common.getRatio();
+const navArrowSize = 40*dpi;
+const navArrowWrapperSize=navArrowSize+10*dpi;
 var styles = StyleSheet.create({
     container: {
         flex:1,
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'stretch',
-        // width:'100%',
-        // height:'100%',
     },
     backgroundImg:{
         width:'100%',
@@ -289,7 +289,7 @@ var styles = StyleSheet.create({
         // backgroundColor:'#000000',
     },
     hr:{
-        borderBottomWidth:0.5,
+        borderBottomWidth:1*dpi,
         borderColor:'#FFFFFF',
         opacity:0.8,
     },

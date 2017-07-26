@@ -17,8 +17,8 @@ export default class Coinmarketcap extends Component {
         super(props);
 
         this.state = {
-            refreshing:true,
-            list:[],
+            refreshing: true,
+            list: [],
         };
     }
 
@@ -35,7 +35,7 @@ export default class Coinmarketcap extends Component {
         fetch("https://api.coinmarketcap.com/v1/ticker/?limit=6")
             .then((response) => response.json())
             .then((responseJson) => {
-                this.setState({list: responseJson, refreshing:false});
+                this.setState({list: responseJson, refreshing: false});
             })
             .catch((error) => {
                 console.error(error);
@@ -43,7 +43,7 @@ export default class Coinmarketcap extends Component {
     }
 
     render() {
-        const tableHead = ['분류', '비율(BTC)', '순환공급량', 'Volume', '변화율', 'Price' ];
+        const tableHead = ['분류', '비율(BTC)', '순환공급량', 'Volume', '변화율', 'Price'];
         return (
             <ScrollView
                 contentContainerStyle={styles.priceWrapper}
@@ -119,27 +119,32 @@ export default class Coinmarketcap extends Component {
     }
 }
 
+const wid = Common.winWidth();
+const hei = Common.winHeight();
 const dpi = Common.getRatio();
 const styles = StyleSheet.create({
     priceWrapper: {
-        alignItems:'center'
+        flex: 1,
+        alignItems: 'center'
     },
     explain: {
         color: '#FFFFFF',
         opacity: 0.8,
-        fontSize: 18*dpi,
-        margin: 15*dpi,
-        textAlign:'center',
+        fontSize: 16*dpi,
+        margin: 5*dpi,
+        textAlign: 'center',
     },
     thead: {
+        width: wid * 0.9,
+        height: hei *0.04,
+        justifyContent: 'center',
         flexDirection: 'row',
     },
     th1: {
-        width: 60*dpi,
+        flex: 1,
         borderWidth: 1*dpi,
         borderRadius: 7*dpi,
         borderColor: '#FFFFFF',
-        padding: 2*dpi,
         alignItems: 'center',
         justifyContent: 'center',
         margin: 1*dpi,
@@ -147,163 +152,161 @@ const styles = StyleSheet.create({
         opacity: 0.5,
     },
     th2: {
-        width: 125*dpi,
+        flex: 1.9,
         borderWidth: 1*dpi,
         borderRadius: 7*dpi,
         borderColor: '#FFFFFF',
-        padding: 2*dpi,
         alignItems: 'center',
         justifyContent: 'center',
         margin: 1*dpi,
         backgroundColor: '#000000',
-        opacity: 0.5*dpi,
+        opacity: 0.5,
     },
     th: {
-        width: 165,
-        borderWidth: 1,
-        borderRadius: 7,
+        flex: 3,
+        borderWidth: 1*dpi,
+        borderRadius: 7*dpi,
         borderColor: '#FFFFFF',
-        padding: 2,
         alignItems: 'center',
         justifyContent: 'center',
-        margin: 1,
+        margin: 1*dpi,
         backgroundColor: '#000000',
         opacity: 0.5,
     },
     th4: {
-        width: 125,
-        borderWidth: 1,
-        borderRadius: 7,
+        flex: 1.9,
+        borderWidth: 1*dpi,
+        borderRadius: 7*dpi,
         borderColor: '#FFFFFF',
-        padding: 2,
         alignItems: 'center',
         justifyContent: 'center',
-        margin: 1,
+        margin: 1*dpi,
         backgroundColor: '#000000',
         opacity: 0.5,
     },
     th5: {
-        width: 70,
-        borderWidth: 1,
-        borderRadius: 7,
+        flex: 1.25,
+        borderWidth: 1*dpi,
+        borderRadius: 7*dpi,
         borderColor: '#FFFFFF',
-        padding: 2,
         alignItems: 'center',
         justifyContent: 'center',
-        margin: 1,
+        margin: 1*dpi,
         backgroundColor: '#000000',
         opacity: 0.5,
     },
     th6: { //비율
-        width: 95,
-        borderWidth: 1,
-        borderRadius: 7,
+        flex: 1.5,
+        borderWidth: 1*dpi,
+        borderRadius: 7*dpi,
         borderColor: '#FFFFFF',
-        padding: 2,
         alignItems: 'center',
         justifyContent: 'center',
-        margin: 1,
+        margin: 1*dpi,
         backgroundColor: '#000000',
         opacity: 0.5,
     },
     htxt: {
         fontWeight: 'bold',
         color: '#FFFFFF',
-        fontSize: 10,
+        fontSize: 10*dpi,
         opacity: 0.8
     },
     tr: {
+        width: wid * 0.9,
+        height: hei *0.04,
         flexDirection: 'row',
     },
     td1: { // 분류
-        width: 60,
-        borderWidth: 1,
-        borderRadius: 7,
+        flex: 1,
+        borderWidth: 1*dpi,
+        borderRadius: 7*dpi,
         borderColor: '#FFFFFF',
-        backgroundColor:'#22214B',
+        backgroundColor: '#22214B',
         opacity: 0.5,
-        padding: 2,
         alignItems: 'center',
-        margin: 1,
+        justifyContent:'center',
+        margin: 1*dpi,
     },
     td2: { //비율?
-        width: 125,
-        borderWidth: 1,
-        borderRadius: 7,
+        flex: 1.9,
+        borderWidth: 1*dpi,
+        borderRadius: 7*dpi,
         borderColor: '#FFFFFF',
         opacity: 0.8,
-        padding: 2,
-        paddingRight:7,
+        paddingRight: 3*dpi,
         alignItems: 'flex-end',
-        margin: 1,
+        justifyContent:'center',
+        margin: 1*dpi,
     },
     td: { //supply
-        width: 165,
-        borderWidth: 1,
-        borderRadius: 7,
+        flex: 3,
+        borderWidth: 1*dpi,
+        borderRadius: 7*dpi,
         borderColor: '#FFFFFF',
         opacity: 0.8,
-        padding: 2,
-        paddingRight:7,
+        paddingRight: 3*dpi,
         alignItems: 'flex-end',
-        margin: 1,
+        justifyContent:'center',
+        margin: 1*dpi,
     },
     td4: { //volume
-        width: 125,
-        borderWidth: 1,
-        borderRadius: 7,
+        flex: 1.9,
+        borderWidth: 1*dpi,
+        borderRadius: 7*dpi,
         borderColor: '#FFFFFF',
         opacity: 0.8,
-        padding: 2,
-        paddingRight:7,
+        paddingRight: 3*dpi,
         alignItems: 'flex-end',
-        margin: 1,
+        justifyContent:'center',
+        margin: 1*dpi,
     },
     td5: {
-        width: 70,
-        borderWidth: 1,
-        borderRadius: 7,
+        flex: 1.25,
+        borderWidth: 1*dpi,
+        borderRadius: 7*dpi,
         borderColor: '#FFFFFF',
         opacity: 0.8,
-        padding: 2,
+        paddingRight: 3*dpi,
         alignItems: 'flex-end',
-        margin: 1,
+        justifyContent:'center',
+        margin: 1*dpi,
     },
     td6: { //price
-        width: 95,
-        borderWidth: 1,
-        borderRadius: 7,
+        flex: 1.5,
+        borderWidth: 1*dpi,
+        borderRadius: 7*dpi,
         borderColor: '#FFFFFF',
         opacity: 0.8,
-        padding: 2,
-        paddingRight:7,
+        paddingRight: 3*dpi,
         alignItems: 'flex-end',
-        margin: 1,
+        justifyContent:'center',
+        margin: 1*dpi,
     },
     title: {
         color: '#FFFFFF',
-        fontSize: 15,
+        fontSize: 14*dpi,
         fontWeight: 'bold',
     },
     htxt: {
         color: '#FFFFFF',
-        fontSize: 16,
+        fontSize: 14*dpi,
         fontWeight: 'bold',
     },
     txt: {
         color: '#FFFFFF',
-        fontSize: 15,
+        fontSize: 14*dpi,
     },
     betweenTable: {
-        margin: 5,
+        margin: 5*dpi,
     },
-    origin:{
-        marginTop:10,
-        marginRight:12,
-        textAlign:'right',
-        alignSelf:'flex-end',
-        color:'#FFFFFF',
-        fontSize:13,
+    origin: {
+        marginTop: 10*dpi,
+        marginRight: 12*dpi,
+        textAlign: 'right',
+        alignSelf: 'flex-end',
+        color: '#FFFFFF',
+        fontSize: 13*dpi,
     },
 });
 
