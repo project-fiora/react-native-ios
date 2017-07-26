@@ -364,6 +364,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         borderColor: '#FFFFFF',
         padding: 5,
+        alignSelf:'center',
         alignItems: 'center',
         justifyContent: 'center',
         opacity: 0.6

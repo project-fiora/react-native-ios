@@ -3,6 +3,9 @@
  */
 
 import React, {Component} from 'react';
+import {PixelRatio, Dimensions} from 'react-native';
+
+var {height, width} = Dimensions.get('window');
 
 class Common extends Component {
     static clone(obj) {
@@ -15,6 +18,27 @@ class Common extends Component {
             }
         }
         return copy;
+    }
+
+    static getRatio(){
+        alert((width*height)/(375*667));
+        return (width*height)/(375*667);
+    }
+
+    static widthRatio(){ //iphone6 = 375
+        return 375/width;
+    }
+
+    static heightRatio(){ //iphone6 = 667
+        return 667/height;
+    }
+
+    static windowWidth(){
+        return width;
+    }
+
+    static windowHeight(){
+        return height;
     }
 
     static modifyDate(date) {

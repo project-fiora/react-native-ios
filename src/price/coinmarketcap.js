@@ -10,6 +10,7 @@ import {
     Text,
     View,
 } from 'react-native';
+import Common from "../common/common";
 
 export default class Coinmarketcap extends Component {
     constructor(props) {
@@ -118,6 +119,7 @@ export default class Coinmarketcap extends Component {
     }
 }
 
+const dpi = Common.getRatio();
 const styles = StyleSheet.create({
     priceWrapper: {
         alignItems:'center'
@@ -125,36 +127,36 @@ const styles = StyleSheet.create({
     explain: {
         color: '#FFFFFF',
         opacity: 0.8,
-        fontSize: 18,
-        margin: 15,
+        fontSize: 18*dpi,
+        margin: 15*dpi,
         textAlign:'center',
     },
     thead: {
         flexDirection: 'row',
     },
     th1: {
-        width: 60,
-        borderWidth: 1,
-        borderRadius: 7,
+        width: 60*dpi,
+        borderWidth: 1*dpi,
+        borderRadius: 7*dpi,
         borderColor: '#FFFFFF',
-        padding: 2,
+        padding: 2*dpi,
         alignItems: 'center',
         justifyContent: 'center',
-        margin: 1,
+        margin: 1*dpi,
         backgroundColor: '#000000',
         opacity: 0.5,
     },
     th2: {
-        width: 125,
-        borderWidth: 1,
-        borderRadius: 7,
+        width: 125*dpi,
+        borderWidth: 1*dpi,
+        borderRadius: 7*dpi,
         borderColor: '#FFFFFF',
-        padding: 2,
+        padding: 2*dpi,
         alignItems: 'center',
         justifyContent: 'center',
-        margin: 1,
+        margin: 1*dpi,
         backgroundColor: '#000000',
-        opacity: 0.5,
+        opacity: 0.5*dpi,
     },
     th: {
         width: 165,

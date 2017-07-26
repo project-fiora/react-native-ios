@@ -3,11 +3,13 @@
  */
 import React, {Component} from 'react';
 import {
-    Image, ScrollView, StyleSheet, Alert,
+    ScrollView, StyleSheet, Alert, PixelRatio,
     Text, AsyncStorage, View, TouchableOpacity,
 } from 'react-native';
+import {Actions} from 'react-native-router-flux';
 import realm from '../common/realm';
 import PrivateAddr from "../common/private/address";
+import Common from "../common/common";
 
 export default class Home extends Component {
     constructor(props) {
@@ -193,6 +195,14 @@ export default class Home extends Component {
                     {/*<Image source={require('../common/img/dollar.png')} style={styles.dollarIcon}/>*/}
                     {/*{this.state.dollar}{'\n'}*/}
                 </Text>
+                <TouchableOpacity
+                    style={styles.rightBtn}
+                    underlayColor={'#000000'}
+                    onPress={() => Actions.main({goTo:'post'})}
+                >
+                    <Text style={styles.txt}>커뮤니티 바로가기</Text>
+                </TouchableOpacity>
+
                 <Text style={styles.warningText}>
                     ** 이 앱을 사용하는 도중에 발생하는
                 </Text>
@@ -248,42 +258,43 @@ export default class Home extends Component {
     }
 }
 
+// const dpi = Common.getDpi();
+const dpi = Common.getRatio();
 const IconSize = 25;
 const styles = StyleSheet.create({
     homeWrapper: {
-        padding: 40,
+        padding: 40*dpi,
     },
     txt: {
         color: '#FFFFFF',
         opacity: 0.8,
-        padding: 1,
-        fontSize: 17,
+        padding: 1*dpi,
+        fontSize: 17*dpi,
         // borderWidth:1,
-        marginTop: -10,
     },
     dollarIcon: {
-        width: IconSize,
-        height: IconSize,
-        marginTop: 8,
-        marginLeft: 5,
-        marginRight: 9,
+        width: IconSize*dpi,
+        height: IconSize*dpi,
+        marginTop: 8*dpi,
+        marginLeft: 5*dpi,
+        marginRight: 9*dpi,
         opacity: 0.7,
     },
     warningText: {
         color: '#FFFFFF',
         opacity: 0.8,
-        fontSize: 15,
+        fontSize: 15*dpi,
     },
     warningText2: {
         color: '#FFFFFF',
         opacity: 0.8,
-        fontSize: 15,
+        fontSize: 15*dpi,
     },
     btn: {
-        marginTop: 20,
+        marginTop: 20*dpi,
         color: '#FFFFFF',
         opacity: 0.8,
-        fontSize: 25,
+        fontSize: 25*dpi,
     },
     rowViewWrapper:{
         flexDirection: 'row',
@@ -293,40 +304,40 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     confirmBtn: {
-        width: 80,
-        height: 30,
-        borderWidth: 1,
-        borderRadius: 20,
+        width: 80*dpi,
+        height: 30*dpi,
+        borderWidth: 1*dpi,
+        borderRadius: 20*dpi,
         borderColor: '#FFFFFF',
-        padding: 5,
+        padding: 5*dpi,
         alignItems: 'center',
         justifyContent: 'center',
         opacity: 0.6,
-        marginRight:1,
+        marginRight:1*dpi,
     },
     btnText: {
         color: '#FFFFFF',
-        fontSize: 15,
+        fontSize: 15*dpi,
         alignSelf: 'center',
         justifyContent: 'center',
     },
     listTitle: {
         color: '#FFFFFF',
-        fontSize: 18,
+        fontSize: 18*dpi,
         opacity: 0.8,
-        marginTop: 10,
-        marginBottom: 10,
+        marginTop: 10*dpi,
+        marginBottom: 10*dpi,
     },
     waitListText: {
         color: '#FFFFFF',
-        fontSize: 16,
+        fontSize: 16*dpi,
         opacity: 0.8,
         justifyContent: 'center',
         alignSelf: 'center',
     },
     listText: {
         color: '#FFFFFF',
-        fontSize: 16,
+        fontSize: 16*dpi,
         opacity: 0.8,
         justifyContent: 'center',
     },

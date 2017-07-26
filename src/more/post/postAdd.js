@@ -4,7 +4,7 @@
 
 import React, {Component} from 'react';
 import {
-    StyleSheet,
+    StyleSheet, ScrollView,
     Text, TextInput, TouchableHighlight,
     View, AsyncStorage, TouchableOpacity, Image
 } from 'react-native';
@@ -113,48 +113,60 @@ export default class PostAdd extends Component {
         }
     }
 
+    removePost(){
+
+    }
+
     goTo() {
         Actions.main({goTo: 'postRead', post_id: this.props.post_id});
     }
 
     render() {
         return (
-            <View pointerEvents={this.state.enable} style={styles.frame}>
-                <TextInput
-                    style={styles.input}
-                    value={this.state.title}
-                    onChangeText={(title) => this.setState({title: title})}
-                    placeholder={'제목'}
-                    placeholderTextColor="#FFFFFF"
-                    autoCapitalize='none'
-                    autoCorrect={false}
-                    multiline={false}
-                    autoFocus={true}
-                />
-                <TextInput
-                    style={styles.inputContent}
-                    multiline={true}
-                    numberOfLines={5}
-                    value={this.state.contents}
-                    onChangeText={(content) => this.setState({contents: content})}
-                    placeholder={'1000자 이내로 입력해주세요'}
-                    placeholderTextColor="#FFFFFF"
-                    autoCapitalize='none'
-                    autoCorrect={false}
-                    maxLength={1000}
-                />
+            <View>
+                <ScrollView
+                    pointerEvents={this.state.enable}
+                    contentContainerStyle={styles.frame}>
+                    <TextInput
+                        style={styles.input}
+                        value={this.state.title}
+                        onChangeText={(title) => this.setState({title: title})}
+                        placeholder={'제목'}
+                        placeholderTextColor="#FFFFFF"
+                        autoCapitalize='none'
+                        autoCorrect={false}
+                        multiline={false}
+                        autoFocus={true}
+                    />
+                    <TextInput
+                        style={styles.inputContent}
+                        multiline={true}
+                        numberOfLines={5}
+                        value={this.state.contents}
+                        onChangeText={(content) => this.setState({contents: content})}
+                        placeholder={'1000자 이내로 입력해주세요'}
+                        placeholderTextColor="#FFFFFF"
+                        autoCapitalize='none'
+                        autoCorrect={false}
+                        maxLength={1000}
+                    />
 
-                {/*<TouchableHighlight*/}
-                {/*style={styles.attachBtn}*/}
-                {/*underlayColor={'#000000'}*/}
-                {/*onPress={*/}
-                {/*() => {*/}
-                {/*alert('attach');*/}
-                {/*}*/}
-                {/*}*/}
-                {/*>*/}
-                {/*<Text style={styles.btnText}>스크린샷, 이미지 첨부</Text>*/}
-                {/*</TouchableHighlight>*/}
+                    {this.props.edit &&
+                    <TouchableHighlight
+                        style={styles.attachBtn}
+                        underlayColor={'#000000'}
+                        onPress={
+                            () => {
+                                this.removePost();
+                            }
+                        }
+                    >
+                        <Text style={styles.btnText}>글 삭제</Text>
+                    </TouchableHighlight>
+                    }
+
+
+                </ScrollView>
                 <TouchableOpacity
                     style={styles.navBackBtn}
                     underlayColor={'#AAAAAA'}
